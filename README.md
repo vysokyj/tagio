@@ -1,4 +1,4 @@
-# Tagio
+# TagIO
 
 Advanced TagLib wrapper for Node.JS
 
