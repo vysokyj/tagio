@@ -1,7 +1,6 @@
 // test.js
 
-var tagio = require('./build/Release/tagio');
-//var tagio = require('./build/Debug/tagio');
+var tagio = require('./tagio');
 
 var config = {
 	attachmentsDir: "/tmp",
@@ -27,12 +26,13 @@ var printConfig = function(mp3) {
 
 var printID3v2Tag = function(mp3) {
 	var frames = mp3.getID3v2Tag();
-	for (var i = 0, l = frames.length; i < l; i++) {
+	for (var i = 0, l = frames.length; i < l; i++)
 		console.log("%d: %j", i, frames[i]);
-	}
+
 };
 
-var mp3 = new tagio.MPEG("sample.mp3", config);
+//var mp3 = new tagio.MPEG("./sample.mp3", config);
+var mp3 = tagio.open("./sample.mp3", config);
 ////var mp3 = new tagio.MPEG("/home/mpd/cz/punk/psi-vojaci/02/01.mp3", config);
 printConfig(mp3)
 printID3v2Tag(mp3);

@@ -1,7 +1,7 @@
 {
   "name": "tagio",
   "version": "0.1.0",
-  "description": "Advnaced TagLib wrapper.",
+  "description": "Advanced TagLib wrapper.",
   "repository": {
     "type": "git",
     "url": "git://github.com/vysokyj/tagio.git"
@@ -9,8 +9,13 @@
   "keywords": [
     "tag",
     "taglib",
-    "metadata"
+    "metadata",
+    "id3",
+    "mp3",
+    "mpeg"
   ],
+  "os" : [ "darwin", "linux" ],
+  "main": "tagio.js",
   "scripts": {
     "install": "cmake-js rebuild"
   },
