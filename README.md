@@ -2,8 +2,12 @@
 
 Advanced TagLib wrapper for Node.JS
 
-This module is under hard development, but partially functional.
-Save not yet tested!
+**This module is under hard development!**
+
+## Implemented
+
+* MPEG - generic API, ID3v2
+
 
 ## Prerequisites
 
@@ -70,6 +74,7 @@ for (var i = 0, l = frames.length; i < l; i++) {
 ## Copyright
 
 TagIO - Advanced TagLib wrapper for Node.JS
+
 Copyright (C) 2015  Jiri Vysoky
 
 This program is free software; you can redistribute it and/or modify
