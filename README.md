@@ -71,6 +71,13 @@ for (var i = 0, l = frames.length; i < l; i++) {
 * **saveID3v2Tag** - TagLib will save ID3v2 tag
 * **saveApeTag** - TagLib will save APE tag
 
+
+## Development notes
+
+## Trace errors
+
+nm -C build/Release/tagio.node
+
 ## Copyright
 
 TagIO - Advanced TagLib wrapper for Node.JS

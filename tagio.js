@@ -12,6 +12,7 @@ tagio.Configuration = {
 tagio.open = function(file, configuration) {
     var ext = path.extname(file);
     if (ext === '.mp3') return new tagio.MPEG(file, configuration);
+    else return new tagio.GENERIC(file, configuration);
 };
 
 module.exports = tagio;

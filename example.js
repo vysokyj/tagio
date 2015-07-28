@@ -23,7 +23,7 @@ var print = function(mp3) {
 	}
 };
 
-var mp3 = tagio.open("./example.mp3", config);
+var mp3 = tagio.open("./samples/sample.mp3", config);
 print(mp3);
 
 // some changes
@@ -37,6 +37,6 @@ var tag = {
 	comment: "My comment"
 };
 
-mp3.setTag(tag);
-mp3.save();
-print(mp3);
+//mp3.setTag(tag);
+//mp3.save();
+//print(mp3);

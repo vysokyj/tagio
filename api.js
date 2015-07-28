@@ -2,14 +2,23 @@
 
 var tagio = {};
 
+tagio.GENERIC = {
+    getPath: function() {},
+    getTag: function() {},
+    setTag: function(tag) {},
+    save: function() {}
+};
+
 tagio.MPEG = {
+    getPath: function() {},
+    getTag: function() {},
+    setTag: function(tag) {},
+    save: function() {},
+
     hasAPETag: function() {},
     hasID3v1Tag: function() {},
     hasID3v2Tag: function() {},
-    getTag: function() {},
-    setTag: function(tag) {},
     getID3v2Tag: function() {},
-    setID3v2Tag: function(tag) {},
-    getPath: function() {}
+    setID3v2Tag: function(tag) {}
 };
 
