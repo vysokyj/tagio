@@ -11,6 +11,7 @@ tagio.GENERIC = {
 
 tagio.MPEG = {
     getPath: function() {},
+    getConfiguration: function() {},
     getTag: function() {},
     setTag: function(tag) {},
     save: function() {},

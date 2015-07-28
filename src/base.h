@@ -30,8 +30,11 @@ namespace TagIO {
 
         // helper methods
         static void SetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
+        static void GetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
         //static TagLib::ByteVector GetBinary(v8::Isolate *isolate, v8::Object *object, const char *key);
         //static void SetBinary(v8::Isolate *isolate, v8::Object *object, const char *key, TagLib::ByteVector);
+        static bool GetBoolean(v8::Isolate *isolate, v8::Object *object, const char *key);
+        static void SetBoolean(v8::Isolate *isolate, v8::Object *object, const char *key, bool);
         static TagLib::uint GetUint32(v8::Isolate *isolate, v8::Object *object, const char *key);
         static void SetUint32(v8::Isolate *isolate, v8::Object *object, const char *key, const TagLib::uint value);
         static TagLib::String GetString(v8::Isolate *isolate, v8::Object *object, const char *key);

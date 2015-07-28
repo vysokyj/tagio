@@ -42,6 +42,7 @@ namespace TagIO {
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void Save(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void GetPath(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void GetConfiguration(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void GetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void SetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
 

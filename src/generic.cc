@@ -26,6 +26,7 @@ void GENERIC::Init(Handle<Object> exports) {
     // Prototype
     NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getConfiguration", GetConfiguration);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
 
@@ -45,7 +46,7 @@ void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
             ref->Wrap(args.This());
             if (args.Length() >= 2 && args[1]->IsObject()) {
                 Local<Object> object = args[1]->ToObject();
-                SetBaseConfiguration(isolate, *object, ref);
+                GetBaseConfiguration(isolate, *object, ref);
             }
         }
         args.GetReturnValue().Set(args.This());
@@ -73,6 +74,14 @@ void GENERIC::GetPath(const FunctionCallbackInfo<Value>& args) {
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     string path = ref->GetFilePath();
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
+}
+
+void GENERIC::GetConfiguration(const FunctionCallbackInfo<Value>& args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
+    Local<Object> object = Object::New(isolate);
+    SetBaseConfiguration(isolate, *object, ref);
+    args.GetReturnValue().Set(object);
 }
 
 void GENERIC::GetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {

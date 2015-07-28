@@ -9,10 +9,10 @@ Base::Base(const char *path) : path(FixPath(path)) { }
 
 Base::~Base() {}
 
-void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
+void Base::GetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
     // prepare keys
     Local<String> binaryDataDirectoryKey = (String::NewFromUtf8(isolate, "binaryDataDirectory"))->ToString();
-    Local<String> binaryDataRelativeUrlKey = (String::NewFromUtf8(isolate, "binaryDataRelativeUrl"))->ToString();
+    Local<String> binaryDataUrlPrefixKey = (String::NewFromUtf8(isolate, "binaryDataUrlPrefix"))->ToString();
     Local<String> binaryDataMethodKey = (String::NewFromUtf8(isolate, "binaryDataMethod"))->ToString();
 
     if (object->Has(binaryDataDirectoryKey)) {
@@ -20,8 +20,8 @@ void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
         base->binaryDataDirectory = *val;
     }
 
-    if (object->Has(binaryDataRelativeUrlKey)) {
-        String::Utf8Value val(object->Get(binaryDataRelativeUrlKey)->ToString());
+    if (object->Has(binaryDataUrlPrefixKey)) {
+        String::Utf8Value val(object->Get(binaryDataUrlPrefixKey)->ToString());
         base->binaryDataUrlPrefix = *val;
     }
 
@@ -32,6 +32,24 @@ void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
         if (s.compare("ABSOLUTE_URL") == 0)  base->binaryDataMethod = Base::BinaryDataMethod::ABSOLUTE_URL;
         if (s.compare("PREFIXED_URL") == 0)  base->binaryDataMethod = Base::BinaryDataMethod::PREFIXED_URL;
     }
+}
+
+void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
+    SetString(isolate, object, "binaryDataDirectory", base->binaryDataDirectory);
+    SetString(isolate, object, "binaryDataUrlPrefix", base->binaryDataUrlPrefix);
+
+    switch(base->binaryDataMethod) {
+        case BinaryDataMethod::FILENAME:
+            SetString(isolate, object, "binaryDataMethod", "FILENAME");
+            break;
+        case BinaryDataMethod::ABSOLUTE_URL:
+            SetString(isolate, object, "binaryDataMethod", "ABSOLUTE_URL");
+            break;
+        case BinaryDataMethod::PREFIXED_URL:
+            SetString(isolate, object, "binaryDataMethod", "PREFIXED_URL");
+            break;
+    }
+
 }
 
 TagLib::String Base::ExportFile(TagLib::ByteVector byteVector, TagLib::String mimeType) {
@@ -57,6 +75,19 @@ TagLib::ByteVector Base::ImportFile(TagLib::String path) {
     ifs.read(data, length);
     ifs.close();
     return TagLib::ByteVector(data, (uint) length);
+}
+
+bool Base::GetBoolean(Isolate *isolate, Object *object, const char *key) {
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        return object->Get(String::NewFromUtf8(isolate, key))->BooleanValue();
+    } else {
+        return false;
+    }
+}
+
+void Base::SetBoolean(Isolate *isolate, Object *object, const char *key, bool value) {
+    object->Set(String::NewFromUtf8(isolate, key), Boolean::New(isolate, value));
 }
 
 TagLib::uint Base::GetUint32(Isolate *isolate, Object *object, const char *key) {

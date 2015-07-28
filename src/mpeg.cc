@@ -49,6 +49,7 @@ void MPEG::Init(Handle<Object> exports) {
     // Generic API
     NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getConfiguration", GetConfiguration);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
     // MPEG API
@@ -76,7 +77,7 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
             if (args.Length() >= 2 && args[1]->IsObject()) {
                 Local<Object> object = args[1]->ToObject();
 
-                SetBaseConfiguration(isolate, *object, ref);
+                GetBaseConfiguration(isolate, *object, ref);
 
                 Local<String> saveID3v1TagKey = String::NewFromUtf8(isolate, "saveID3v1Tag");
                 Local<String> saveID3v2TagKey = String::NewFromUtf8(isolate, "saveID3v2Tag");
@@ -132,6 +133,17 @@ void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     string path = ref->GetFilePath();
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
+}
+
+void MPEG::GetConfiguration(const FunctionCallbackInfo<Value>& args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    Local<Object> object = Object::New(isolate);
+    SetBaseConfiguration(isolate, *object, ref);
+    SetBoolean(isolate, *object, "saveID3v1Tag", ref->saveID3v1Tag);
+    SetBoolean(isolate, *object, "saveID3v2Tag", ref->saveID3v2Tag);
+    SetBoolean(isolate, *object, "saveApeTag", ref->saveApeTag);
+    args.GetReturnValue().Set(object);
 }
 
 void MPEG::GetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
