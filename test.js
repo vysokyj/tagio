@@ -1,6 +1,7 @@
 // test.js
 
-var tagio = require('./tagio');
+var fs = require("fs");
+var tagio = require("./tagio");
 
 var config = {
 	attachmentsDir: "/tmp",
@@ -28,18 +29,16 @@ var printID3v2Tag = function(mp3) {
 	var frames = mp3.getID3v2Tag();
 	for (var i = 0, l = frames.length; i < l; i++)
 		console.log("%d: %j", i, frames[i]);
-
 };
 
-//var mp3 = new tagio.MPEG("./sample.mp3", config);
-var mp3 = tagio.open("./sample.mp3", config);
+var mp3 = tagio.open("./test/sample.mp3", config);
 ////var mp3 = new tagio.MPEG("/home/mpd/cz/punk/psi-vojaci/02/01.mp3", config);
 printConfig(mp3)
 printID3v2Tag(mp3);
 console.log("\nAFTER CHANGE:");
-var tag = mp3.getID3v2Tag();
-tag[0]['text'] = "Tam u pekelných bran";
-mp3.setID3v2Tag(tag);
-printID3v2Tag(mp3);
+//var tag = mp3.getID3v2Tag();
+//tag[0]['text'] = "Tam u pekelných bran";
+//mp3.setID3v2Tag(tag);
+//printID3v2Tag(mp3);
 
 //console.log( 'This should be eight:', addon.add(3,5) );
