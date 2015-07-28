@@ -35,7 +35,7 @@ namespace TagIO {
         void SetID3v2TagEnabled(bool value) { this->saveID3v2Tag = value; }
         void SetApeTagEnabled(bool value) { this->saveApeTag = value; }
     private:
-        explicit MPEG(std::string path);
+        explicit MPEG(const char *path);
         ~MPEG();
 
         // Generic API

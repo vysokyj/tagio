@@ -16,7 +16,7 @@ namespace TagIO {
     public:
         static void Init(v8::Handle<v8::Object> exports);
     private:
-        explicit GENERIC(std::string path);
+        explicit GENERIC(const char *path);
         ~GENERIC();
 
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);

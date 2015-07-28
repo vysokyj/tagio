@@ -2,8 +2,9 @@ var tagio = require('./build/Release/tagio');
 var path = require('path');
 
 tagio.Configuration = {
-    attachmentsDir: ".",
-    attachmentsCtx: "/",
+    binaryDataDirectory: "/tmp",
+    binaryDataContext: "/attachments",
+    binaryDataMethod: "context",
     saveID3v1Tag: false,
     saveID3v2Tag: true,
     saveApeTag: false

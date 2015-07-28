@@ -1,28 +1,53 @@
-#include <taglib/tstring.h>
+
 #include "base.h"
 
+using namespace TagIO;
 using namespace std;
 using namespace v8;
-using namespace TagIO;
 
-Base::Base(string path) : path(FixPath(path)) { }
+Base::Base(const char *path) : path(FixPath(path)) { }
 
 Base::~Base() {}
 
+void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
+    // prepare keys
+    Local<String> binaryDataDirectoryKey = (String::NewFromUtf8(isolate, "binaryDataDirectory"))->ToString();
+    Local<String> binaryDataRelativeUrlKey = (String::NewFromUtf8(isolate, "binaryDataRelativeUrl"))->ToString();
+    Local<String> binaryDataMethodKey = (String::NewFromUtf8(isolate, "binaryDataMethod"))->ToString();
+
+    if (object->Has(binaryDataDirectoryKey)) {
+        String::Utf8Value val(object->Get(binaryDataDirectoryKey)->ToString());
+        base->binaryDataDirectory = *val;
+    }
+
+    if (object->Has(binaryDataRelativeUrlKey)) {
+        String::Utf8Value val(object->Get(binaryDataRelativeUrlKey)->ToString());
+        base->binaryDataRelativeUrl = *val;
+    }
+
+    if (object->Has(binaryDataMethodKey)) {
+        String::Utf8Value val(object->Get(binaryDataMethodKey)->ToString());
+        string s(*val);
+        if (s.compare("file") == 0) base->binaryDataMethod = Base::BinaryDataMethod::FILE;
+        if (s.compare("fileUrl") == 0) base->binaryDataMethod = Base::BinaryDataMethod::FILE_URL;
+        if (s.compare("relativeUrl") == 0) base->binaryDataMethod = Base::BinaryDataMethod::RELATIVE_URL;
+    }
+}
+
 TagLib::String Base::ExportFile(TagLib::ByteVector byteVector, TagLib::String mimeType) {
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
-    string filePath = NewPath(attachmentsDir, fileName);
+    string filePath = NewPath(binaryDataDirectory, fileName);
     ofstream ofs;
     ofs.open(filePath, ios::out | ios::binary);
     ofs.write(byteVector.data(), byteVector.size());
     ofs.close();
-    string retval = attachmentsCtx + fileName;
+    string retval = NewRelativeUrl(binaryDataRelativeUrl, fileName);
     return TagLib::String(retval, TagLib::String::UTF8);
 }
 
 TagLib::ByteVector Base::ImportFile(TagLib::String path) {
-    string fileName = path.to8Bit(true).substr(attachmentsCtx.length());
-    string filePath = NewPath(attachmentsDir, fileName);
+    string fileName = path.to8Bit(true).substr(binaryDataRelativeUrl.length());
+    string filePath = NewPath(binaryDataRelativeUrl, fileName);
     ifstream ifs;
     ifs.open(filePath, ios::in | ios::binary);
     ifs.seekg(0, ios::end);
@@ -35,7 +60,12 @@ TagLib::ByteVector Base::ImportFile(TagLib::String path) {
 }
 
 TagLib::uint Base::GetUint32(Isolate *isolate, Object *object, const char *key) {
-    return (uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        return (uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
+    } else {
+        return 0;
+    }
 }
 
 void Base::SetUint32(Isolate *isolate, Object *object, const char *key, const TagLib::uint value) {
@@ -43,8 +73,13 @@ void Base::SetUint32(Isolate *isolate, Object *object, const char *key, const Ta
 }
 
 TagLib::String Base::GetString(Isolate *isolate, Object *object, const char *key) {
-    String::Utf8Value value(object->Get(String::NewFromUtf8(isolate, key))->ToString());
-    return TagLib::String(*value, TagLib::String::UTF8);
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        String::Utf8Value value(object->Get(keyString));
+        return TagLib::String(*value, TagLib::String::UTF8);
+    } else {
+        return TagLib::String("", TagLib::String::UTF8);
+    }
 }
 
 void Base::SetString(Isolate *isolate, Object *object, const char *key, TagLib::String value) {
@@ -74,6 +109,11 @@ void Base::SetTagByObject(Isolate *isolate, Object *object, TagLib::Tag *tag) {
 //----------------------------------------------------------------------------------------------------------------------
 // Private methods
 
+
+const char *Base::FixPath(const char *path) {
+    return FixPath(string(path)).c_str();
+}
+
 string Base::FixPath(string path) {
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     replace(path.begin(), path.end(), '/', '\\');
@@ -83,10 +123,15 @@ string Base::FixPath(string path) {
     return path;
 }
 
+const char *Base::FixContext(const char *context) {
+    return FixContext(string(context)).c_str();
+}
+
 string Base::FixContext(string context) {
     if (context.length() == 0) return context;
-    else if (context.back() == '/') return context;
-    else return context + '/';
+    if (context.back() == '/') context = context.substr(0, context.length() - 1);
+    if (context.front() != '/') context = '/' + context;
+    return context;
 }
 
 string Base::NewPath(string directoryPath, string fileName) {
@@ -97,6 +142,10 @@ string Base::NewPath(string directoryPath, string fileName) {
     replace(directoryPath.begin(), directoryPath.end(), '\\', '/');
     return directoryPath + '/' + fileName;
     #endif
+}
+
+string Base::NewRelativeUrl(string relativeUrl, string fileName) {
+    return relativeUrl + '/' + fileName;
 }
 
 

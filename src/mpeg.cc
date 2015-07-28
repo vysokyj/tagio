@@ -7,8 +7,8 @@ using namespace std;
 
 Persistent<Function> MPEG::constructor;
 
-MPEG::MPEG(string path) : Base(path) {
-    file = new TagLib::MPEG::File(this->GetFilePath().c_str());
+MPEG::MPEG(const char *path) : Base(path) {
+    file = new TagLib::MPEG::File(FixPath(path));
     apicMap[0x00] = TagLib::ID3v2::AttachedPictureFrame::Other;
     apicMap[0x01] = TagLib::ID3v2::AttachedPictureFrame::FileIcon;
     apicMap[0x02] = TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon;
@@ -70,36 +70,28 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
         // Invoked as constructor
         if (args.Length() >= 1) {
             String::Utf8Value path(args[0]->ToString());
-            auto *ref = new MPEG(string(*path));
+            auto *ref = new MPEG(*path);
             ref->Wrap(args.This());
 
-            if (args.Length() >= 2) {
+            if (args.Length() >= 2 && args[1]->IsObject()) {
+                Local<Object> object = args[1]->ToObject();
 
-                Local<String> attachmentsDirKey = String::NewFromUtf8(isolate, "attachmentsDir");
-                Local<String> attachmentsCtxKey = String::NewFromUtf8(isolate, "attachmentsCtx");
+                SetBaseConfiguration(isolate, *object, ref);
+
                 Local<String> saveID3v1TagKey = String::NewFromUtf8(isolate, "saveID3v1Tag");
                 Local<String> saveID3v2TagKey = String::NewFromUtf8(isolate, "saveID3v2Tag");
                 Local<String> saveApeTagKey = String::NewFromUtf8(isolate, "saveApeTag");
 
-                Local<Object> config = args[1]->ToObject();
-                if (config->Has(attachmentsDirKey)) {
-                    String::Utf8Value val(config->Get(attachmentsDirKey)->ToString());
-                    ref->SetAttachmentsDir(string(*val));
-                }
-                if (config->Has(attachmentsCtxKey)) {
-                    String::Utf8Value val(config->Get(attachmentsCtxKey)->ToString());
-                    ref->SetAttachmentsCtx(string(*val));
-                }
-                if (config->Has(saveID3v1TagKey)) {
-                    Local<Boolean> val(config->Get(saveID3v1TagKey)->ToBoolean());
+                if (object->Has(saveID3v1TagKey)) {
+                    Local<Boolean> val(object->Get(saveID3v1TagKey)->ToBoolean());
                     ref->SetID3v1TagEnabled(val->BooleanValue());
                 }
-                if (config->Has(saveID3v2TagKey)) {
-                    Local<Boolean> val(config->Get(saveID3v2TagKey)->ToBoolean());
+                if (object->Has(saveID3v2TagKey)) {
+                    Local<Boolean> val(object->Get(saveID3v2TagKey)->ToBoolean());
                     ref->SetID3v2TagEnabled(val->BooleanValue());
                 }
-                if (config->Has(saveApeTagKey)) {
-                    Local<Boolean> val(config->Get(saveApeTagKey)->ToBoolean());
+                if (object->Has(saveApeTagKey)) {
+                    Local<Boolean> val(object->Get(saveApeTagKey)->ToBoolean());
                     ref->SetApeTagEnabled(val->BooleanValue());
                 }
             }

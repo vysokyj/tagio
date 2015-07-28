@@ -7,8 +7,8 @@ using namespace std;
 
 Persistent<Function> GENERIC::constructor;
 
-GENERIC::GENERIC(string path) : Base(path) {
-    file = new TagLib::FileRef(this->GetFilePath().c_str());
+GENERIC::GENERIC(const char *path) : Base(path) {
+    file = new TagLib::FileRef(FixPath(path));
 }
 
 GENERIC::~GENERIC() {
@@ -41,26 +41,13 @@ void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
         // Invoked as constructor
         if (args.Length() >= 1) {
             String::Utf8Value path(args[0]->ToString());
-            auto *ref = new GENERIC(string(*path));
+            auto *ref = new GENERIC(*path);
             ref->Wrap(args.This());
-
-            if (args.Length() >= 2) {
-
-                Local<String> attachmentsDirKey = String::NewFromUtf8(isolate, "attachmentsDir");
-                Local<String> attachmentsCtxKey = String::NewFromUtf8(isolate, "attachmentsCtx");
-
-                Local<Object> config = args[1]->ToObject();
-                if (config->Has(attachmentsDirKey)) {
-                    String::Utf8Value val(config->Get(attachmentsDirKey)->ToString());
-                    ref->SetAttachmentsDir(string(*val));
-                }
-                if (config->Has(attachmentsCtxKey)) {
-                    String::Utf8Value val(config->Get(attachmentsCtxKey)->ToString());
-                    ref->SetAttachmentsCtx(string(*val));
-                }
+            if (args.Length() >= 2 && args[1]->IsObject()) {
+                Local<Object> object = args[1]->ToObject();
+                SetBaseConfiguration(isolate, *object, ref);
             }
         }
-
         args.GetReturnValue().Set(args.This());
     } else {
         // Invoked as plain function, turn into construct call.
