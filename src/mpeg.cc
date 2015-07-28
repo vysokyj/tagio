@@ -72,8 +72,8 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
         // Invoked as constructor
         if (args.Length() >= 1) {
             String::Utf8Value path(args[0]->ToString());
-            MPEG* mpeg = new MPEG(string(*path));
-            mpeg->Wrap(args.This());
+            auto *ref = new MPEG(string(*path));
+            ref->Wrap(args.This());
 
             if (args.Length() >= 2) {
 
@@ -86,23 +86,23 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
                 Local<Object> config = args[1]->ToObject();
                 if (config->Has(attachmentsDirKey)) {
                     String::Utf8Value val(config->Get(attachmentsDirKey)->ToString());
-                    mpeg->SetAttachmentsDir(string(*val));
+                    ref->SetAttachmentsDir(string(*val));
                 }
                 if (config->Has(attachmentsCtxKey)) {
                     String::Utf8Value val(config->Get(attachmentsCtxKey)->ToString());
-                    mpeg->SetAttachmentsCtx(string(*val));
+                    ref->SetAttachmentsCtx(string(*val));
                 }
                 if (config->Has(saveID3v1TagKey)) {
                     Local<Boolean> val(config->Get(saveID3v1TagKey)->ToBoolean());
-                    mpeg->SetID3v1TagEnabled(val->BooleanValue());
+                    ref->SetID3v1TagEnabled(val->BooleanValue());
                 }
                 if (config->Has(saveID3v2TagKey)) {
                     Local<Boolean> val(config->Get(saveID3v2TagKey)->ToBoolean());
-                    mpeg->SetID3v2TagEnabled(val->BooleanValue());
+                    ref->SetID3v2TagEnabled(val->BooleanValue());
                 }
                 if (config->Has(saveApeTagKey)) {
                     Local<Boolean> val(config->Get(saveApeTagKey)->ToBoolean());
-                    mpeg->SetApeTagEnabled(val->BooleanValue());
+                    ref->SetApeTagEnabled(val->BooleanValue());
                 }
             }
         }
@@ -139,26 +139,24 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
 
 void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    string path = mpeg->GetFilePath();
+    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    string path = ref->GetFilePath();
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }
 
 void MPEG::GetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    TagLib::Tag *tag = mpeg->file->tag();
+    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     Local<Object> object = Object::New(isolate);
-    SetObjectByTag(isolate, *object, tag);
+    SetObjectByTag(isolate, *object, ref->file->tag());
     args.GetReturnValue().Set(object);
 }
 
 void MPEG::SetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    TagLib::Tag *tag = mpeg->file->tag();
+    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     Local<Object> object = Local<Object>::Cast(args[0]);
-    SetTagByObject(isolate, *object, tag);
+    SetTagByObject(isolate, *object, ref->file->tag());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
