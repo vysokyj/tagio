@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include <v8.h>
+#include <taglib/fileref.h>
 #include <taglib/tbytevector.h>
 #include "md5.h"
 
@@ -24,8 +25,14 @@ namespace TagIO {
         std::string GetAttachmetnsCtx() { return this->attachmentsCtx; }
         void SetAttachmentsCtx(std::string attachmentsCtx) { this->attachmentsCtx = FixContext(attachmentsCtx); };
 
-        static TagLib::String GetStringProperty(v8::Isolate *isolate, v8::Object *object, const char *key);
-        static void SetStringProperty(v8::Isolate *isolate, v8::Object *object, const char *key, TagLib::String value);
+        static void SetTagByObject(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
+        static void SetObjectByTag(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
+
+        // helper methods
+        static TagLib::uint GetUint32(v8::Isolate *isolate, v8::Object *object, const char *key);
+        static void SetUint32(v8::Isolate *isolate, v8::Object *object, const char *key, const TagLib::uint value);
+        static TagLib::String GetString(v8::Isolate *isolate, v8::Object *object, const char *key);
+        static void SetString(v8::Isolate *isolate, v8::Object *object, const char *key, const TagLib::String value);
     protected:
         Base(std::string path);
         ~Base();

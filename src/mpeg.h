@@ -46,20 +46,8 @@ namespace TagIO {
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void Save(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void GetPath(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetTitle(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetTitle(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetAlbum(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetAlbum(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetArtist(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetArtist(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetTrack(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetTrack(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetYear(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetYear(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetGenre(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetGenre(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetComment(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetComment(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void GetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void SetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
 
         // MPEG API
         static void HasAPETag(const v8::FunctionCallbackInfo<v8::Value>& args);

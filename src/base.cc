@@ -1,19 +1,13 @@
-//
-// Created by jirka on 21.7.15.
-//
-
 #include <taglib/tstring.h>
 #include "base.h"
 
 using namespace std;
-using namespace TagIO;
 using namespace v8;
-
+using namespace TagIO;
 
 Base::Base(string path) : path(FixPath(path)) { }
 
 Base::~Base() {}
-
 
 TagLib::String Base::ExportFile(TagLib::ByteVector byteVector, TagLib::String mimeType) {
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
@@ -40,13 +34,41 @@ TagLib::ByteVector Base::ImportFile(TagLib::String path) {
     return TagLib::ByteVector(data, (uint) length);
 }
 
-TagLib::String Base::GetStringProperty(Isolate *isolate, Object *object, const char *key) {
+TagLib::uint Base::GetUint32(Isolate *isolate, Object *object, const char *key) {
+    return (uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
+}
+
+void Base::SetUint32(Isolate *isolate, Object *object, const char *key, const TagLib::uint value) {
+    object->Set(String::NewFromUtf8(isolate, key), Integer::New(isolate, value));
+}
+
+TagLib::String Base::GetString(Isolate *isolate, Object *object, const char *key) {
     String::Utf8Value value(object->Get(String::NewFromUtf8(isolate, key))->ToString());
     return TagLib::String(*value, TagLib::String::UTF8);
 }
 
-void Base::SetStringProperty(Isolate *isolate, Object *object, const char *key, TagLib::String value) {
+void Base::SetString(Isolate *isolate, Object *object, const char *key, TagLib::String value) {
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
+}
+
+void Base::SetObjectByTag(Isolate *isolate, Object *object, TagLib::Tag *tag) {
+    SetString(isolate, object, "title", tag->title());
+    SetString(isolate, object, "album", tag->album());
+    SetString(isolate, object, "artist", tag->artist());
+    SetUint32(isolate, object, "track", tag->track());
+    SetUint32(isolate, object, "year", tag->year());
+    SetString(isolate, object, "genre", tag->genre());
+    SetString(isolate, object, "comment", tag->comment());
+}
+
+void Base::SetTagByObject(Isolate *isolate, Object *object, TagLib::Tag *tag) {
+    tag->setTitle(GetString(isolate, object, "title"));
+    tag->setAlbum(GetString(isolate, object, "album"));
+    tag->setArtist(GetString(isolate, object, "artist"));
+    tag->setTrack(GetUint32(isolate, object, "track"));
+    tag->setYear(GetUint32(isolate, object, "year"));
+    tag->setGenre(GetString(isolate, object, "genre"));
+    tag->setComment(GetString(isolate, object, "comment"));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
