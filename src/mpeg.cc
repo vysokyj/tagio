@@ -126,7 +126,7 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     int APE     = 0x0004;
     int AllTags = 0xffff;
     int tags = NoTags;
-    MPEG *mpeg = node::ObjectWrap::Unwrap<MPEG>(args.Holder());
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
     if (mpeg->saveID3v1Tag)  tags = tags | ID3v1;
     if (mpeg->saveID3v2Tag)  tags = tags | ID3v2;
     if (mpeg->saveApeTag)    tags = tags | APE;

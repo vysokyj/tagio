@@ -1,11 +1,8 @@
-//
-// Created by jirka on 26.5.15.
-//
-
 #ifndef TAGIO_TAGIO_H
 #define TAGIO_TAGIO_H
 
 #include <node/node.h>
+#include "generic.h"
 #include "mpeg.h"
 
 

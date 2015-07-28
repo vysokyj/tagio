@@ -1,7 +1,3 @@
-//
-// Created by jirka on 21.7.15.
-//
-
 #ifndef TAGIO_BASE_H
 #define TAGIO_BASE_H
 
