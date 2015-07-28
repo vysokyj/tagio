@@ -4,13 +4,11 @@ using namespace TagIO;
 using namespace v8;
 using namespace node;
 using namespace std;
-using namespace TagLib::MPEG;
-using namespace TagLib::ID3v2;
 
 Persistent<Function> MPEG::constructor;
 
 MPEG::MPEG(string path) : Base(path) {
-    file = new File(this->GetFilePath().c_str());
+    file = new TagLib::MPEG::File(this->GetFilePath().c_str());
     apicMap[0x00] = TagLib::ID3v2::AttachedPictureFrame::Other;
     apicMap[0x01] = TagLib::ID3v2::AttachedPictureFrame::FileIcon;
     apicMap[0x02] = TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon;
@@ -185,12 +183,12 @@ void MPEG::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
     if (!mpeg->file->hasID3v2Tag()) return;
-    Tag *tag = mpeg->file->ID3v2Tag(false);
-    FrameList frameList = tag->frameList();
+    TagLib::ID3v2::Tag *tag = mpeg->file->ID3v2Tag(false);
+    TagLib::ID3v2::FrameList frameList = tag->frameList();
     Local<Array> frameArray = Array::New(isolate, frameList.size());
 
     for (unsigned int i = 0; i < frameList.size(); i++) {
-        Frame *frame = frameList[i];
+        TagLib::ID3v2::Frame *frame = frameList[i];
         Local<Object> object = Object::New(isolate);
         TagLib::ByteVector idBytes = frame->frameID();
         string id = string(idBytes.data(), idBytes.size());
@@ -257,20 +255,20 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
         String::Utf8Value idValue(object->Get(String::NewFromUtf8(isolate, "id"))->ToString());
         string id(*idValue);
         if (id.at(0) == 'T') {
-            auto *frame= new TextIdentificationFrame(*idValue, TagLib::String::UTF8);
+            auto *frame= new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
             frame->setText(GetString(isolate, *object, "text"));
             tag->addFrame(frame);
         } else if (id.at(0) == 'W') {
-            auto *frame = new UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
+            auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
             frame->setUrl(GetString(isolate, *object, "url"));
             tag->addFrame(frame);
         } else if (id.compare("COMM") == 0) {
-            auto *frame = new CommentsFrame();
+            auto *frame = new TagLib::ID3v2::CommentsFrame();
             frame->setText(GetString(isolate, *object, "text"));
             tag->addFrame(frame);
         } else if (id.compare("APIC") == 0) {
             uint32_t type(object->Get(String::NewFromUtf8(isolate, "type"))->Uint32Value());
-            auto *frame = new AttachedPictureFrame();
+            auto *frame = new TagLib::ID3v2::AttachedPictureFrame();
             frame->setMimeType(GetString(isolate, *object, "mimeType"));
             if (mpeg->apicMap.count(type)) frame->setType(mpeg->apicMap[type]);
             else frame->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
@@ -278,13 +276,13 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
             frame->setPicture(mpeg->ImportFile(GetString(isolate, *object, "file")));
             tag->addFrame(frame);
         } else if (id.compare("GEOB") == 0) {
-            auto *frame = new GeneralEncapsulatedObjectFrame();
+            auto *frame = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
             frame->setMimeType(GetString(isolate, *object, "mimeType"));
             frame->setFileName(GetString(isolate, *object, "fileName"));
             frame->setObject(mpeg->ImportFile(GetString(isolate, *object, "file")));
             tag->addFrame(frame);
         } else if (id.compare("PRIV") == 0) {
-            auto *frame = new PrivateFrame();
+            auto *frame = new TagLib::ID3v2::PrivateFrame();
             frame->setOwner(GetString(isolate, *object, "owner"));
         } else if (id.compare("RVA2") == 0) {
 //            Local<Array> channelArray = Local<Array>::Cast(object->Get(String::NewFromUtf8(isolate, "text")));
@@ -295,16 +293,16 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
 //            tag->addFrame(frame);
             cout << "RVA2 not yet supported!" << endl;
         } else if (id.compare("UFID") == 0) {
-            auto *frame = new UniqueFileIdentifierFrame(GetString(isolate, *object, "owner"),
+            auto *frame = new TagLib::ID3v2::UniqueFileIdentifierFrame(GetString(isolate, *object, "owner"),
                     TagLib::ByteVector(*idValue, 4));
             frame->setIdentifier(mpeg->ImportFile(GetString(isolate, *object, "identifier")));
         } else if (id.compare("USLT") == 0) {
-            auto *frame = new UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
+            auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
             frame->setUrl(GetString(isolate, *object, "url"));
             frame->setText(GetString(isolate, *object, "text"));
             tag->addFrame(frame);
         } else { // fallback
-            auto *frame = new TextIdentificationFrame(*idValue, TagLib::String::UTF8);
+            auto *frame = new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
             frame->setText(GetString(isolate, *object, "text"));
             tag->addFrame(frame);
         }
@@ -315,10 +313,10 @@ void MPEG::ClearID3v2Frames() {
     if (!file->hasID3v2Tag()) return;
     typedef list<TagLib::ByteVector> ByteVectorList;
     TagLib::ID3v2::Tag *tag = file->ID3v2Tag();
-    FrameList frameList = tag->frameList();
+    TagLib::ID3v2::FrameList frameList = tag->frameList();
     ByteVectorList list;
     for (uint32_t i = 0; i < frameList.size(); i++) {
-        Frame *frame = frameList[i];
+        TagLib::ID3v2::Frame *frame = frameList[i];
         TagLib::ByteVector vector = frame->frameID();
         string id = string(vector.data(), vector.size());
         if (id.at(0) == 'T' ||
