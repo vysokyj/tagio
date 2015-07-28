@@ -1,7 +1,3 @@
-//
-// Created by jirka on 26.5.15.
-//
-
 #ifndef TAGIO_MPEG_H
 #define TAGIO_MPEG_H
 
