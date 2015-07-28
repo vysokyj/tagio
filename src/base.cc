@@ -22,15 +22,15 @@ void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
 
     if (object->Has(binaryDataRelativeUrlKey)) {
         String::Utf8Value val(object->Get(binaryDataRelativeUrlKey)->ToString());
-        base->binaryDataRelativeUrl = *val;
+        base->binaryDataUrlPrefix = *val;
     }
 
     if (object->Has(binaryDataMethodKey)) {
         String::Utf8Value val(object->Get(binaryDataMethodKey)->ToString());
         string s(*val);
-        if (s.compare("file") == 0) base->binaryDataMethod = Base::BinaryDataMethod::FILE;
-        if (s.compare("fileUrl") == 0) base->binaryDataMethod = Base::BinaryDataMethod::FILE_URL;
-        if (s.compare("relativeUrl") == 0) base->binaryDataMethod = Base::BinaryDataMethod::RELATIVE_URL;
+        if (s.compare("FILENAME") == 0)      base->binaryDataMethod = Base::BinaryDataMethod::FILENAME;
+        if (s.compare("ABSOLUTE_URL") == 0)  base->binaryDataMethod = Base::BinaryDataMethod::ABSOLUTE_URL;
+        if (s.compare("PREFIXED_URL") == 0)  base->binaryDataMethod = Base::BinaryDataMethod::PREFIXED_URL;
     }
 }
 
@@ -41,13 +41,13 @@ TagLib::String Base::ExportFile(TagLib::ByteVector byteVector, TagLib::String mi
     ofs.open(filePath, ios::out | ios::binary);
     ofs.write(byteVector.data(), byteVector.size());
     ofs.close();
-    string retval = NewRelativeUrl(binaryDataRelativeUrl, fileName);
+    string retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
     return TagLib::String(retval, TagLib::String::UTF8);
 }
 
 TagLib::ByteVector Base::ImportFile(TagLib::String path) {
-    string fileName = path.to8Bit(true).substr(binaryDataRelativeUrl.length());
-    string filePath = NewPath(binaryDataRelativeUrl, fileName);
+    string fileName = path.to8Bit(true).substr(binaryDataUrlPrefix.length());
+    string filePath = NewPath(binaryDataUrlPrefix, fileName);
     ifstream ifs;
     ifs.open(filePath, ios::in | ios::binary);
     ifs.seekg(0, ios::end);

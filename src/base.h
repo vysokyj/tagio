@@ -18,9 +18,9 @@ namespace TagIO {
     class Base {
 
     enum BinaryDataMethod {
-        FILE, // just file name
-        FILE_URL, // complete url - file protocol file://somepath/somefile.ext
-        RELATIVE_URL // relative url - used binaryDataRelativeUrl property
+        FILENAME,     // JSON contains just the filename -> somefile.ext
+        ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
+        PREFIXED_URL  // JSON contains file URL with given prefix -> /somepath/somefile.ext
     };
 
     public:
@@ -55,11 +55,10 @@ namespace TagIO {
     private:
         std::string path;
 
-        // binary data props
-        std::string binaryDataDirectory = "."; // export to current directory at default
-        std::string binaryDataRelativeUrl; // UR
-        BinaryDataMethod binaryDataMethod = FILE; // JSON contains just file name
-
+        // Base configuration
+        BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
+        std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
+        std::string binaryDataUrlPrefix = "";   // relative URL prefix for BinaryDataMethod::RELATIVE_URL
 
     };
 }
