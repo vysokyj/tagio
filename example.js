@@ -47,7 +47,7 @@ printID3v2(file);
 file = tagio.open("./samples/sample.ogg", config);
 printTag(file);
 
-file = tagio.open("./samples/sample.ogg", config);
+file = tagio.open("./samples/sample.wav", config);
 printTag(file);
 file.setTag(tag);
 printTag(file);
