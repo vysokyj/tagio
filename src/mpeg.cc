@@ -8,7 +8,7 @@ using namespace std;
 Persistent<Function> MPEG::constructor;
 
 MPEG::MPEG(const char *path) : Base(path) {
-    file = new TagLib::MPEG::File(FixPath(path));
+    file = new TagLib::MPEG::File(path);
     apicMap[0x00] = TagLib::ID3v2::AttachedPictureFrame::Other;
     apicMap[0x01] = TagLib::ID3v2::AttachedPictureFrame::FileIcon;
     apicMap[0x02] = TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon;

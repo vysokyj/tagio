@@ -50,10 +50,6 @@ namespace TagIO {
         TagLib::String ExportFile(TagLib::ByteVector byteVector, TagLib::String mimeType);
         TagLib::ByteVector ImportFile(TagLib::String path);
 
-        static const char *FixPath(const char *path);
-        static std::string FixPath(std::string path);
-        static const char *FixContext(const char *context);
-        static std::string FixContext(std::string context);
         static std::string NewPath(std::string directory, std::string fileName);
         static std::string NewRelativeUrl(std::string relativeUrl, std::string fileName);
         static std::string CountMD5(TagLib::ByteVector byteVector);

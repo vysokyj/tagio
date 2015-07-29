@@ -4,7 +4,7 @@ using namespace TagIO;
 using namespace std;
 using namespace v8;
 
-Base::Base(const char *path) : path(FixPath(path)) { }
+Base::Base(const char *path) : path(path) { }
 
 Base::~Base() {}
 
@@ -161,35 +161,6 @@ void Base::SetTagByObject(Isolate *isolate, Object *object, TagLib::Tag *tag) {
 //----------------------------------------------------------------------------------------------------------------------
 // Private methods
 
-
-const char *Base::FixPath(const char *path) {
-    return FixPath(string(path)).c_str();
-}
-
-string Base::FixPath(string path) {
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-    replace(path.begin(), path.end(), '/', '\\');
-    #else
-    replace(path.begin(), path.end(), '\\', '/');
-    #endif
-
-    // todo throw error
-    ifstream infile(path);
-    if (!infile.good()) cout << "File not exist!" << endl;
-    infile.close();
-    return path;
-}
-
-const char *Base::FixContext(const char *context) {
-    return FixContext(string(context)).c_str();
-}
-
-string Base::FixContext(string context) {
-    if (context.length() == 0) return context;
-    if (context.back() == '/') context = context.substr(0, context.length() - 1);
-    if (context.front() != '/') context = '/' + context;
-    return context;
-}
 
 string Base::NewPath(string directoryPath, string fileName) {
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)

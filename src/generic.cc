@@ -9,8 +9,7 @@ Persistent<Function> GENERIC::constructor;
 
 GENERIC::GENERIC(const char *path) : Base(path) {
     //file = TagLib::FileRef::create(FixPath(path), true, TagLib::AudioProperties::Average);
-    file = new TagLib::FileRef(FixPath(path));
-    cout << file->audioProperties() << endl;
+    file = new TagLib::FileRef(path);
 }
 
 GENERIC::~GENERIC() {
@@ -96,7 +95,6 @@ void GENERIC::GetTag(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     Local<Object> object = Object::New(isolate);
-    cout << ref->file->tag() << endl;
     SetObjectByTag(isolate, *object, ref->file->tag());
     args.GetReturnValue().Set(object);
 }

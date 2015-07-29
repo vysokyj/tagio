@@ -3,8 +3,9 @@ var fs = require("fs");
 var tagio = require("./tagio");
 
 var config = {
-	attachmentsDir: "/tmp",
-	attachmentsCtx: "/attachments/",
+    binaryDataDirectory: "/tmp",
+    binaryDataUrlPrefix: "/attachments",
+    binaryDataMethod: tagio.BinaryDataMethod.FILENAME,
 	saveID3v1Tag: false,
 	saveID3v2Tag: true,
 	saveApeTag: false
@@ -27,12 +28,8 @@ var printID3v2 = function(mp3) {
     }
 };
 
-//var file = tagio.open("./samples/sample.mp3", config);
-//printTag(file);
-//printID3v2(file);
-
-//file = tagio.open("./samples/sample.ogg", config);
-//printTag(file);
+// declaration
+var file;
 
 var tag = {
     title: "My title",
@@ -43,16 +40,14 @@ var tag = {
     comment: "My comment"
 };
 
+file = tagio.open("./samples/sample.mp3", config);
+printTag(file);
+printID3v2(file);
 
-var file = tagio.open("./samples/sample.ogg", config);
+file = tagio.open("./samples/sample.ogg", config);
+printTag(file);
+
+file = tagio.open("./samples/sample.ogg", config);
 printTag(file);
 file.setTag(tag);
 printTag(file);
-
-// some changes
-
-
-
-//mp3.setTag(tag);
-//mp3.save();
-//print(mp3);
