@@ -5,36 +5,38 @@ using namespace v8;
 using namespace node;
 using namespace std;
 
+static map<uint, TagLib::ID3v2::AttachedPictureFrame::Type> APIC = {
+     {0x00, TagLib::ID3v2::AttachedPictureFrame::Other},
+     {0x01, TagLib::ID3v2::AttachedPictureFrame::FileIcon},
+     {0x02, TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon},
+     {0x03, TagLib::ID3v2::AttachedPictureFrame::FrontCover},
+     {0x04, TagLib::ID3v2::AttachedPictureFrame::BackCover},
+     {0x05, TagLib::ID3v2::AttachedPictureFrame::LeafletPage},
+     {0x06, TagLib::ID3v2::AttachedPictureFrame::Media},
+     {0x07, TagLib::ID3v2::AttachedPictureFrame::LeadArtist},
+     {0x08, TagLib::ID3v2::AttachedPictureFrame::Artist},
+     {0x09, TagLib::ID3v2::AttachedPictureFrame::Conductor},
+     {0x0A, TagLib::ID3v2::AttachedPictureFrame::Band},
+     {0x0B, TagLib::ID3v2::AttachedPictureFrame::Composer},
+     {0x0C, TagLib::ID3v2::AttachedPictureFrame::Lyricist},
+     {0x0D, TagLib::ID3v2::AttachedPictureFrame::RecordingLocation},
+     {0x0E, TagLib::ID3v2::AttachedPictureFrame::DuringRecording},
+     {0x0F, TagLib::ID3v2::AttachedPictureFrame::DuringPerformance},
+     {0x10, TagLib::ID3v2::AttachedPictureFrame::MovieScreenCapture},
+     {0x11, TagLib::ID3v2::AttachedPictureFrame::ColouredFish},
+     {0x12, TagLib::ID3v2::AttachedPictureFrame::Illustration},
+     {0x13, TagLib::ID3v2::AttachedPictureFrame::BandLogo},
+     {0x14, TagLib::ID3v2::AttachedPictureFrame::PublisherLogo}
+};
+
 Persistent<Function> MPEG::constructor;
 
 MPEG::MPEG(const char *path) : Base(path) {
     file = new TagLib::MPEG::File(path);
-    apicMap[0x00] = TagLib::ID3v2::AttachedPictureFrame::Other;
-    apicMap[0x01] = TagLib::ID3v2::AttachedPictureFrame::FileIcon;
-    apicMap[0x02] = TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon;
-    apicMap[0x03] = TagLib::ID3v2::AttachedPictureFrame::FrontCover;
-    apicMap[0x04] = TagLib::ID3v2::AttachedPictureFrame::BackCover;
-    apicMap[0x05] = TagLib::ID3v2::AttachedPictureFrame::LeafletPage;
-    apicMap[0x06] = TagLib::ID3v2::AttachedPictureFrame::Media;
-    apicMap[0x07] = TagLib::ID3v2::AttachedPictureFrame::LeadArtist;
-    apicMap[0x08] = TagLib::ID3v2::AttachedPictureFrame::Artist;
-    apicMap[0x09] = TagLib::ID3v2::AttachedPictureFrame::Conductor;
-    apicMap[0x0A] = TagLib::ID3v2::AttachedPictureFrame::Band;
-    apicMap[0x0B] = TagLib::ID3v2::AttachedPictureFrame::Composer;
-    apicMap[0x0C] = TagLib::ID3v2::AttachedPictureFrame::Lyricist;
-    apicMap[0x0D] = TagLib::ID3v2::AttachedPictureFrame::RecordingLocation;
-    apicMap[0x0E] = TagLib::ID3v2::AttachedPictureFrame::DuringRecording;
-    apicMap[0x0F] = TagLib::ID3v2::AttachedPictureFrame::DuringPerformance;
-    apicMap[0x10] = TagLib::ID3v2::AttachedPictureFrame::MovieScreenCapture;
-    apicMap[0x11] = TagLib::ID3v2::AttachedPictureFrame::ColouredFish;
-    apicMap[0x12] = TagLib::ID3v2::AttachedPictureFrame::Illustration;
-    apicMap[0x13] = TagLib::ID3v2::AttachedPictureFrame::BandLogo;
-    apicMap[0x14] = TagLib::ID3v2::AttachedPictureFrame::PublisherLogo;
 }
 
 MPEG::~MPEG() {
     delete file;
-    apicMap.empty();
 }
 
 void MPEG::Init(Handle<Object> exports) {
@@ -274,7 +276,7 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
             uint32_t type(object->Get(String::NewFromUtf8(isolate, "type"))->Uint32Value());
             auto *frame = new TagLib::ID3v2::AttachedPictureFrame();
             frame->setMimeType(GetString(isolate, *object, "mimeType"));
-            if (mpeg->apicMap.count(type)) frame->setType(mpeg->apicMap[type]);
+            if (APIC.count(type)) frame->setType(APIC[type]);
             else frame->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
             frame->setDescription(GetString(isolate, *object, "description"));
             frame->setPicture(mpeg->ImportFile(GetString(isolate, *object, "file")));

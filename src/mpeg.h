@@ -62,7 +62,6 @@ namespace TagIO {
         bool saveID3v1Tag = false;
         bool saveID3v2Tag = true;
         bool saveApeTag = false;
-        std::map<uint, TagLib::ID3v2::AttachedPictureFrame::Type> apicMap;
     };
 }
 
