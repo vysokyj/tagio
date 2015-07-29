@@ -1,5 +1,5 @@
 var tagio = require("./build/Release/tagio");
-var fs = require("fs")
+var fs = require("fs");
 var path = require("path");
 
 tagio.BinaryDataMethod = {
@@ -8,7 +8,8 @@ tagio.BinaryDataMethod = {
     RELATIVE_URL: "RELATIVE_URL"
 };
 
-tagio.ID3v2Genres = [
+tagio.getID3v2Gensgres = function() {
+    return [
     "Blues",
     "Classic Rock",
     "Country",
@@ -89,7 +90,7 @@ tagio.ID3v2Genres = [
     "Musical",
     "Rock & Roll",
     "Hard Rock"
-];
+]};
 
 tagio.Configuration = {
     binaryDataDirectory: "/tmp",
