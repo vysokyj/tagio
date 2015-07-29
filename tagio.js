@@ -8,7 +8,7 @@ tagio.BinaryDataMethod = {
     RELATIVE_URL: "RELATIVE_URL"
 };
 
-tagio.getID3v2Gensgres = function() {
+tagio.getID3v2Genres = function() {
     return [
     "Blues",
     "Classic Rock",
