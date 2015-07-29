@@ -4,13 +4,16 @@ var tagio = {};
 
 tagio.GENERIC = {
     getPath: function() {},
+    getAudioProperties: function() {},
+    getConfiguration: function() {},
     getTag: function() {},
     setTag: function(tag) {},
-    save: function() {}
+    save: function() {},
 };
 
 tagio.MPEG = {
     getPath: function() {},
+    getAudioProperties: function() {},
     getConfiguration: function() {},
     getTag: function() {},
     setTag: function(tag) {},

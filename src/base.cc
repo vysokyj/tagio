@@ -90,6 +90,19 @@ void Base::SetBoolean(Isolate *isolate, Object *object, const char *key, bool va
     object->Set(String::NewFromUtf8(isolate, key), Boolean::New(isolate, value));
 }
 
+int Base::GetInt32(Isolate *isolate, Object *object, const char *key) {
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        return (int) (object->Get(String::NewFromUtf8(isolate, key)))->Int32Value();
+    } else {
+        return 0;
+    }
+}
+
+void Base::SetInt32(Isolate *isolate, Object *object, const char *key, int value) {
+    object->Set(String::NewFromUtf8(isolate, key), Integer::New(isolate, value));
+}
+
 TagLib::uint Base::GetUint32(Isolate *isolate, Object *object, const char *key) {
     Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
     if (object->Has(keyString)) {
@@ -115,6 +128,13 @@ TagLib::String Base::GetString(Isolate *isolate, Object *object, const char *key
 
 void Base::SetString(Isolate *isolate, Object *object, const char *key, TagLib::String value) {
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
+}
+
+void Base::SetAudioProperties(Isolate *isolate, Object *object, TagLib::AudioProperties *audioProperties) {
+    SetInt32(isolate, object, "length", audioProperties->length());
+    SetInt32(isolate, object, "bitrate ", audioProperties->bitrate());
+    SetInt32(isolate, object, "sampleRate", audioProperties->sampleRate());
+    SetInt32(isolate, object, "channels", audioProperties->channels());
 }
 
 void Base::SetObjectByTag(Isolate *isolate, Object *object, TagLib::Tag *tag) {

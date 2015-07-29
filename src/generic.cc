@@ -26,6 +26,7 @@ void GENERIC::Init(Handle<Object> exports) {
     // Prototype
     NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getAudioProperties", GetAudioProperties);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getConfiguration", GetConfiguration);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
@@ -76,6 +77,14 @@ void GENERIC::GetPath(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }
 
+void GENERIC::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
+    Local<Object> object = Object::New(isolate);
+    SetAudioProperties(isolate, *object, ref->file->audioProperties());
+    args.GetReturnValue().Set(object);
+}
+
 void GENERIC::GetConfiguration(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
@@ -84,7 +93,7 @@ void GENERIC::GetConfiguration(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(object);
 }
 
-void GENERIC::GetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void GENERIC::GetTag(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     Local<Object> object = Object::New(isolate);
@@ -92,7 +101,7 @@ void GENERIC::GetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
     args.GetReturnValue().Set(object);
 }
 
-void GENERIC::SetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void GENERIC::SetTag(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     Local<Object> object = Local<Object>::Cast(args[0]);

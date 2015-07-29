@@ -49,6 +49,7 @@ void MPEG::Init(Handle<Object> exports) {
     // Generic API
     NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getAudioProperties", GetAudioProperties);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getConfiguration", GetConfiguration);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
@@ -133,6 +134,14 @@ void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     string path = ref->GetFilePath();
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
+}
+
+void MPEG::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    Local<Object> object = Object::New(isolate);
+    SetAudioProperties(isolate, *object, ref->file->audioProperties());
+    args.GetReturnValue().Set(object);
 }
 
 void MPEG::GetConfiguration(const FunctionCallbackInfo<Value>& args) {

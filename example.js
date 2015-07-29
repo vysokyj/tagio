@@ -12,6 +12,7 @@ var config = {
 
 var print = function(mp3) {
 	console.log("Path: %s", mp3.getPath());
+	console.log("Audio properties: %j", mp3.getAudioProperties());
 	console.log("Configuration: %j", mp3.getConfiguration());
 	console.log("Generic tag: %j", mp3.getTag());
 	if (mp3.hasID3v2Tag()) {

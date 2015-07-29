@@ -31,10 +31,14 @@ namespace TagIO {
         // helper methods
         static void SetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
         static void GetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
+        static void SetAudioProperties(v8::Isolate *isolate, v8::Object *object, TagLib::AudioProperties *audioProperties);
+
         //static TagLib::ByteVector GetBinary(v8::Isolate *isolate, v8::Object *object, const char *key);
         //static void SetBinary(v8::Isolate *isolate, v8::Object *object, const char *key, TagLib::ByteVector);
         static bool GetBoolean(v8::Isolate *isolate, v8::Object *object, const char *key);
         static void SetBoolean(v8::Isolate *isolate, v8::Object *object, const char *key, bool);
+        static int GetInt32(v8::Isolate *isolate, v8::Object *object, const char *key);
+        static void SetInt32(v8::Isolate *isolate, v8::Object *object, const char *key, const int value);
         static TagLib::uint GetUint32(v8::Isolate *isolate, v8::Object *object, const char *key);
         static void SetUint32(v8::Isolate *isolate, v8::Object *object, const char *key, const TagLib::uint value);
         static TagLib::String GetString(v8::Isolate *isolate, v8::Object *object, const char *key);
@@ -53,8 +57,6 @@ namespace TagIO {
         static std::string NewRelativeUrl(std::string relativeUrl, std::string fileName);
         static std::string CountMD5(TagLib::ByteVector byteVector);
         static std::string NewFileName(TagLib::ByteVector byteVector, std::string mimeType);
-
-
     private:
         std::string path;
 
