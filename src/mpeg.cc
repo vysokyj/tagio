@@ -50,7 +50,6 @@ void MPEG::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getAudioProperties", GetAudioProperties);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getConfiguration", GetConfiguration);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
     // MPEG API
@@ -66,7 +65,7 @@ void MPEG::Init(Handle<Object> exports) {
 
 void MPEG::New(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    //HandleScope scope(isolate);
+    HandleScope scope(isolate);
 
     if (args.Length() < 2) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
@@ -143,18 +142,7 @@ void MPEG::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     Local<Object> object = Object::New(isolate);
-    SetAudioProperties(isolate, *object, ref->file->audioProperties());
-    args.GetReturnValue().Set(object);
-}
-
-void MPEG::GetConfiguration(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    Local<Object> object = Object::New(isolate);
-    SetBaseConfiguration(isolate, *object, ref);
-    SetBoolean(isolate, *object, "saveID3v1Tag", ref->saveID3v1Tag);
-    SetBoolean(isolate, *object, "saveID3v2Tag", ref->saveID3v2Tag);
-    SetBoolean(isolate, *object, "saveApeTag", ref->saveApeTag);
+    SetObjectByAudioProperties(isolate, *object, ref->file->audioProperties());
     args.GetReturnValue().Set(object);
 }
 

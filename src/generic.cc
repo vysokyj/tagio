@@ -8,7 +8,9 @@ using namespace std;
 Persistent<Function> GENERIC::constructor;
 
 GENERIC::GENERIC(const char *path) : Base(path) {
+    //file = TagLib::FileRef::create(FixPath(path), true, TagLib::AudioProperties::Average);
     file = new TagLib::FileRef(FixPath(path));
+    cout << file->audioProperties() << endl;
 }
 
 GENERIC::~GENERIC() {
@@ -27,7 +29,6 @@ void GENERIC::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getAudioProperties", GetAudioProperties);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getConfiguration", GetConfiguration);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
 
@@ -37,7 +38,7 @@ void GENERIC::Init(Handle<Object> exports) {
 
 void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    //HandleScope scope(isolate);
+    HandleScope scope(isolate);
 
     if (args.Length() < 2) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
@@ -52,7 +53,7 @@ void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
     if (args.IsConstructCall()) {
         // Invoked as constructor
         String::Utf8Value path(args[0]->ToString());
-        auto *ref = new GENERIC(*path);
+        GENERIC *ref = new GENERIC(*path);
         ref->Wrap(args.This());
         Local<Object> object = args[1]->ToObject();
         GetBaseConfiguration(isolate, *object, ref);
@@ -87,15 +88,7 @@ void GENERIC::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     Local<Object> object = Object::New(isolate);
-    SetAudioProperties(isolate, *object, ref->file->audioProperties());
-    args.GetReturnValue().Set(object);
-}
-
-void GENERIC::GetConfiguration(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    Local<Object> object = Object::New(isolate);
-    SetBaseConfiguration(isolate, *object, ref);
+    SetObjectByAudioProperties(isolate, *object, ref->file->audioProperties());
     args.GetReturnValue().Set(object);
 }
 
@@ -103,6 +96,7 @@ void GENERIC::GetTag(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     Local<Object> object = Object::New(isolate);
+    cout << ref->file->tag() << endl;
     SetObjectByTag(isolate, *object, ref->file->tag());
     args.GetReturnValue().Set(object);
 }

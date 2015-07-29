@@ -25,13 +25,14 @@ namespace TagIO {
 
     public:
         const char *GetFilePath() { return this->path.c_str(); }
+        static void SetObjectByAudioProperties(v8::Isolate *isolate, v8::Object *object, TagLib::AudioProperties *audioProperties);
         static void SetTagByObject(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
         static void SetObjectByTag(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
 
         // helper methods
         static void SetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
         static void GetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
-        static void SetAudioProperties(v8::Isolate *isolate, v8::Object *object, TagLib::AudioProperties *audioProperties);
+
 
         //static TagLib::ByteVector GetBinary(v8::Isolate *isolate, v8::Object *object, const char *key);
         //static void SetBinary(v8::Isolate *isolate, v8::Object *object, const char *key, TagLib::ByteVector);

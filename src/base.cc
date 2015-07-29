@@ -129,7 +129,8 @@ void Base::SetString(Isolate *isolate, Object *object, const char *key, TagLib::
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
 }
 
-void Base::SetAudioProperties(Isolate *isolate, Object *object, TagLib::AudioProperties *audioProperties) {
+void Base::SetObjectByAudioProperties(Isolate *isolate, Object *object, TagLib::AudioProperties *audioProperties) {
+    if (!audioProperties) return;
     SetInt32(isolate, object, "length", audioProperties->length());
     SetInt32(isolate, object, "bitrate ", audioProperties->bitrate());
     SetInt32(isolate, object, "sampleRate", audioProperties->sampleRate());
@@ -137,6 +138,7 @@ void Base::SetAudioProperties(Isolate *isolate, Object *object, TagLib::AudioPro
 }
 
 void Base::SetObjectByTag(Isolate *isolate, Object *object, TagLib::Tag *tag) {
+    if (!tag) return;
     SetString(isolate, object, "title", tag->title());
     SetString(isolate, object, "album", tag->album());
     SetString(isolate, object, "artist", tag->artist());
@@ -170,6 +172,11 @@ string Base::FixPath(string path) {
     #else
     replace(path.begin(), path.end(), '\\', '/');
     #endif
+
+    // todo throw error
+    ifstream infile(path);
+    if (!infile.good()) cout << "File not exist!" << endl;
+    infile.close();
     return path;
 }
 
