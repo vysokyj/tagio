@@ -68,37 +68,40 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     //HandleScope scope(isolate);
 
+    if (args.Length() < 2) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
+        return;
+    }
+
+    if (!args[0]->IsString() || !args[1]->IsObject()) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong arguments")));
+        return;
+    }
+
     if (args.IsConstructCall()) {
         // Invoked as constructor
-        if (args.Length() >= 1) {
-            String::Utf8Value path(args[0]->ToString());
-            auto *ref = new MPEG(*path);
-            ref->Wrap(args.This());
+        String::Utf8Value path(args[0]->ToString());
+        auto *ref = new MPEG(*path);
+        ref->Wrap(args.This());
+        Local<Object> object = args[1]->ToObject();
+        GetBaseConfiguration(isolate, *object, ref);
 
-            if (args.Length() >= 2 && args[1]->IsObject()) {
-                Local<Object> object = args[1]->ToObject();
+        Local<String> saveID3v1TagKey = String::NewFromUtf8(isolate, "saveID3v1Tag");
+        Local<String> saveID3v2TagKey = String::NewFromUtf8(isolate, "saveID3v2Tag");
+        Local<String> saveApeTagKey = String::NewFromUtf8(isolate, "saveApeTag");
 
-                GetBaseConfiguration(isolate, *object, ref);
-
-                Local<String> saveID3v1TagKey = String::NewFromUtf8(isolate, "saveID3v1Tag");
-                Local<String> saveID3v2TagKey = String::NewFromUtf8(isolate, "saveID3v2Tag");
-                Local<String> saveApeTagKey = String::NewFromUtf8(isolate, "saveApeTag");
-
-                if (object->Has(saveID3v1TagKey)) {
-                    Local<Boolean> val(object->Get(saveID3v1TagKey)->ToBoolean());
-                    ref->SetID3v1TagEnabled(val->BooleanValue());
-                }
-                if (object->Has(saveID3v2TagKey)) {
-                    Local<Boolean> val(object->Get(saveID3v2TagKey)->ToBoolean());
-                    ref->SetID3v2TagEnabled(val->BooleanValue());
-                }
-                if (object->Has(saveApeTagKey)) {
-                    Local<Boolean> val(object->Get(saveApeTagKey)->ToBoolean());
-                    ref->SetApeTagEnabled(val->BooleanValue());
-                }
-            }
+        if (object->Has(saveID3v1TagKey)) {
+            Local<Boolean> val(object->Get(saveID3v1TagKey)->ToBoolean());
+            ref->SetID3v1TagEnabled(val->BooleanValue());
         }
-
+        if (object->Has(saveID3v2TagKey)) {
+            Local<Boolean> val(object->Get(saveID3v2TagKey)->ToBoolean());
+            ref->SetID3v2TagEnabled(val->BooleanValue());
+        }
+        if (object->Has(saveApeTagKey)) {
+            Local<Boolean> val(object->Get(saveApeTagKey)->ToBoolean());
+            ref->SetApeTagEnabled(val->BooleanValue());
+        }
         args.GetReturnValue().Set(args.This());
     } else {
         // Invoked as plain function, turn into construct call.

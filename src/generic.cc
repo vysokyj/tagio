@@ -39,17 +39,23 @@ void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     //HandleScope scope(isolate);
 
+    if (args.Length() < 2) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
+        return;
+    }
+
+    if (!args[0]->IsString() || !args[1]->IsObject()) {
+        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong arguments")));
+        return;
+    }
+
     if (args.IsConstructCall()) {
         // Invoked as constructor
-        if (args.Length() >= 1) {
-            String::Utf8Value path(args[0]->ToString());
-            auto *ref = new GENERIC(*path);
-            ref->Wrap(args.This());
-            if (args.Length() >= 2 && args[1]->IsObject()) {
-                Local<Object> object = args[1]->ToObject();
-                GetBaseConfiguration(isolate, *object, ref);
-            }
-        }
+        String::Utf8Value path(args[0]->ToString());
+        auto *ref = new GENERIC(*path);
+        ref->Wrap(args.This());
+        Local<Object> object = args[1]->ToObject();
+        GetBaseConfiguration(isolate, *object, ref);
         args.GetReturnValue().Set(args.This());
     } else {
         // Invoked as plain function, turn into construct call.
