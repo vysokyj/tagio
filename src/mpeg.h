@@ -26,6 +26,7 @@
 #include <taglib/urllinkframe.h>
 
 #include "base.h"
+#include "converter.h"
 
 namespace TagIO {
     class MPEG : public Base, public node::ObjectWrap {

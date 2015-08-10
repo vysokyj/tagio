@@ -12,6 +12,7 @@
 #include <taglib/tstring.h>
 #include <taglib/tbytevector.h>
 #include "md5.h"
+#include "converter.h"
 
 namespace TagIO {
 
@@ -33,17 +34,6 @@ namespace TagIO {
         static void SetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
         static void GetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
 
-
-        //static TagLib::ByteVector GetBinary(v8::Isolate *isolate, v8::Object *object, const char *key);
-        //static void SetBinary(v8::Isolate *isolate, v8::Object *object, const char *key, TagLib::ByteVector);
-        static bool GetBoolean(v8::Isolate *isolate, v8::Object *object, const char *key);
-        static void SetBoolean(v8::Isolate *isolate, v8::Object *object, const char *key, bool);
-        static int GetInt32(v8::Isolate *isolate, v8::Object *object, const char *key);
-        static void SetInt32(v8::Isolate *isolate, v8::Object *object, const char *key, const int value);
-        static TagLib::uint GetUint32(v8::Isolate *isolate, v8::Object *object, const char *key);
-        static void SetUint32(v8::Isolate *isolate, v8::Object *object, const char *key, const TagLib::uint value);
-        static TagLib::String GetString(v8::Isolate *isolate, v8::Object *object, const char *key);
-        static void SetString(v8::Isolate *isolate, v8::Object *object, const char *key, const TagLib::String value);
     protected:
         Base(const char *path);
         ~Base();

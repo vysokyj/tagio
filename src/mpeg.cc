@@ -196,34 +196,35 @@ void MPEG::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
     for (unsigned int i = 0; i < frameList.size(); i++) {
         TagLib::ID3v2::Frame *frame = frameList[i];
         Local<Object> object = Object::New(isolate);
+        Converter conv(isolate, *object);
         TagLib::ByteVector idBytes = frame->frameID();
         string id = string(idBytes.data(), idBytes.size());
-        SetString(isolate, *object, "id", TagLib::String(id));
+        conv.SetString("id", TagLib::String(id));
         if (id.at(0) == 'T') {
             auto *f = dynamic_cast<TagLib::ID3v2::TextIdentificationFrame *>(frame);
-            SetString(isolate, *object, "text", f->toString());
+            conv.SetString("text", f->toString());
         } else if (id.at(0) == 'W') {
             auto *f = dynamic_cast<TagLib::ID3v2::UrlLinkFrame *>(frame);
-            SetString(isolate, *object, "url", f->url());
-            SetString(isolate, *object, "text", f->toString());
+            conv.SetString("url", f->url());
+            conv.SetString("text", f->toString());
         } else if (id.compare("COMM") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(frame);
-            SetString(isolate, *object, "text", f->toString());
+            conv.SetString("text", f->toString());
         } else if (id.compare("APIC") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frame);
-            SetString(isolate, *object, "mimeType", f->mimeType());
-            SetString(isolate, *object, "description", f->description());
-            SetUint32(isolate, *object, "type", f->type());
-            SetString(isolate, *object, "text", f->toString());
-            SetString(isolate, *object, "file", mpeg->ExportFile(f->picture(), f->mimeType()));
+            conv.SetString("mimeType", f->mimeType());
+            conv.SetString("description", f->description());
+            conv.SetUint32("type", f->type());
+            conv.SetString("text", f->toString());
+            conv.SetString("file", mpeg->ExportFile(f->picture(), f->mimeType()));
         } else if (id.compare("GEOB") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::GeneralEncapsulatedObjectFrame *>(frame);
-            SetString(isolate, *object, "mimeType", f->mimeType());
-            SetString(isolate, *object, "fileName", f->fileName());
-            SetString(isolate, *object, "file", mpeg->ExportFile(f->object(), f->mimeType()));
+            conv.SetString("mimeType", f->mimeType());
+            conv.SetString("fileName", f->fileName());
+            conv.SetString("file", mpeg->ExportFile(f->object(), f->mimeType()));
         } else if (id.compare("PRIV") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::PrivateFrame *>(frame);
-            SetString(isolate, *object, "owner", f->owner());
+            conv.SetString("owner", f->owner());
         } else if (id.compare("RVA2") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::RelativeVolumeFrame *>(frame);
             TagLib::List<TagLib::ID3v2::RelativeVolumeFrame::ChannelType> channels = f->channels();
@@ -234,15 +235,15 @@ void MPEG::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
         } else if (id.compare("UFID") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::UniqueFileIdentifierFrame *>(frame);
             TagLib::String mimeType("data/bin", TagLib::String::UTF8); //TODO: Mime type
-            SetString(isolate, *object, "owner", f->owner());
-            SetString(isolate, *object, "file", mpeg->ExportFile(f->identifier(), mimeType));
+            conv.SetString("owner", f->owner());
+            conv.SetString("file", mpeg->ExportFile(f->identifier(), mimeType));
         } else if (id.compare("USLT") == 0) {
             auto *f = dynamic_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame *>(frame);
-            SetString(isolate, *object, "description", f->description());
-            SetString(isolate, *object, "text", f->toString());
+            conv.SetString("description", f->description());
+            conv.SetString("text", f->toString());
         } else {
             // fallback
-            SetString(isolate, *object, "text", frame->toString());
+            conv.SetString("text", frame->toString());
         }
         frameArray->Set(i, object);
     }
@@ -258,38 +259,39 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
     mpeg->ClearID3v2Frames();
     for (unsigned int i = 0; i < frames->Length(); i++) {
         Local<Object> object = frames->Get(i)->ToObject();
+        Converter conv(isolate, *object);
         String::Utf8Value idValue(object->Get(String::NewFromUtf8(isolate, "id"))->ToString());
         string id(*idValue);
         if (id.at(0) == 'T') {
             auto *frame= new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
-            frame->setText(GetString(isolate, *object, "text"));
+            frame->setText(conv.GetString("text"));
             tag->addFrame(frame);
         } else if (id.at(0) == 'W') {
             auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
-            frame->setUrl(GetString(isolate, *object, "url"));
+            frame->setUrl(conv.GetString("url"));
             tag->addFrame(frame);
         } else if (id.compare("COMM") == 0) {
             auto *frame = new TagLib::ID3v2::CommentsFrame();
-            frame->setText(GetString(isolate, *object, "text"));
+            frame->setText(conv.GetString("text"));
             tag->addFrame(frame);
         } else if (id.compare("APIC") == 0) {
             uint32_t type(object->Get(String::NewFromUtf8(isolate, "type"))->Uint32Value());
             auto *frame = new TagLib::ID3v2::AttachedPictureFrame();
-            frame->setMimeType(GetString(isolate, *object, "mimeType"));
+            frame->setMimeType(conv.GetString("mimeType"));
             if (APIC.count(type)) frame->setType(APIC[type]);
             else frame->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
-            frame->setDescription(GetString(isolate, *object, "description"));
-            frame->setPicture(mpeg->ImportFile(GetString(isolate, *object, "file")));
+            frame->setDescription(conv.GetString("description"));
+            frame->setPicture(mpeg->ImportFile(conv.GetString("file")));
             tag->addFrame(frame);
         } else if (id.compare("GEOB") == 0) {
             auto *frame = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
-            frame->setMimeType(GetString(isolate, *object, "mimeType"));
-            frame->setFileName(GetString(isolate, *object, "fileName"));
-            frame->setObject(mpeg->ImportFile(GetString(isolate, *object, "file")));
+            frame->setMimeType(conv.GetString("mimeType"));
+            frame->setFileName(conv.GetString("fileName"));
+            frame->setObject(mpeg->ImportFile(conv.GetString("file")));
             tag->addFrame(frame);
         } else if (id.compare("PRIV") == 0) {
             auto *frame = new TagLib::ID3v2::PrivateFrame();
-            frame->setOwner(GetString(isolate, *object, "owner"));
+            frame->setOwner(conv.GetString("owner"));
         } else if (id.compare("RVA2") == 0) {
 //            Local<Array> channelArray = Local<Array>::Cast(object->Get(String::NewFromUtf8(isolate, "text")));
 //            auto *frame = new RelativeVolumeFrame();
@@ -299,17 +301,17 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
 //            tag->addFrame(frame);
             cout << "RVA2 not yet supported!" << endl;
         } else if (id.compare("UFID") == 0) {
-            auto *frame = new TagLib::ID3v2::UniqueFileIdentifierFrame(GetString(isolate, *object, "owner"),
+            auto *frame = new TagLib::ID3v2::UniqueFileIdentifierFrame(conv.GetString("owner"),
                     TagLib::ByteVector(*idValue, 4));
-            frame->setIdentifier(mpeg->ImportFile(GetString(isolate, *object, "identifier")));
+            frame->setIdentifier(mpeg->ImportFile(conv.GetString("identifier")));
         } else if (id.compare("USLT") == 0) {
             auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
-            frame->setUrl(GetString(isolate, *object, "url"));
-            frame->setText(GetString(isolate, *object, "text"));
+            frame->setUrl(conv.GetString("url"));
+            frame->setText(conv.GetString("text"));
             tag->addFrame(frame);
         } else { // fallback
             auto *frame = new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
-            frame->setText(GetString(isolate, *object, "text"));
+            frame->setText(conv.GetString("text"));
             tag->addFrame(frame);
         }
     }

@@ -34,18 +34,19 @@ void Base::GetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
 }
 
 void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
-    SetString(isolate, object, "binaryDataDirectory", base->binaryDataDirectory);
-    SetString(isolate, object, "binaryDataUrlPrefix", base->binaryDataUrlPrefix);
+    Converter conv(isolate, object);
+    conv.SetString("binaryDataDirectory", base->binaryDataDirectory);
+    conv.SetString("binaryDataUrlPrefix", base->binaryDataUrlPrefix);
 
     switch(base->binaryDataMethod) {
         case BinaryDataMethod::FILENAME:
-            SetString(isolate, object, "binaryDataMethod", "FILENAME");
+            conv.SetString("binaryDataMethod", "FILENAME");
             break;
         case BinaryDataMethod::ABSOLUTE_URL:
-            SetString(isolate, object, "binaryDataMethod", "ABSOLUTE_URL");
+            conv.SetString("binaryDataMethod", "ABSOLUTE_URL");
             break;
         case BinaryDataMethod::PREFIXED_URL:
-            SetString(isolate, object, "binaryDataMethod", "PREFIXED_URL");
+            conv.SetString("binaryDataMethod", "PREFIXED_URL");
             break;
     }
 
@@ -76,86 +77,37 @@ TagLib::ByteVector Base::ImportFile(TagLib::String path) {
     return TagLib::ByteVector(data, (uint) length);
 }
 
-bool Base::GetBoolean(Isolate *isolate, Object *object, const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
-    if (object->Has(keyString)) {
-        return object->Get(String::NewFromUtf8(isolate, key))->BooleanValue();
-    } else {
-        return false;
-    }
-}
-
-void Base::SetBoolean(Isolate *isolate, Object *object, const char *key, bool value) {
-    object->Set(String::NewFromUtf8(isolate, key), Boolean::New(isolate, value));
-}
-
-int Base::GetInt32(Isolate *isolate, Object *object, const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
-    if (object->Has(keyString)) {
-        return (int) (object->Get(String::NewFromUtf8(isolate, key)))->Int32Value();
-    } else {
-        return 0;
-    }
-}
-
-void Base::SetInt32(Isolate *isolate, Object *object, const char *key, int value) {
-    object->Set(String::NewFromUtf8(isolate, key), Integer::New(isolate, value));
-}
-
-TagLib::uint Base::GetUint32(Isolate *isolate, Object *object, const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
-    if (object->Has(keyString)) {
-        return (uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
-    } else {
-        return 0;
-    }
-}
-
-void Base::SetUint32(Isolate *isolate, Object *object, const char *key, const TagLib::uint value) {
-    object->Set(String::NewFromUtf8(isolate, key), Integer::New(isolate, value));
-}
-
-TagLib::String Base::GetString(Isolate *isolate, Object *object, const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
-    if (object->Has(keyString)) {
-        String::Utf8Value value(object->Get(keyString));
-        return TagLib::String(*value, TagLib::String::UTF8);
-    } else {
-        return TagLib::String("", TagLib::String::UTF8);
-    }
-}
-
-void Base::SetString(Isolate *isolate, Object *object, const char *key, TagLib::String value) {
-    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
-}
 
 void Base::SetObjectByAudioProperties(Isolate *isolate, Object *object, TagLib::AudioProperties *audioProperties) {
     if (!audioProperties) return;
-    SetInt32(isolate, object, "length", audioProperties->length());
-    SetInt32(isolate, object, "bitrate ", audioProperties->bitrate());
-    SetInt32(isolate, object, "sampleRate", audioProperties->sampleRate());
-    SetInt32(isolate, object, "channels", audioProperties->channels());
+    Converter conv(isolate, object);
+    conv.SetInt32("length", audioProperties->length());
+    conv.SetInt32("bitrate ", audioProperties->bitrate());
+    conv.SetInt32("sampleRate", audioProperties->sampleRate());
+    conv.SetInt32("channels", audioProperties->channels());
 }
 
 void Base::SetObjectByTag(Isolate *isolate, Object *object, TagLib::Tag *tag) {
     if (!tag) return;
-    SetString(isolate, object, "title", tag->title());
-    SetString(isolate, object, "album", tag->album());
-    SetString(isolate, object, "artist", tag->artist());
-    SetUint32(isolate, object, "track", tag->track());
-    SetUint32(isolate, object, "year", tag->year());
-    SetString(isolate, object, "genre", tag->genre());
-    SetString(isolate, object, "comment", tag->comment());
+    Converter conv(isolate, object);
+    conv.SetString("title", tag->title());
+    conv.SetString("album", tag->album());
+    conv.SetString("artist", tag->artist());
+    conv.SetUint32("track", tag->track());
+    conv.SetUint32("year", tag->year());
+    conv.SetString("genre", tag->genre());
+    conv.SetString("comment", tag->comment());
 }
 
 void Base::SetTagByObject(Isolate *isolate, Object *object, TagLib::Tag *tag) {
-    tag->setTitle(GetString(isolate, object, "title"));
-    tag->setAlbum(GetString(isolate, object, "album"));
-    tag->setArtist(GetString(isolate, object, "artist"));
-    tag->setTrack(GetUint32(isolate, object, "track"));
-    tag->setYear(GetUint32(isolate, object, "year"));
-    tag->setGenre(GetString(isolate, object, "genre"));
-    tag->setComment(GetString(isolate, object, "comment"));
+    Converter conv(isolate, object);
+    tag->setTitle(conv.GetString("title"));
+    tag->setAlbum(conv.GetString("album"));
+    tag->setArtist(conv.GetString("artist"));
+    tag->setTrack(conv.GetUint32("track"));
+    tag->setYear(conv.GetUint32("year"));
+    tag->setGenre(conv.GetString("genre"));
+    tag->setComment(conv.GetString("comment"));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
