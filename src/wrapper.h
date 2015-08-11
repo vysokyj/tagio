@@ -1,15 +1,9 @@
-#ifndef TAGIO_CONVERTER_H
-#define TAGIO_CONVERTER_H
+#ifndef TAGIO_WRAPPER_H
+#define TAGIO_WRAPPER_H
 
-
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
 
 #include <v8.h>
-
-#include <taglib/fileref.h>
+#include <string>
 #include <taglib/tstring.h>
 #include <taglib/tbytevector.h>
 #include "md5.h"
@@ -18,10 +12,10 @@
 
 namespace TagIO {
 
-    class Converter {
+    class Wrapper {
 
     public:
-        Converter(v8::Isolate *isolate, v8::Object *object);
+        Wrapper(v8::Isolate *isolate, v8::Object *object);
         bool GetBoolean(const char *key);
         void SetBoolean(const char *key, bool);
         int GetInt32(const char *key);
@@ -30,7 +24,7 @@ namespace TagIO {
         void SetUint32(const char *key, const TagLib::uint value);
         TagLib::String GetString(const char *key);
         void SetString(const char *key, const TagLib::String value);
-        ~Converter();
+        ~Wrapper();
     private:
         v8::Isolate *isolate;
         v8::Object *object;
@@ -39,4 +33,4 @@ namespace TagIO {
 }
 
 
-#endif //TAGIO_CONVERTER_H
+#endif //TAGIO_WRAPPER_H

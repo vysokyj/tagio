@@ -34,19 +34,19 @@ void Base::GetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
 }
 
 void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
-    Converter conv(isolate, object);
-    conv.SetString("binaryDataDirectory", base->binaryDataDirectory);
-    conv.SetString("binaryDataUrlPrefix", base->binaryDataUrlPrefix);
+    Wrapper o(isolate, object);
+    o.SetString("binaryDataDirectory", base->binaryDataDirectory);
+    o.SetString("binaryDataUrlPrefix", base->binaryDataUrlPrefix);
 
     switch(base->binaryDataMethod) {
         case BinaryDataMethod::FILENAME:
-            conv.SetString("binaryDataMethod", "FILENAME");
+            o.SetString("binaryDataMethod", "FILENAME");
             break;
         case BinaryDataMethod::ABSOLUTE_URL:
-            conv.SetString("binaryDataMethod", "ABSOLUTE_URL");
+            o.SetString("binaryDataMethod", "ABSOLUTE_URL");
             break;
         case BinaryDataMethod::PREFIXED_URL:
-            conv.SetString("binaryDataMethod", "PREFIXED_URL");
+            o.SetString("binaryDataMethod", "PREFIXED_URL");
             break;
     }
 
@@ -80,34 +80,34 @@ TagLib::ByteVector Base::ImportFile(TagLib::String path) {
 
 void Base::SetObjectByAudioProperties(Isolate *isolate, Object *object, TagLib::AudioProperties *audioProperties) {
     if (!audioProperties) return;
-    Converter conv(isolate, object);
-    conv.SetInt32("length", audioProperties->length());
-    conv.SetInt32("bitrate ", audioProperties->bitrate());
-    conv.SetInt32("sampleRate", audioProperties->sampleRate());
-    conv.SetInt32("channels", audioProperties->channels());
+    Wrapper o(isolate, object);
+    o.SetInt32("length", audioProperties->length());
+    o.SetInt32("bitrate ", audioProperties->bitrate());
+    o.SetInt32("sampleRate", audioProperties->sampleRate());
+    o.SetInt32("channels", audioProperties->channels());
 }
 
 void Base::SetObjectByTag(Isolate *isolate, Object *object, TagLib::Tag *tag) {
     if (!tag) return;
-    Converter conv(isolate, object);
-    conv.SetString("title", tag->title());
-    conv.SetString("album", tag->album());
-    conv.SetString("artist", tag->artist());
-    conv.SetUint32("track", tag->track());
-    conv.SetUint32("year", tag->year());
-    conv.SetString("genre", tag->genre());
-    conv.SetString("comment", tag->comment());
+    Wrapper o(isolate, object);
+    o.SetString("title", tag->title());
+    o.SetString("album", tag->album());
+    o.SetString("artist", tag->artist());
+    o.SetUint32("track", tag->track());
+    o.SetUint32("year", tag->year());
+    o.SetString("genre", tag->genre());
+    o.SetString("comment", tag->comment());
 }
 
 void Base::SetTagByObject(Isolate *isolate, Object *object, TagLib::Tag *tag) {
-    Converter conv(isolate, object);
-    tag->setTitle(conv.GetString("title"));
-    tag->setAlbum(conv.GetString("album"));
-    tag->setArtist(conv.GetString("artist"));
-    tag->setTrack(conv.GetUint32("track"));
-    tag->setYear(conv.GetUint32("year"));
-    tag->setGenre(conv.GetString("genre"));
-    tag->setComment(conv.GetString("comment"));
+    Wrapper o(isolate, object);
+    tag->setTitle(o.GetString("title"));
+    tag->setAlbum(o.GetString("album"));
+    tag->setArtist(o.GetString("artist"));
+    tag->setTrack(o.GetUint32("track"));
+    tag->setYear(o.GetUint32("year"));
+    tag->setGenre(o.GetString("genre"));
+    tag->setComment(o.GetString("comment"));
 }
 
 //----------------------------------------------------------------------------------------------------------------------

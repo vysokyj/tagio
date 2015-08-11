@@ -12,7 +12,7 @@
 #include <taglib/tstring.h>
 #include <taglib/tbytevector.h>
 #include "md5.h"
-#include "converter.h"
+#include "wrapper.h"
 
 namespace TagIO {
 
