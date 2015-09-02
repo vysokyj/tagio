@@ -169,8 +169,7 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag) 
         }
         tag->addFrame(f);
     } else if (id.compare("UFID") == 0) {
-        auto *f = new TagLib::ID3v2::UniqueFileIdentifierFrame(o.GetString("owner"),
-                                                                   TagLib::ByteVector(*idValue, 4));
+        auto *f = new TagLib::ID3v2::UniqueFileIdentifierFrame(o.GetString("owner"), TagLib::ByteVector(*idValue, 4));
         f->setIdentifier(o.GetBytes("identifier"));
     } else if (id.compare("USLT") == 0) {
         auto *f = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
