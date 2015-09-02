@@ -14,7 +14,6 @@ namespace TagIO {
             ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
             PREFIXED_URL  // JSON contains file URL with given prefix -> /somepath/somefile.ext
         };
-
         static Configuration &Get() {
             static Configuration instance;
             return instance;
@@ -23,8 +22,8 @@ namespace TagIO {
         static void Set(v8::Isolate *isolate, v8::Object *object);
 
         BinaryDataMethod GetBinaryDataMethod() { return binaryDataMethod; }
-        const char *GetBinaryDataDirectory() { return binaryDataDirectory; }
-        const char *GetBinaryDataUrlPrefix() { return binaryDataUrlPrefix; }
+        const char *GetBinaryDataDirectory() { return binaryDataDirectory.c_str(); }
+        const char *GetBinaryDataUrlPrefix() { return binaryDataUrlPrefix.c_str(); }
         bool GetSaveID3v1Tag() { return  saveID3v1Tag; }
         bool GetSaveID3v2Tag() { return  saveID3v2Tag; }
         bool GetSaveApeTag() { return  saveApeTag; }
@@ -39,8 +38,8 @@ namespace TagIO {
 
         // Base configuration
         BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
-        const char *binaryDataDirectory = ".";    // default directory for exporting and importing files
-        const char *binaryDataUrlPrefix = "";   // relative URL prefix for BinaryDataMethod::RELATIVE_URL
+        std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
+        std::string binaryDataUrlPrefix = "";   // relative URL prefix for BinaryDataMethod::RELATIVE_URL
         bool saveID3v1Tag = false;
         bool saveID3v2Tag = true;
         bool saveApeTag = false;

@@ -1,5 +1,5 @@
 #include "wrapper.h"
-#include "configuration.h"
+#include "bytevector.h"
 
 using namespace TagIO;
 using namespace v8;
@@ -62,11 +62,10 @@ void Wrapper::SetString(const char *key, TagLib::String value) {
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
 }
 
-TagLib::ByteVector Wrapper::GetBinary(const char *key) {
-    Configuration &conf = Configuration::Get();
-    //TODO: Implement
-    return nullptr;
+TagLib::ByteVector Wrapper::GetBytes(const char *key) {
+    return ByteVector::Import(GetString(key));
 }
-void Wrapper::SetBinary(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {
-    //TODO: Implement
+
+void Wrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {
+    SetString(key, ByteVector::Export(value, mimeType));
 }

@@ -66,12 +66,12 @@ Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
         o.SetString("description", f->description());
         o.SetUint32("type", f->type());
         o.SetString("text", f->toString());
-        o.SetBinary("file", f->picture(), f->mimeType());
+        o.SetBytes("file", f->picture(), f->mimeType());
     } else if (id.compare("GEOB") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::GeneralEncapsulatedObjectFrame *>(frame);
         o.SetString("mimeType", f->mimeType());
         o.SetString("fileName", f->fileName());
-        o.SetBinary("file", f->object(), f->mimeType());
+        o.SetBytes("file", f->object(), f->mimeType());
     } else if (id.compare("PRIV") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::PrivateFrame *>(frame);
         o.SetString("owner", f->owner());
@@ -86,7 +86,7 @@ Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
         auto *f = dynamic_cast<TagLib::ID3v2::UniqueFileIdentifierFrame *>(frame);
         TagLib::String mimeType("data/bin", TagLib::String::UTF8); //TODO: Mime type
         o.SetString("owner", f->owner());
-        o.SetBinary("file", f->identifier(), mimeType);
+        o.SetBytes("file", f->identifier(), mimeType);
     } else if (id.compare("USLT") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame *>(frame);
         o.SetString("description", f->description());
@@ -121,13 +121,13 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag) 
         if (APIC.count(type)) frame->setType(APIC[type]);
         else frame->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
         frame->setDescription(o.GetString("description"));
-        frame->setPicture(o.GetBinary("file"));
+        frame->setPicture(o.GetBytes("file"));
         tag->addFrame(frame);
     } else if (id.compare("GEOB") == 0) {
         auto *frame = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
         frame->setMimeType(o.GetString("mimeType"));
         frame->setFileName(o.GetString("fileName"));
-        frame->setObject(o.GetBinary("file"));
+        frame->setObject(o.GetBytes("file"));
         tag->addFrame(frame);
     } else if (id.compare("PRIV") == 0) {
         auto *frame = new TagLib::ID3v2::PrivateFrame();
@@ -143,7 +143,7 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag) 
     } else if (id.compare("UFID") == 0) {
         auto *frame = new TagLib::ID3v2::UniqueFileIdentifierFrame(o.GetString("owner"),
                                                                    TagLib::ByteVector(*idValue, 4));
-        frame->setIdentifier(o.GetBinary("identifier"));
+        frame->setIdentifier(o.GetBytes("identifier"));
     } else if (id.compare("USLT") == 0) {
         auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
         frame->setUrl(o.GetString("url"));

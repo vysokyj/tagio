@@ -24,8 +24,8 @@ namespace TagIO {
         void SetUint32(const char *key, const TagLib::uint value);
         TagLib::String GetString(const char *key);
         void SetString(const char *key, const TagLib::String value);
-        TagLib::ByteVector GetBinary(const char *key);
-        void SetBinary(const char *key, const TagLib::ByteVector value, TagLib::String mimeType);
+        TagLib::ByteVector GetBytes(const char *key);
+        void SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType);
         ~Wrapper();
     private:
         v8::Isolate *isolate;
