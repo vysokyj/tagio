@@ -1,6 +1,5 @@
 #include "configuration.h"
 #include "wrapper.h"
-#include <iostream>
 
 using namespace TagIO;
 using namespace v8;
@@ -47,12 +46,12 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.saveApeTag = o.GetBoolean("saveApeTag");
 
 
-    cout << "binaryDataMethod: " << conf.binaryDataMethod << endl;
-    cout << "binaryDataDirectory: " << conf.binaryDataDirectory << endl;
-    cout << "binaryDataUrlPrefix: " << conf.binaryDataUrlPrefix << endl;
-    cout << "saveID3v1Tag: " << conf.saveID3v1Tag << endl;
-    cout << "saveID3v2Tag: " << conf.saveID3v2Tag << endl;
-    cout << "saveApeTag: " << conf.saveApeTag << endl;
+//    cout << "binaryDataMethod: " << conf.binaryDataMethod << endl;
+//    cout << "binaryDataDirectory: " << conf.binaryDataDirectory << endl;
+//    cout << "binaryDataUrlPrefix: " << conf.binaryDataUrlPrefix << endl;
+//    cout << "saveID3v1Tag: " << conf.saveID3v1Tag << endl;
+//    cout << "saveID3v2Tag: " << conf.saveID3v2Tag << endl;
+//    cout << "saveApeTag: " << conf.saveApeTag << endl;
 
 }
 

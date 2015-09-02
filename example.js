@@ -5,7 +5,7 @@ var tagio = require("./tagio");
 var config = {
     binaryDataDirectory: "/tmp",
     binaryDataUrlPrefix: "/attachments",
-    binaryDataMethod: tagio.BinaryDataMethod.FILENAME,
+    binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
 	saveID3v1Tag: false,
 	saveID3v2Tag: true,
 	saveApeTag: false

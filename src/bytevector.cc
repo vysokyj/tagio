@@ -2,47 +2,15 @@
 #include "configuration.h"
 #include "md5.h"
 #include <fstream>
-#include <iostream>
 #include <algorithm>
 
 using namespace TagIO;
 using namespace std;
 
-TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
-    //TODO: Implement other methods
-    return ExportFile(byteVector, mimeType);
 
-}
-
-TagLib::ByteVector ByteVector::Import(TagLib::String path) {
-    //TODO: Implement other methods
-    return ImportFile(path);
-}
-
-
-TagLib::String ByteVector::ExportFile(TagLib::ByteVector byteVector, TagLib::String mimeType) {
-    string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
-    string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
-    string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
-    string filePath = NewPath(binaryDataDirectory, fileName);
-    ofstream ofs;
-    ofs.open(filePath, ios::out | ios::binary);
-    ofs.write(byteVector.data(), byteVector.size());
-    ofs.close();
-    string retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
-    cout << "binaryDataDirectory: " << binaryDataDirectory << endl;
-    cout << "binaryDataUrlPrefix: " << binaryDataUrlPrefix << endl;
-    cout << "retval: " << retval << endl;
-    return TagLib::String(retval, TagLib::String::UTF8);
-}
-
-TagLib::ByteVector ByteVector::ImportFile(TagLib::String path) {
-    string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
-    string prefix(Configuration::Get().GetBinaryDataUrlPrefix());
-    string fileName = path.to8Bit(true).substr(prefix.length());
-    string filePath = NewPath(binaryDataUrlPrefix, fileName);
+TagLib::ByteVector ByteVector::Import(TagLib::String string) {
     ifstream ifs;
-    ifs.open(filePath, ios::in | ios::binary);
+    ifs.open(StringToPath(string.to8Bit(true)), ios::in | ios::binary);
     ifs.seekg(0, ios::end);
     long length = ifs.tellg();
     char *data = new char[length];
@@ -50,6 +18,20 @@ TagLib::ByteVector ByteVector::ImportFile(TagLib::String path) {
     ifs.read(data, length);
     ifs.close();
     return TagLib::ByteVector(data, (uint) length);
+}
+
+TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
+    string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
+    string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
+    string filePath = NewPath(binaryDataDirectory, fileName);
+    ofstream ofs;
+    ofs.open(filePath, ios::out | ios::binary);
+    ofs.write(byteVector.data(), byteVector.size());
+    ofs.close();
+//    string s = ;
+//    cout << "TEST: " << StringToPath(s) << endl;
+//    return s;
+    return PathToString(filePath, fileName);
 }
 
 string ByteVector::NewFileName(TagLib::ByteVector byteVector, string mimeType) {
@@ -69,8 +51,7 @@ string ByteVector::CountMD5(TagLib::ByteVector byteVector) {
     return hash;
 }
 
-string ByteVector::NewPath(string directoryPath, string fileName) {
-
+string ByteVector::NewPath(std::string directoryPath, std::string fileName) {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     replace(directoryPath.begin(), directoryPath.end(), '/', '\\');
     return directoryPath + '\\' + fileName;
@@ -80,6 +61,39 @@ string ByteVector::NewPath(string directoryPath, string fileName) {
 #endif
 }
 
-string  ByteVector::NewRelativeUrl(string relativeUrl, string fileName) {
+std::string ByteVector::NewAbsoluteUrl(std::string filePath) {
+    replace(filePath.begin(), filePath.end(), '\\', '/');
+    return "file://" + filePath;
+}
+
+std::string ByteVector::NewRelativeUrl(std::string relativeUrl, std::string fileName) {
     return relativeUrl + '/' + fileName;
 }
+
+
+std::string ByteVector::PathToString(std::string filePath, std::string fileName) {
+    string retval = fileName;
+    string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
+    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL)
+        retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
+    else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+        retval = NewAbsoluteUrl(filePath);
+
+    return retval;
+}
+
+
+std::string ByteVector::StringToPath(std::string str) {
+    string fileName = str;
+    string filePrefix = "file://";
+    string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
+    string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
+
+    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL)
+    fileName = str.substr(binaryDataUrlPrefix.length() + 1);
+    else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+    fileName = str.substr(filePrefix.length() + binaryDataDirectory.length() + 1);
+
+    return NewPath(binaryDataDirectory, fileName);
+}
+
