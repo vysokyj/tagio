@@ -1,4 +1,5 @@
 #include "generic.h"
+#include "audioproperties.h"
 
 using namespace TagIO;
 using namespace v8;
@@ -86,8 +87,7 @@ void GENERIC::GetPath(const FunctionCallbackInfo<Value>& args) {
 void GENERIC::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    Local<Object> object = Object::New(isolate);
-    SetObjectByAudioProperties(isolate, *object, ref->file->audioProperties());
+    Local<Object> object = AudioProperties::New(isolate, ref->file->audioProperties());
     args.GetReturnValue().Set(object);
 }
 

@@ -1,4 +1,5 @@
 #include "base.h"
+#include "audioproperties.h"
 
 using namespace TagIO;
 using namespace std;
@@ -78,14 +79,6 @@ TagLib::ByteVector Base::ImportFile(TagLib::String path) {
 }
 
 
-void Base::SetObjectByAudioProperties(Isolate *isolate, Object *object, TagLib::AudioProperties *audioProperties) {
-    if (!audioProperties) return;
-    Wrapper o(isolate, object);
-    o.SetInt32("length", audioProperties->length());
-    o.SetInt32("bitrate ", audioProperties->bitrate());
-    o.SetInt32("sampleRate", audioProperties->sampleRate());
-    o.SetInt32("channels", audioProperties->channels());
-}
 
 void Base::SetObjectByTag(Isolate *isolate, Object *object, TagLib::Tag *tag) {
     if (!tag) return;

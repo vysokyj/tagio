@@ -26,7 +26,6 @@ namespace TagIO {
 
     public:
         const char *GetFilePath() { return this->path.c_str(); }
-        static void SetObjectByAudioProperties(v8::Isolate *isolate, v8::Object *object, TagLib::AudioProperties *audioProperties);
         static void SetTagByObject(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
         static void SetObjectByTag(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
 

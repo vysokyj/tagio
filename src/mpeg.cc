@@ -1,5 +1,7 @@
 #include "mpeg.h"
 
+#include "audioproperties.h"
+
 using namespace TagIO;
 using namespace v8;
 using namespace node;
@@ -143,8 +145,7 @@ void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
 void MPEG::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    Local<Object> object = Object::New(isolate);
-    SetObjectByAudioProperties(isolate, *object, ref->file->audioProperties());
+    Local<Object> object = AudioProperties::New(isolate, ref->file->audioProperties());
     args.GetReturnValue().Set(object);
 }
 
