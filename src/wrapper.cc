@@ -22,6 +22,19 @@ void Wrapper::SetBoolean(const char *key, bool value) {
     object->Set(String::NewFromUtf8(isolate, key), Boolean::New(isolate, value));
 }
 
+double Wrapper::GetNumber(const char *key) {
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        return object->Get(String::NewFromUtf8(isolate, key))->NumberValue();
+    } else {
+        return 0.0;
+    }
+}
+
+void Wrapper::SetNumber(const char *key, double value) {
+    object->Set(String::NewFromUtf8(isolate, key), Number::New(isolate, value));
+}
+
 int Wrapper::GetInt32(const char *key) {
     Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
     if (object->Has(keyString)) {

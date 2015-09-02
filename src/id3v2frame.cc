@@ -20,27 +20,39 @@ using namespace v8;
 using namespace std;
 
 static map<uint, TagLib::ID3v2::AttachedPictureFrame::Type> APIC = {
-        {0x00, TagLib::ID3v2::AttachedPictureFrame::Other},
-        {0x01, TagLib::ID3v2::AttachedPictureFrame::FileIcon},
-        {0x02, TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon},
-        {0x03, TagLib::ID3v2::AttachedPictureFrame::FrontCover},
-        {0x04, TagLib::ID3v2::AttachedPictureFrame::BackCover},
-        {0x05, TagLib::ID3v2::AttachedPictureFrame::LeafletPage},
-        {0x06, TagLib::ID3v2::AttachedPictureFrame::Media},
-        {0x07, TagLib::ID3v2::AttachedPictureFrame::LeadArtist},
-        {0x08, TagLib::ID3v2::AttachedPictureFrame::Artist},
-        {0x09, TagLib::ID3v2::AttachedPictureFrame::Conductor},
-        {0x0A, TagLib::ID3v2::AttachedPictureFrame::Band},
-        {0x0B, TagLib::ID3v2::AttachedPictureFrame::Composer},
-        {0x0C, TagLib::ID3v2::AttachedPictureFrame::Lyricist},
-        {0x0D, TagLib::ID3v2::AttachedPictureFrame::RecordingLocation},
-        {0x0E, TagLib::ID3v2::AttachedPictureFrame::DuringRecording},
-        {0x0F, TagLib::ID3v2::AttachedPictureFrame::DuringPerformance},
-        {0x10, TagLib::ID3v2::AttachedPictureFrame::MovieScreenCapture},
-        {0x11, TagLib::ID3v2::AttachedPictureFrame::ColouredFish},
-        {0x12, TagLib::ID3v2::AttachedPictureFrame::Illustration},
-        {0x13, TagLib::ID3v2::AttachedPictureFrame::BandLogo},
-        {0x14, TagLib::ID3v2::AttachedPictureFrame::PublisherLogo}
+    {0x00, TagLib::ID3v2::AttachedPictureFrame::Other},
+    {0x01, TagLib::ID3v2::AttachedPictureFrame::FileIcon},
+    {0x02, TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon},
+    {0x03, TagLib::ID3v2::AttachedPictureFrame::FrontCover},
+    {0x04, TagLib::ID3v2::AttachedPictureFrame::BackCover},
+    {0x05, TagLib::ID3v2::AttachedPictureFrame::LeafletPage},
+    {0x06, TagLib::ID3v2::AttachedPictureFrame::Media},
+    {0x07, TagLib::ID3v2::AttachedPictureFrame::LeadArtist},
+    {0x08, TagLib::ID3v2::AttachedPictureFrame::Artist},
+    {0x09, TagLib::ID3v2::AttachedPictureFrame::Conductor},
+    {0x0A, TagLib::ID3v2::AttachedPictureFrame::Band},
+    {0x0B, TagLib::ID3v2::AttachedPictureFrame::Composer},
+    {0x0C, TagLib::ID3v2::AttachedPictureFrame::Lyricist},
+    {0x0D, TagLib::ID3v2::AttachedPictureFrame::RecordingLocation},
+    {0x0E, TagLib::ID3v2::AttachedPictureFrame::DuringRecording},
+    {0x0F, TagLib::ID3v2::AttachedPictureFrame::DuringPerformance},
+    {0x10, TagLib::ID3v2::AttachedPictureFrame::MovieScreenCapture},
+    {0x11, TagLib::ID3v2::AttachedPictureFrame::ColouredFish},
+    {0x12, TagLib::ID3v2::AttachedPictureFrame::Illustration},
+    {0x13, TagLib::ID3v2::AttachedPictureFrame::BandLogo},
+    {0x14, TagLib::ID3v2::AttachedPictureFrame::PublisherLogo}
+};
+
+static map<uint, TagLib::ID3v2::RelativeVolumeFrame::ChannelType> RVA2 = {
+    {0x00, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::Other},
+    {0x01, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::MasterVolume},
+    {0x02, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::FrontRight},
+    {0x03, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::FrontLeft},
+    {0x04, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::BackRight},
+    {0x05, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::BackLeft},
+    {0x06, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::FrontCentre},
+    {0x07, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::BackCentre},
+    {0x08, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::Subwoofer}
 };
 
 Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
@@ -79,8 +91,17 @@ Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
         auto *f = dynamic_cast<TagLib::ID3v2::RelativeVolumeFrame *>(frame);
         TagLib::List<TagLib::ID3v2::RelativeVolumeFrame::ChannelType> channels = f->channels();
         Local<Array> channelArray = Array::New(isolate, channels.size());
-        for (unsigned int i = 0; i < channels.size(); i++)
-            channelArray->Set(i, Integer::New(isolate, channels[i]));
+        for (unsigned int i = 0; i < channels.size(); i++) {
+            TagLib::ID3v2::RelativeVolumeFrame::ChannelType channelType = channels[i];
+            Local<Object> channelObject = Object::New(isolate);
+            Wrapper co(isolate, *channelObject);
+            TagLib::ID3v2::RelativeVolumeFrame::PeakVolume peakVolume = f->peakVolume(channelType);
+            co.SetUint32("channelType", channelType); //numeric
+            co.SetNumber("volumeAdjustment", (double) f->volumeAdjustment(channelType));
+            co.SetString("bitsRepresentingPeak", (char) peakVolume.bitsRepresentingPeak);
+            co.SetString("peakVolume", TagLib::String(peakVolume.peakVolume));
+            channelArray->Set(i, channelObject);
+        }
         object->Set(String::NewFromUtf8(isolate, "channels"), channelArray);
     } else if (id.compare("UFID") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::UniqueFileIdentifierFrame *>(frame);
@@ -103,55 +124,62 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag) 
     String::Utf8Value idValue(object->Get(String::NewFromUtf8(isolate, "id"))->ToString());
     string id(*idValue);
     if (id.at(0) == 'T') {
-        auto *frame= new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
-        frame->setText(o.GetString("text"));
-        tag->addFrame(frame);
+        auto *f= new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
+        f->setText(o.GetString("text"));
+        tag->addFrame(f);
     } else if (id.at(0) == 'W') {
-        auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
-        frame->setUrl(o.GetString("url"));
-        tag->addFrame(frame);
+        auto *f = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
+        f->setUrl(o.GetString("url"));
+        tag->addFrame(f);
     } else if (id.compare("COMM") == 0) {
-        auto *frame = new TagLib::ID3v2::CommentsFrame();
-        frame->setText(o.GetString("text"));
-        tag->addFrame(frame);
+        auto *f = new TagLib::ID3v2::CommentsFrame();
+        f->setText(o.GetString("text"));
+        tag->addFrame(f);
     } else if (id.compare("APIC") == 0) {
-        uint32_t type(object->Get(String::NewFromUtf8(isolate, "type"))->Uint32Value());
-        auto *frame = new TagLib::ID3v2::AttachedPictureFrame();
-        frame->setMimeType(o.GetString("mimeType"));
-        if (APIC.count(type)) frame->setType(APIC[type]);
-        else frame->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
-        frame->setDescription(o.GetString("description"));
-        frame->setPicture(o.GetBytes("picture"));
-        tag->addFrame(frame);
+        uint32_t type = o.GetUint32("type");
+        auto *f = new TagLib::ID3v2::AttachedPictureFrame();
+        f->setMimeType(o.GetString("mimeType"));
+        if (APIC.count(type)) f->setType(APIC[type]);
+        else f->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
+        f->setDescription(o.GetString("description"));
+        f->setPicture(o.GetBytes("picture"));
+        tag->addFrame(f);
     } else if (id.compare("GEOB") == 0) {
-        auto *frame = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
-        frame->setMimeType(o.GetString("mimeType"));
-        frame->setFileName(o.GetString("fileName"));
-        frame->setObject(o.GetBytes("object"));
-        tag->addFrame(frame);
+        auto *f = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
+        f->setMimeType(o.GetString("mimeType"));
+        f->setFileName(o.GetString("fileName"));
+        f->setObject(o.GetBytes("object"));
+        tag->addFrame(f);
     } else if (id.compare("PRIV") == 0) {
-        auto *frame = new TagLib::ID3v2::PrivateFrame();
-        frame->setOwner(o.GetString("owner"));
+        auto *f = new TagLib::ID3v2::PrivateFrame();
+        f->setOwner(o.GetString("owner"));
     } else if (id.compare("RVA2") == 0) {
-//            Local<Array> channelArray = Local<Array>::Cast(object->Get(String::NewFromUtf8(isolate, "text")));
-//            auto *frame = new RelativeVolumeFrame();
-//            for (unsigned int j = 0; j < channelArray->Length(); j++) {
-//                Local<Object> channelObject = channelArray->Get(j)->ToObject();
-//            }
-//            tag->addFrame(frame);
-        cout << "RVA2 not yet supported!" << endl;
+        Local<Array> channelArray = Local<Array>::Cast(object->Get(String::NewFromUtf8(isolate, "text")));
+        auto *f = new TagLib::ID3v2::RelativeVolumeFrame();
+        for (unsigned int i = 0; i < channelArray->Length(); i++) {
+            Local<Object> channelObject = channelArray->Get(i)->ToObject();
+            Wrapper co(isolate, *channelObject);
+            TagLib::ID3v2::RelativeVolumeFrame::ChannelType channelType = RVA2[co.GetInt32("channelType")];
+            float volumeAdjustment = (float) co.GetNumber("volumeAdjustment");
+            TagLib::ID3v2::RelativeVolumeFrame::PeakVolume peakVolume;
+            peakVolume.bitsRepresentingPeak = (unsigned char) co.GetString("bitsRepresentingPeak")[0];
+            peakVolume.peakVolume = TagLib::ByteVector(co.GetString("peakVolume").toCString());
+            f->setVolumeAdjustment(volumeAdjustment, channelType);
+            f->setPeakVolume(peakVolume, channelType);
+        }
+        tag->addFrame(f);
     } else if (id.compare("UFID") == 0) {
-        auto *frame = new TagLib::ID3v2::UniqueFileIdentifierFrame(o.GetString("owner"),
+        auto *f = new TagLib::ID3v2::UniqueFileIdentifierFrame(o.GetString("owner"),
                                                                    TagLib::ByteVector(*idValue, 4));
-        frame->setIdentifier(o.GetBytes("identifier"));
+        f->setIdentifier(o.GetBytes("identifier"));
     } else if (id.compare("USLT") == 0) {
-        auto *frame = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
-        frame->setUrl(o.GetString("url"));
-        frame->setText(o.GetString("text"));
-        tag->addFrame(frame);
+        auto *f = new TagLib::ID3v2::UrlLinkFrame(TagLib::ByteVector(*idValue, 4));
+        f->setUrl(o.GetString("url"));
+        f->setText(o.GetString("text"));
+        tag->addFrame(f);
     } else { // fallback
-        auto *frame = new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
-        frame->setText(o.GetString("text"));
-        tag->addFrame(frame);
+        auto *f = new TagLib::ID3v2::TextIdentificationFrame(*idValue, TagLib::String::UTF8);
+        f->setText(o.GetString("text"));
+        tag->addFrame(f);
     }
 }
