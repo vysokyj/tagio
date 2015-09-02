@@ -1,6 +1,6 @@
 #include "mpeg.h"
-
 #include "audioproperties.h"
+#include "tag.h"
 
 using namespace TagIO;
 using namespace v8;
@@ -152,8 +152,7 @@ void MPEG::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
 void MPEG::GetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    Local<Object> object = Object::New(isolate);
-    SetObjectByTag(isolate, *object, ref->file->tag());
+    Local<Object> object = Tag::New(isolate, ref->file->tag());
     args.GetReturnValue().Set(object);
 }
 
@@ -161,7 +160,7 @@ void MPEG::SetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     Local<Object> object = Local<Object>::Cast(args[0]);
-    SetTagByObject(isolate, *object, ref->file->tag());
+    Tag::Set(isolate, *object, ref->file->tag());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
