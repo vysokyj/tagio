@@ -51,8 +51,8 @@ var checkDirectory = function(d) {
 tagio.open = function(filePath, configuration) {
     filePath = checkFile(filePath);
     //configuration = checkConfiguration(configuration);
-    console.log(filePath);
-    console.log(configuration);
+    //console.log(filePath);
+    //console.log(configuration);
     var ext = path.extname(filePath);
     if (ext === '.mp3') return new tagio.MPEG(filePath, configuration);
     else return new tagio.GENERIC(filePath, configuration);

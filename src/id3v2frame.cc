@@ -65,13 +65,13 @@ Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
         o.SetString("mimeType", f->mimeType());
         o.SetString("description", f->description());
         o.SetUint32("type", f->type());
-        o.SetString("text", f->toString());
-        o.SetBytes("file", f->picture(), f->mimeType());
+        //o.SetString("text", f->toString());
+        o.SetBytes("picture", f->picture(), f->mimeType());
     } else if (id.compare("GEOB") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::GeneralEncapsulatedObjectFrame *>(frame);
         o.SetString("mimeType", f->mimeType());
         o.SetString("fileName", f->fileName());
-        o.SetBytes("file", f->object(), f->mimeType());
+        o.SetBytes("object", f->object(), f->mimeType());
     } else if (id.compare("PRIV") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::PrivateFrame *>(frame);
         o.SetString("owner", f->owner());
@@ -121,13 +121,13 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag) 
         if (APIC.count(type)) frame->setType(APIC[type]);
         else frame->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
         frame->setDescription(o.GetString("description"));
-        frame->setPicture(o.GetBytes("file"));
+        frame->setPicture(o.GetBytes("picture"));
         tag->addFrame(frame);
     } else if (id.compare("GEOB") == 0) {
         auto *frame = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
         frame->setMimeType(o.GetString("mimeType"));
         frame->setFileName(o.GetString("fileName"));
-        frame->setObject(o.GetBytes("file"));
+        frame->setObject(o.GetBytes("object"));
         tag->addFrame(frame);
     } else if (id.compare("PRIV") == 0) {
         auto *frame = new TagLib::ID3v2::PrivateFrame();
