@@ -54,9 +54,6 @@ namespace TagIO {
         static void GetID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void SetID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-        // helper methods
-        void ClearID3v2Frames();
-
         // members
         static v8::Persistent<v8::Function> constructor;
         TagLib::MPEG::File *file;

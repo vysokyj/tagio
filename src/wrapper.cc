@@ -60,3 +60,11 @@ TagLib::String Wrapper::GetString(const char *key) {
 void Wrapper::SetString(const char *key, TagLib::String value) {
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
 }
+
+TagLib::ByteVector Wrapper::GetBinary(const char *key) {
+    //TODO: Implement
+    return nullptr;
+}
+void Wrapper::SetBinary(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {
+    //TODO: Implement
+}
