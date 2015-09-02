@@ -1,4 +1,5 @@
 #include "wrapper.h"
+#include "configuration.h"
 
 using namespace TagIO;
 using namespace v8;
@@ -62,6 +63,7 @@ void Wrapper::SetString(const char *key, TagLib::String value) {
 }
 
 TagLib::ByteVector Wrapper::GetBinary(const char *key) {
+    Configuration &conf = Configuration::Get();
     //TODO: Implement
     return nullptr;
 }

@@ -2,6 +2,9 @@
 
 var tagio = {};
 
+tagio.setConfiguration = function(configuration) {};
+tagio.getConfiguration = function() {};
+
 tagio.GENERIC = {
     getPath: function() {},
     getAudioProperties: function() {},

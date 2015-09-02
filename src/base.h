@@ -27,10 +27,6 @@ namespace TagIO {
     public:
         const char *GetFilePath() { return this->path.c_str(); }
 
-        // helper methods
-        static void SetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
-        static void GetBaseConfiguration(v8::Isolate *isolate, v8::Object *object, Base *base);
-
     protected:
         Base(const char *path);
         ~Base();

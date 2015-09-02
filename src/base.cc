@@ -9,49 +9,6 @@ Base::Base(const char *path) : path(path) { }
 
 Base::~Base() {}
 
-void Base::GetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
-    // prepare keys
-    Local<String> binaryDataDirectoryKey = (String::NewFromUtf8(isolate, "binaryDataDirectory"))->ToString();
-    Local<String> binaryDataUrlPrefixKey = (String::NewFromUtf8(isolate, "binaryDataUrlPrefix"))->ToString();
-    Local<String> binaryDataMethodKey = (String::NewFromUtf8(isolate, "binaryDataMethod"))->ToString();
-
-    if (object->Has(binaryDataDirectoryKey)) {
-        String::Utf8Value val(object->Get(binaryDataDirectoryKey)->ToString());
-        base->binaryDataDirectory = *val;
-    }
-
-    if (object->Has(binaryDataUrlPrefixKey)) {
-        String::Utf8Value val(object->Get(binaryDataUrlPrefixKey)->ToString());
-        base->binaryDataUrlPrefix = *val;
-    }
-
-    if (object->Has(binaryDataMethodKey)) {
-        String::Utf8Value val(object->Get(binaryDataMethodKey)->ToString());
-        string s(*val);
-        if (s.compare("FILENAME") == 0)      base->binaryDataMethod = Base::BinaryDataMethod::FILENAME;
-        if (s.compare("ABSOLUTE_URL") == 0)  base->binaryDataMethod = Base::BinaryDataMethod::ABSOLUTE_URL;
-        if (s.compare("PREFIXED_URL") == 0)  base->binaryDataMethod = Base::BinaryDataMethod::PREFIXED_URL;
-    }
-}
-
-void Base::SetBaseConfiguration(Isolate *isolate, Object *object, Base *base) {
-    Wrapper o(isolate, object);
-    o.SetString("binaryDataDirectory", base->binaryDataDirectory);
-    o.SetString("binaryDataUrlPrefix", base->binaryDataUrlPrefix);
-
-    switch(base->binaryDataMethod) {
-        case BinaryDataMethod::FILENAME:
-            o.SetString("binaryDataMethod", "FILENAME");
-            break;
-        case BinaryDataMethod::ABSOLUTE_URL:
-            o.SetString("binaryDataMethod", "ABSOLUTE_URL");
-            break;
-        case BinaryDataMethod::PREFIXED_URL:
-            o.SetString("binaryDataMethod", "PREFIXED_URL");
-            break;
-    }
-
-}
 
 TagLib::String Base::ExportFile(TagLib::ByteVector byteVector, TagLib::String mimeType) {
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));

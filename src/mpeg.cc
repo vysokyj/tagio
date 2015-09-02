@@ -1,4 +1,5 @@
 #include "mpeg.h"
+#include "configuration.h"
 #include "audioproperties.h"
 #include "tag.h"
 #include "id3v2tag.h"
@@ -64,24 +65,7 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
         auto *ref = new MPEG(*path);
         ref->Wrap(args.This());
         Local<Object> object = args[1]->ToObject();
-        GetBaseConfiguration(isolate, *object, ref);
-
-        Local<String> saveID3v1TagKey = String::NewFromUtf8(isolate, "saveID3v1Tag");
-        Local<String> saveID3v2TagKey = String::NewFromUtf8(isolate, "saveID3v2Tag");
-        Local<String> saveApeTagKey = String::NewFromUtf8(isolate, "saveApeTag");
-
-        if (object->Has(saveID3v1TagKey)) {
-            Local<Boolean> val(object->Get(saveID3v1TagKey)->ToBoolean());
-            ref->SetID3v1TagEnabled(val->BooleanValue());
-        }
-        if (object->Has(saveID3v2TagKey)) {
-            Local<Boolean> val(object->Get(saveID3v2TagKey)->ToBoolean());
-            ref->SetID3v2TagEnabled(val->BooleanValue());
-        }
-        if (object->Has(saveApeTagKey)) {
-            Local<Boolean> val(object->Get(saveApeTagKey)->ToBoolean());
-            ref->SetApeTagEnabled(val->BooleanValue());
-        }
+        Configuration::Set(isolate, *object);
         args.GetReturnValue().Set(args.This());
     } else {
         // Invoked as plain function, turn into construct call.

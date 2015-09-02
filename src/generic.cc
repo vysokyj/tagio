@@ -1,4 +1,5 @@
 #include "generic.h"
+#include "configuration.h"
 #include "audioproperties.h"
 #include "tag.h"
 
@@ -57,7 +58,7 @@ void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
         GENERIC *ref = new GENERIC(*path);
         ref->Wrap(args.This());
         Local<Object> object = args[1]->ToObject();
-        GetBaseConfiguration(isolate, *object, ref);
+        Configuration::Set(isolate, *object);
         args.GetReturnValue().Set(args.This());
     } else {
         // Invoked as plain function, turn into construct call.
