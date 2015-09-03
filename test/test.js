@@ -1,6 +1,7 @@
 // Example
 var fs = require("fs");
 var tagio = require("../lib/tagio");
+var print = require("./print");
 
 var config = {
     binaryDataDirectory: "/tmp",
@@ -11,26 +12,7 @@ var config = {
 	saveApeTag: false
 };
 
-var printTag = function(ref) {
-    console.log("Path: %s", ref.getPath());
-    console.log("Audio properties: %j", ref.getAudioProperties());
-    console.log("Generic tag: %j", ref.getTag());
-};
-
-var printID3v2 = function(mp3) {
-    if (mp3.hasID3v2Tag()) {
-        console.log("ID3v2 tag:");
-        var frames = mp3.getID3v2Tag();
-        for (var i = 0, l = frames.length; i < l; i++)
-            console.log(" - frame %d: %j", i, frames[i]);
-    } else {
-        console.log("ID3v2 tag: undefined");
-    }
-};
-
 // declaration
-var file;
-
 var tag = {
     title: "My title",
     album: "My album",
@@ -40,14 +22,11 @@ var tag = {
     comment: "My comment"
 };
 
-file = tagio.open(__dirname + "/samples/sample.mp3", config);
-printTag(file);
-printID3v2(file);
+var mp3 = tagio.open(__dirname + "/samples/sample.mp3", config);
+mp3.log();
 
-file = tagio.open(__dirname + "/samples/sample.ogg", config);
-printTag(file);
+var ogg = tagio.open(__dirname + "/samples/sample.ogg", config);
+ogg.log();
 
-file = tagio.open(__dirname + "/samples/sample.wav", config);
-printTag(file);
-file.setTag(tag);
-printTag(file);
+var wav = tagio.open(__dirname + "/samples/sample.wav", config);
+wav.log();

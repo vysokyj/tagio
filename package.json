@@ -17,7 +17,8 @@
   "os" : [ "darwin", "linux" ],
   "main": "./lib/tagio.js",
   "scripts": {
-    "test": "./node_modules/.bin/cmake-js clean && ./node_modules/.bin/cmake-js && node ./test/test.js",
+    "test": "node ./test/test.js",
+    "rebuild": "./node_modules/.bin/cmake-js rebuild",
     "install": "./node_modules/.bin/cmake-js rebuild"
   },
   "author": "Jiri Vysoky <jiri.vysoky@gmail.com> (http://jiri.vysoky.name/)",
