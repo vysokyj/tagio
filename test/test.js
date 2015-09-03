@@ -1,6 +1,6 @@
 // Example
 var fs = require("fs");
-var tagio = require("./tagio");
+var tagio = require("../lib/tagio");
 
 var config = {
     binaryDataDirectory: "/tmp",
@@ -40,14 +40,14 @@ var tag = {
     comment: "My comment"
 };
 
-file = tagio.open("./samples/sample.mp3", config);
+file = tagio.open(__dirname + "/samples/sample.mp3", config);
 printTag(file);
 printID3v2(file);
 
-file = tagio.open("./samples/sample.ogg", config);
+file = tagio.open(__dirname + "/samples/sample.ogg", config);
 printTag(file);
 
-file = tagio.open("./samples/sample.wav", config);
+file = tagio.open(__dirname + "/samples/sample.wav", config);
 printTag(file);
 file.setTag(tag);
 printTag(file);
