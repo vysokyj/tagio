@@ -17,6 +17,7 @@ namespace TagIO {
         static std::string NewFileName(TagLib::ByteVector byteVector, std::string mimeType);
         static std::string PathToString(std::string filePath, std::string fileName);
         static std::string StringToPath(std::string str);
+        static bool FileExist(const std::string& name);
     };
 }
 
