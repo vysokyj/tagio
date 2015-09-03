@@ -1,7 +1,3 @@
-//
-// Created by jirka on 26.5.15.
-//
-
 #ifndef TAGIO_MPEG_H
 #define TAGIO_MPEG_H
 
@@ -30,6 +26,7 @@
 #include <taglib/urllinkframe.h>
 
 #include "base.h"
+#include "wrapper.h"
 
 namespace TagIO {
     class MPEG : public Base, public node::ObjectWrap {
@@ -39,27 +36,16 @@ namespace TagIO {
         void SetID3v2TagEnabled(bool value) { this->saveID3v2Tag = value; }
         void SetApeTagEnabled(bool value) { this->saveApeTag = value; }
     private:
-        explicit MPEG(std::string path);
+        explicit MPEG(const char *path);
         ~MPEG();
 
         // Generic API
         static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void Save(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void GetPath(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetTitle(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetTitle(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetAlbum(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetAlbum(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetArtist(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetArtist(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetTrack(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetTrack(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetYear(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetYear(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetGenre(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetGenre(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void GetComment(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void SetComment(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void GetAudioProperties(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void GetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void SetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
 
         // MPEG API
         static void HasAPETag(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -68,16 +54,12 @@ namespace TagIO {
         static void GetID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void SetID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-        // helper methods
-        void ClearID3v2Frames();
-
         // members
         static v8::Persistent<v8::Function> constructor;
         TagLib::MPEG::File *file;
         bool saveID3v1Tag = false;
         bool saveID3v2Tag = true;
         bool saveApeTag = false;
-        std::map<uint, TagLib::ID3v2::AttachedPictureFrame::Type> apicMap;
     };
 }
 

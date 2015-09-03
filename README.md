@@ -2,11 +2,26 @@
 
 Advanced TagLib wrapper for Node.JS
 
+## Status
+
 **This module is under hard development!**
 
-## Implemented
-
-* MPEG - generic API, ID3v2
+| *Format*   | *Status*         |
+| ---------- | ---------------- |
+| Generic    | done             |
+| MP3        | generic, ID3v2   |
+| MPC        | not started      |
+| FLAC       | not started      |
+| MP4        | not started      |
+| ASF        | not started      |
+| AIFF       | not started      |
+| WAV        | not started      |
+| TrueAudio  | not started      |
+| WavPack    | not started      |
+| Ogg FLAC   | not started      |
+| Ogg Vorbis | not started      |
+| Speex      | not started      |
+| Opus       | not started      |
 
 
 ## Prerequisites
@@ -15,61 +30,17 @@ Advanced TagLib wrapper for Node.JS
 * Installed cmake
 * Installed taglib
 
-## Usage
+## Documentation
 
-### Generic Interface
+### General Usage Information
 
-TagLib supports generic interface for all supported formats.
+* [Configuration Format](./doc/config.md)
+* [Generic Interface](./doc/generic.md)
+* [MPEG (MP3) File Interface](./doc/mpeg.md)
 
-```javascript
-var tagio = import('tagio');
+### Other
 
-var config = { ... };
-
-var mp3 = tagio.open("./sample.mp3", config);
-console.log("path: %s", mp3.getPath());
-console.log("getAlbum: \"%s\"", mp3.getAlbum());
-console.log("getArtist: \"%s\"", mp3.getArtist());
-console.log("getComment: \"%s\"", mp3.getComment());
-console.log("getGenre: \"%s\"", mp3.getGenre());
-console.log("getTitle: \"%s\"", mp3.getTitle());
-console.log("getTrack: %s", mp3.getTrack());
-console.log("getYear: %s", mp3.getYear());
-
-```
-
-### MPEG (MP3) Interface
-
-```javascript
-var tagio = import('tagio');
-
-var config = {
-	attachmentsDir: "/tmp",
-	attachmentsCtx: "/attachments/",
-	saveID3v1Tag: false,
-	saveID3v2Tag: true,
-	saveApeTag: false
-};
-
-var mp3 = tagio.open("./sample.mp3", config);
-
-console.log("hasAPETag: %s", mp3.hasAPETag());
-console.log("hasID3v1Tag: %s", mp3.hasID3v1Tag());
-console.log("hasID3v2Tag: %s", mp3.hasID3v2Tag());
-
-var frames = mp3.getID3v2Tag();
-for (var i = 0, l = frames.length; i < l; i++) {
-    console.log("%d: %j", i, frames[i]);
-}
-```
-
-#### Configuration Parameters
-
-* **attachmentsDir** - directory used for exporting and importing attachments such as cover images
-* **attachmentsCtx** - prefix generated to the output file path in jsoun - for server purposes
-* **saveID3v1Tag** - TagLib will save ID3v1 tag
-* **saveID3v2Tag** - TagLib will save ID3v2 tag
-* **saveApeTag** - TagLib will save APE tag
+* [Development Notes](./doc/notes.md)
 
 ## Copyright
 

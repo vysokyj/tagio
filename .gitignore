@@ -30,3 +30,6 @@
 TagIO.xcodeproj/*
 node_modules/*
 build/*
+
+example/input.mp3
+example/output.mp3
