@@ -68,7 +68,6 @@ Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
     } else if (id.at(0) == 'W') {
         auto *f = dynamic_cast<TagLib::ID3v2::UrlLinkFrame *>(frame);
         o.SetString("url", f->url());
-        o.SetString("text", f->toString());
     } else if (id.compare("COMM") == 0) {
         auto *f = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(frame);
         o.SetString("text", f->toString());
@@ -88,6 +87,7 @@ Local<Object> ID3v2Frame::New(Isolate *isolate, TagLib::ID3v2::Frame *frame) {
         auto *f = dynamic_cast<TagLib::ID3v2::PrivateFrame *>(frame);
         o.SetString("owner", f->owner());
     } else if (id.compare("RVA2") == 0) {
+        //TODO: Test RVA2 usability
         auto *f = dynamic_cast<TagLib::ID3v2::RelativeVolumeFrame *>(frame);
         TagLib::List<TagLib::ID3v2::RelativeVolumeFrame::ChannelType> channels = f->channels();
         Local<Array> channelArray = Array::New(isolate, channels.size());
@@ -154,6 +154,7 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag) 
         auto *f = new TagLib::ID3v2::PrivateFrame();
         f->setOwner(o.GetString("owner"));
     } else if (id.compare("RVA2") == 0) {
+        //TODO: Test RVA2 usability
         Local<Array> channelArray = Local<Array>::Cast(object->Get(String::NewFromUtf8(isolate, "text")));
         auto *f = new TagLib::ID3v2::RelativeVolumeFrame();
         for (unsigned int i = 0; i < channelArray->Length(); i++) {
