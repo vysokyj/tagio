@@ -2,12 +2,26 @@
 
 Advanced TagLib wrapper for Node.JS
 
+## Status
+
 **This module is under hard development!**
 
-### Implemented
-
-* **Generic File Tags** - complete
-* **MPEG File** - generic API, ID3v2
+| *Format*   | *Status*         |
+| ---------- | ---------------- |
+| Generic    | done             |
+| MP3        | generic, ID3v2   |
+| MPC        | not started      |
+| FLAC       | not started      |
+| MP4        | not started      |
+| ASF        | not started      |
+| AIFF       | not started      |
+| WAV        | not started      |
+| TrueAudio  | not started      |
+| WavPack    | not started      |
+| Ogg FLAC   | not started      |
+| Ogg Vorbis | not started      |
+| Speex      | not started      |
+| Opus       | not started      |
 
 
 ## Prerequisites
