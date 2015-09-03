@@ -17,67 +17,182 @@ Advanced TagLib wrapper for Node.JS
 
 ## Usage
 
-### Generic Interface
+### Configuration
 
-TagLib supports generic interface for all supported formats.
+Configuration format:
+
+```javascript
+var config = {
+  binaryDataDirectory: "/tmp",
+  binaryDataUrlPrefix: "/attachments",
+  binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
+  saveID3v1Tag: false,
+  saveID3v2Tag: true,
+  saveApeTag: false
+};
+```
+
+#### Binary data handling
+
+* **binaryDataMethod** - method used for handling binary data
+  * FILENAME method output: 01100af24849aec09055a35b0f6dd050.jpg
+  * ABSOLUTE_URL method output: file://tmp/01100af24849aec09055a35b0f6dd050.jpg
+  * RELATIVE_URL method output: /custom/prefix/01100af24849aec09055a35b0f6dd050.jpg
+* **binaryDataDirectory** - directory used for exporting and importing file attachments such as cover images
+* **binaryDataUrlPrefix** - prefix used in RELATIVE_URL method
+
+
+#### Enable or disable tag formats
+
+* **saveID3v1Tag** - TagLib will save ID3v1 tag if possible
+* **saveID3v2Tag** - TagLib will save ID3v2 tag if possible
+* **saveApeTag** - TagLib will save APE tag if possible
+
+### Generic Tag Interface
+
+TagIO supports generic interface for all formats supported by TagLib.
 
 ```javascript
 var tagio = import('tagio');
-
 var config = { ... };
+var ogg = tagio.open(__dirname + "/samples/sample.ogg", config);
+ogg.log();
+```
+Output:
 
-var mp3 = tagio.open("./sample.mp3", config);
-console.log("path: %s", mp3.getPath());
-console.log("getAlbum: \"%s\"", mp3.getAlbum());
-console.log("getArtist: \"%s\"", mp3.getArtist());
-console.log("getComment: \"%s\"", mp3.getComment());
-console.log("getGenre: \"%s\"", mp3.getGenre());
-console.log("getTitle: \"%s\"", mp3.getTitle());
-console.log("getTrack: %s", mp3.getTrack());
-console.log("getYear: %s", mp3.getYear());
-
+```json
+{
+  "path": "/home/jirka/dev/github/tagio/test/samples/sample.ogg",
+  "audioProperties": {
+    "length": 2,
+    "bitrate ": 112,
+    "sampleRate": 44100,
+    "channels": 2
+  },
+  "tags": {
+    "generic": {
+      "title": "My title",
+      "album": "My album",
+      "artist": "My artist",
+      "track": 2,
+      "year": 2000,
+      "genre": "Rock",
+      "comment": "My comment"
+    }
+  }
+}
 ```
 
 ### MPEG (MP3) Interface
 
+Example:
+
 ```javascript
 var tagio = import('tagio');
+var config = { ... };
+var mp3 = tagio.open(__dirname + "/samples/sample.mp3", config);
+mp3.log();
+```
+Output:
 
-var config = {
-	attachmentsDir: "/tmp",
-	attachmentsCtx: "/attachments/",
-	saveID3v1Tag: false,
-	saveID3v2Tag: true,
-	saveApeTag: false
-};
-
-var mp3 = tagio.open("./sample.mp3", config);
-
-console.log("hasAPETag: %s", mp3.hasAPETag());
-console.log("hasID3v1Tag: %s", mp3.hasID3v1Tag());
-console.log("hasID3v2Tag: %s", mp3.hasID3v2Tag());
-
-var frames = mp3.getID3v2Tag();
-for (var i = 0, l = frames.length; i < l; i++) {
-    console.log("%d: %j", i, frames[i]);
+```json
+{
+  "path": "/home/jirka/dev/github/tagio/test/samples/sample.mp3",
+  "audioProperties": {
+    "length": 2,
+    "bitrate ": 117,
+    "sampleRate": 44100,
+    "channels": 2
+  },
+  "tags": {
+    "generic": {
+      "title": "My title",
+      "album": "My album",
+      "artist": "My artist",
+      "track": 1,
+      "year": 2000,
+      "genre": "Rock",
+      "comment": "My comment"
+    },
+    "id3v2": [
+      {
+        "id": "TIT2",
+        "text": "My title"
+      },
+      {
+        "id": "TPE1",
+        "text": "My artist"
+      },
+      {
+        "id": "TPE2",
+        "text": "My album artist"
+      },
+      {
+        "id": "TALB",
+        "text": "My album"
+      },
+      {
+        "id": "TDRC",
+        "text": "2000"
+      },
+      {
+        "id": "TRCK",
+        "text": "01"
+      },
+      {
+        "id": "TCON",
+        "text": "17"
+      },
+      {
+        "id": "COMM",
+        "text": "My comment"
+      },
+      {
+        "id": "TCOM",
+        "text": "My composer"
+      },
+      {
+        "id": "TOPE",
+        "text": "My original artist"
+      },
+      {
+        "id": "TCOP",
+        "text": "My copyright"
+      },
+      {
+        "id": "WXXX",
+        "url": "http://somewhere.com",
+      },
+      {
+        "id": "TENC",
+        "text": "Some Encoder"
+      },
+      {
+        "id": "APIC",
+        "mimeType": "image/jpeg",
+        "description": "Cover Front.jpeg",
+        "type": 3,
+        "picture": "file:///tmp/01100af24849aec09055a35b0f6dd050.jpg"
+      }
+    ]
+  }
 }
 ```
+### Available additional methods
 
-#### Configuration Parameters
-
-* **attachmentsDir** - directory used for exporting and importing attachments such as cover images
-* **attachmentsCtx** - prefix generated to the output file path in jsoun - for server purposes
-* **saveID3v1Tag** - TagLib will save ID3v1 tag
-* **saveID3v2Tag** - TagLib will save ID3v2 tag
-* **saveApeTag** - TagLib will save APE tag
-
+* **hasAPETag()**
+* **hasID3v1Tag()**
+* **hasID3v2Tag()**
+* **getID3v2Tag()**
+* **setID3v2Tag(tagio)**
 
 ## Development notes
 
-## Trace errors
+#### Trace errors
 
+```bash
 nm -C build/Release/tagio.node
-
+```
 ## Copyright
 
 TagIO - Advanced TagLib wrapper for Node.JS
