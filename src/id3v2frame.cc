@@ -283,12 +283,12 @@ inline void ID3v2Frame::SetUSLT(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLi
 }
 
 inline void ID3v2Frame::GetNONE(Wrapper &o, TagLib::ID3v2::Frame *frame) {
-    o.SetString("text", frame->toString());
+    auto *f = dynamic_cast<TagLib::ID3v2::UnknownFrame *>(frame);
+    o.SetBytes("data", f->data(), "application/octet-stream");
 }
 
 inline void ID3v2Frame::SetNONE(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLib::ByteVector &id) {
-    auto *f = new TagLib::ID3v2::TextIdentificationFrame(id, TagLib::String::UTF8);
-    f->setText(o.GetString("text"));
+    auto *f = new TagLib::ID3v2::UnknownFrame(o.GetBytes("data"));
     tag->addFrame(f);
 }
 
