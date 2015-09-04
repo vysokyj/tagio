@@ -4,6 +4,7 @@
 
 #include <v8.h>
 #include <string>
+#include <taglib/tlist.h>
 #include <taglib/tstring.h>
 #include <taglib/tbytevector.h>
 #include "md5.h"
@@ -26,9 +27,10 @@ namespace TagIO {
         void SetUint32(const char *key, const TagLib::uint value);
         TagLib::String GetString(const char *key);
         void SetString(const char *key, const TagLib::String value);
+//        TagLib::List<TagLib::String> GetStringArray(const char *key);
+//        void SetStringArray(const char *key, const TagLib::List<TagLib::String>);
         TagLib::ByteVector GetBytes(const char *key);
         void SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType);
-
         ~Wrapper();
     private:
         v8::Isolate *isolate;

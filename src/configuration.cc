@@ -15,6 +15,9 @@ Local<Object> Configuration::New(Isolate *isolate) {
     o.SetString("binaryDataUrlPrefix", conf.binaryDataUrlPrefix);
 
     switch(conf.binaryDataMethod) {
+        case BinaryDataMethod::IGNORE:
+            o.SetString("binaryDataMethod", "IGNORE");
+            break;
         case BinaryDataMethod::FILENAME:
             o.SetString("binaryDataMethod", "FILENAME");
             break;
