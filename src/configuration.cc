@@ -15,6 +15,9 @@ Local<Object> Configuration::New(Isolate *isolate) {
     o.SetString("binaryDataUrlPrefix", conf.binaryDataUrlPrefix);
 
     switch(conf.binaryDataMethod) {
+        case BinaryDataMethod::IGNORE:
+            o.SetString("binaryDataMethod", "IGNORE");
+            break;
         case BinaryDataMethod::FILENAME:
             o.SetString("binaryDataMethod", "FILENAME");
             break;
@@ -35,6 +38,7 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     Wrapper o(isolate, object);
 
     string s = o.GetString("binaryDataMethod").to8Bit(true);
+    if (s.compare("IGNORE") == 0)        conf.binaryDataMethod = Configuration::BinaryDataMethod::IGNORE;
     if (s.compare("FILENAME") == 0)      conf.binaryDataMethod = Configuration::BinaryDataMethod::FILENAME;
     if (s.compare("ABSOLUTE_URL") == 0)  conf.binaryDataMethod = Configuration::BinaryDataMethod::ABSOLUTE_URL;
     if (s.compare("PREFIXED_URL") == 0)  conf.binaryDataMethod = Configuration::BinaryDataMethod::PREFIXED_URL;

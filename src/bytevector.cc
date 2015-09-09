@@ -3,6 +3,7 @@
 #include "md5.h"
 #include <fstream>
 #include <algorithm>
+#include <sys/stat.h>
 
 using namespace TagIO;
 using namespace std;
@@ -21,17 +22,20 @@ TagLib::ByteVector ByteVector::Import(TagLib::String string) {
 }
 
 TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
+    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::IGNORE)
+        return TagLib::String("IGNORED");
     string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
     string filePath = NewPath(binaryDataDirectory, fileName);
+    TagLib::String filePathString = PathToString(filePath, fileName);
+    if (FileExist(filePath)) return filePathString;
+
     ofstream ofs;
     ofs.open(filePath, ios::out | ios::binary);
     ofs.write(byteVector.data(), byteVector.size());
     ofs.close();
-//    string s = ;
-//    cout << "TEST: " << StringToPath(s) << endl;
-//    return s;
-    return PathToString(filePath, fileName);
+
+    return filePathString;
 }
 
 string ByteVector::NewFileName(TagLib::ByteVector byteVector, string mimeType) {
@@ -70,7 +74,6 @@ std::string ByteVector::NewRelativeUrl(std::string relativeUrl, std::string file
     return relativeUrl + '/' + fileName;
 }
 
-
 std::string ByteVector::PathToString(std::string filePath, std::string fileName) {
     string retval = fileName;
     string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
@@ -81,7 +84,6 @@ std::string ByteVector::PathToString(std::string filePath, std::string fileName)
 
     return retval;
 }
-
 
 std::string ByteVector::StringToPath(std::string str) {
     string fileName = str;
@@ -96,4 +98,9 @@ std::string ByteVector::StringToPath(std::string str) {
 
     return NewPath(binaryDataDirectory, fileName);
 }
+
+inline bool ByteVector::FileExist(const std::string &name) {
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
+};
 

@@ -82,3 +82,24 @@ TagLib::ByteVector Wrapper::GetBytes(const char *key) {
 void Wrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {
     SetString(key, ByteVector::Export(value, mimeType));
 }
+
+//TagLib::List<TagLib::String> Wrapper::GetStringArray(const char *key) {
+//    Local<Array> array = Local<Array>::Cast(object->Get(key));
+//    TagLib::List<TagLib::String> list;
+//    for (unsigned int i = 0; i < array->Length(); i++) {
+//        String::Utf8Value value(array->Get(i)->ToString());
+//        TagLib::String string(*value, TagLib::String::UTF8);
+//        list.append(string);
+//    }
+//    return list;
+//}
+//
+//void Wrapper::SetStringArray(const char *key, const TagLib::List<TagLib::String> list) {
+//    Local<Array> array = Array::New(isolate, list.size());
+//    for (unsigned int i = 0; i < list.size(); i++) {
+//        TagLib::String string = list[i];
+//        array->Set(i, String::NewFromUtf8(isolate, string.toCString(true)));
+//    }
+//    object->Set(key, array);
+//}
+
