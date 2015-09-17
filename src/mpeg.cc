@@ -80,6 +80,7 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
 // Generic API
 
 void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
+    Configuration &cfg = Configuration::Get();
     Isolate *isolate = Isolate::GetCurrent();
     int NoTags  = 0x0000;
     int ID3v1   = 0x0001;
@@ -88,10 +89,10 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     int AllTags = 0xffff;
     int tags = NoTags;
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    if (mpeg->saveID3v1Tag)  tags = tags | ID3v1;
-    if (mpeg->saveID3v2Tag)  tags = tags | ID3v2;
-    if (mpeg->saveApeTag)    tags = tags | APE;
-    if (mpeg->saveID3v1Tag && mpeg->saveID3v2Tag && mpeg->saveApeTag) tags = AllTags;
+    if (cfg.GetSaveID3v1Tag())  tags = tags | ID3v1;
+    if (cfg.GetSaveID3v2Tag())  tags = tags | ID3v2;
+    if (cfg.GetSaveApeTag())    tags = tags | APE;
+    if (cfg.GetSaveID3v1Tag() && cfg.GetSaveID3v2Tag() && cfg.GetSaveApeTag()) tags = AllTags;
     bool result = mpeg->file->save(tags);
     args.GetReturnValue().Set(Boolean::New(isolate, result));
 }

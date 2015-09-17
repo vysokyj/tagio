@@ -35,8 +35,6 @@ namespace TagIO {
         Configuration(Configuration const&)   = delete;
         void operator=(Configuration const&)  = delete;
 
-        static Configuration *instance;
-
         // Base configuration
         BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files

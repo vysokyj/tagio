@@ -32,9 +32,6 @@ namespace TagIO {
     class MPEG : public Base, public node::ObjectWrap {
     public:
         static void Init(v8::Handle<v8::Object> exports);
-        void SetID3v1TagEnabled(bool value) { this->saveID3v1Tag = value; }
-        void SetID3v2TagEnabled(bool value) { this->saveID3v2Tag = value; }
-        void SetApeTagEnabled(bool value) { this->saveApeTag = value; }
     private:
         explicit MPEG(const char *path);
         ~MPEG();
@@ -57,9 +54,6 @@ namespace TagIO {
         // members
         static v8::Persistent<v8::Function> constructor;
         TagLib::MPEG::File *file;
-        bool saveID3v1Tag = false;
-        bool saveID3v2Tag = true;
-        bool saveApeTag = false;
     };
 }
 
