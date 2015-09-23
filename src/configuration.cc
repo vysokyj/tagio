@@ -48,7 +48,8 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.saveID3v1Tag = o.GetBoolean("saveID3v1Tag");
     conf.saveID3v2Tag = o.GetBoolean("saveID3v2Tag");
     conf.saveApeTag = o.GetBoolean("saveApeTag");
-
+    conf.id3v2Version = o.GetUint32("id3v2Version");
+    if (conf.id3v2Version != 3 || conf.id3v2Version != 4) conf.id3v2Version = 4;
 
 //    cout << "binaryDataMethod: " << conf.binaryDataMethod << endl;
 //    cout << "binaryDataDirectory: " << conf.binaryDataDirectory << endl;

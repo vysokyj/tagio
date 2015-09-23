@@ -35,9 +35,7 @@ void MPEG::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
     // MPEG API
-    NODE_SET_PROTOTYPE_METHOD(tpl, "hasAPETag", HasAPETag);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "hasID3v1Tag", HasID3v1Tag);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "hasID3v2Tag", HasID3v2Tag);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getIncludedTags", GetIncludedTags);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v2Tag", GetID3v2Tag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setID3v2Tag", SetID3v2Tag);
 
@@ -93,7 +91,7 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     if (cfg.GetSaveID3v2Tag())  tags = tags | ID3v2;
     if (cfg.GetSaveApeTag())    tags = tags | APE;
     if (cfg.GetSaveID3v1Tag() && cfg.GetSaveID3v2Tag() && cfg.GetSaveApeTag()) tags = AllTags;
-    bool result = mpeg->file->save(tags);
+    bool result = mpeg->file->save(tags, true, cfg.GetId3v2Version(), true);
     args.GetReturnValue().Set(Boolean::New(isolate, result));
 }
 
@@ -108,8 +106,8 @@ void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
 
 void MPEG::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    Local<Object> object = AudioProperties::New(isolate, ref->file->audioProperties());
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    Local<Object> object = AudioProperties::New(isolate, mpeg->file->audioProperties());
     args.GetReturnValue().Set(object);
 }
 
@@ -131,22 +129,31 @@ void MPEG::SetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
 // MPEG API
 
 
-void MPEG::HasAPETag(const FunctionCallbackInfo<Value>& args) {
+void MPEG::GetIncludedTags(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    args.GetReturnValue().Set(Boolean::New(isolate, mpeg->file->hasAPETag()));
-}
+    int c = 0;
+    uint32_t i = 0;
 
-void MPEG::HasID3v1Tag(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    args.GetReturnValue().Set(Boolean::New(isolate, mpeg->file->hasID3v1Tag()));
-}
+    if (mpeg->file->hasID3v1Tag()) c++;
+    if (mpeg->file->hasID3v2Tag()) c++;
+    if (mpeg->file->hasAPETag()) c++;
 
-void MPEG::HasID3v2Tag(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    args.GetReturnValue().Set(Boolean::New(isolate, mpeg->file->hasID3v2Tag()));
+    Local<Array> array = Array::New(isolate, c);
+    if (mpeg->file->hasID3v1Tag()) {
+        array->Set(i++, String::NewFromUtf8(isolate, "ID3v1"));
+    }
+    if (mpeg->file->hasID3v2Tag()) {
+        TagLib::ID3v2::Tag *tag = mpeg->file->ID3v2Tag(false);
+        string str = "ID3v2";
+        str = str + "." + to_string(tag->header()->majorVersion());
+        str = str + "." + to_string(tag->header()->revisionNumber());
+        array->Set(i++, String::NewFromUtf8(isolate, str.c_str()));
+    }
+    if (mpeg->file->hasAPETag()) {
+        array->Set(i, String::NewFromUtf8(isolate, "APE"));
+    }
+    args.GetReturnValue().Set(array);
 }
 
 void MPEG::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {

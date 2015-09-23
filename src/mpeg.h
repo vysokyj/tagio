@@ -45,9 +45,7 @@ namespace TagIO {
         static void SetTag(const v8::FunctionCallbackInfo<v8::Value>& args);
 
         // MPEG API
-        static void HasAPETag(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void HasID3v1Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
-        static void HasID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
+        static void GetIncludedTags(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void GetID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
         static void SetID3v2Tag(const v8::FunctionCallbackInfo<v8::Value>& args);
 
