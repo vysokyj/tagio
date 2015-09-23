@@ -76,7 +76,13 @@ void Wrapper::SetString(const char *key, TagLib::String value) {
 }
 
 TagLib::ByteVector Wrapper::GetBytes(const char *key) {
-    return ByteVector::Import(GetString(key));
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        String::Utf8Value value(object->Get(keyString));
+        return ByteVector::Import(TagLib::String(*value, TagLib::String::UTF8));
+    } else {
+        return TagLib::ByteVector(); // empty byte vector
+    }
 }
 
 void Wrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {

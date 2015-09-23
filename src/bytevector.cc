@@ -9,9 +9,12 @@ using namespace TagIO;
 using namespace std;
 
 
-TagLib::ByteVector ByteVector::Import(TagLib::String string) {
+TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
+    cout << "pathString=" << pathString << endl;
+    string path(StringToPath(pathString.to8Bit(true)));
+    cout << "path=" << path << endl;
     ifstream ifs;
-    ifs.open(StringToPath(string.to8Bit(true)), ios::in | ios::binary);
+    ifs.open(path, ios::in | ios::binary);
     ifs.seekg(0, ios::end);
     long length = ifs.tellg();
     char *data = new char[length];
@@ -55,7 +58,17 @@ string ByteVector::CountMD5(TagLib::ByteVector byteVector) {
     return hash;
 }
 
-string ByteVector::NewPath(std::string directoryPath, std::string fileName) {
+string ByteVector::NormalizePath(string path) {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    replace(path.begin(), path.end(), '/', '\\');
+    return path;
+#else
+    replace(path.begin(), path.end(), '\\', '/');
+    return path;
+#endif
+}
+
+string ByteVector::NewPath(string directoryPath, string fileName) {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     replace(directoryPath.begin(), directoryPath.end(), '/', '\\');
     return directoryPath + '\\' + fileName;
@@ -81,22 +94,20 @@ std::string ByteVector::PathToString(std::string filePath, std::string fileName)
         retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
     else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
         retval = NewAbsoluteUrl(filePath);
-
     return retval;
 }
 
 std::string ByteVector::StringToPath(std::string str) {
-    string fileName = str;
     string filePrefix = "file://";
     string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
     string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
-
-    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL)
-    fileName = str.substr(binaryDataUrlPrefix.length() + 1);
-    else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
-    fileName = str.substr(filePrefix.length() + binaryDataDirectory.length() + 1);
-
-    return NewPath(binaryDataDirectory, fileName);
+    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL) {
+        return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
+    } else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL) {
+        return NormalizePath(str.substr(filePrefix.length() + 1));
+    } else {
+        return NewPath(binaryDataDirectory, str);
+    }
 }
 
 inline bool ByteVector::FileExist(const std::string &name) {

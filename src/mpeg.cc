@@ -163,4 +163,7 @@ void MPEG::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
     TagLib::ID3v2::Tag *tag = mpeg->file->ID3v2Tag(true);
     Local<Array> frames = Local<Array>::Cast(args[0]);
     ID3v2Tag::Set(isolate, *frames, tag);
+    // return frames
+    Local<Array> array = ID3v2Tag::New(isolate, tag);
+    args.GetReturnValue().Set(array);
 }

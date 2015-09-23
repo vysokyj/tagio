@@ -1,8 +1,6 @@
 //// Example
 //var fs = require("fs");
-//var tagio = require("../lib/tagio");
-//var print = require("./print");
-//
+//var tagio = require("../lib");
 //var config = {
 //    binaryDataDirectory: "/tmp",
 //    binaryDataUrlPrefix: "/attachments",

@@ -1,5 +1,5 @@
 #include "id3v2frame.h"
-
+#include <string>
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
 #include <taglib/commentsframe.h>
@@ -101,8 +101,13 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag )
 
 inline void ID3v2Frame::GetTXXX(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::UserTextIdentificationFrame *>(frame);
+    string s1 = f->description().to8Bit(true);
+    string s2 = "[" + s1 + "] " + s1 + " "; // yes - so stupid
+    string s3 = f->toString().to8Bit(true);
+    string s4 = s3.substr(s2.length());
+    TagLib::String text(s4);
     o.SetString("description", f->description());
-    o.SetString("text", f->toString());
+    o.SetString("text", text);
 }
 
 inline void ID3v2Frame::SetTXXX(Wrapper &o, TagLib::ID3v2::Tag *tag) {
@@ -181,6 +186,7 @@ inline void ID3v2Frame::GetGEOB(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::GeneralEncapsulatedObjectFrame *>(frame);
     o.SetString("mimeType", f->mimeType());
     o.SetString("fileName", f->fileName());
+    o.SetString("description", f->description());
     o.SetBytes("object", f->object(), f->mimeType());
 }
 
@@ -188,6 +194,7 @@ inline void ID3v2Frame::SetGEOB(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
     f->setMimeType(o.GetString("mimeType"));
     f->setFileName(o.GetString("fileName"));
+    f->setDescription(o.GetString("description"));
     f->setObject(o.GetBytes("object"));
     tag->addFrame(f);
 }
