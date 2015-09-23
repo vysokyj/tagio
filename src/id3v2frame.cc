@@ -192,14 +192,14 @@ inline void ID3v2Frame::SetGEOB(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     tag->addFrame(f);
 }
 
-void ID3v2Frame::GetPOPM(Wrapper &o, TagLib::ID3v2::Frame *frame) {
+inline void ID3v2Frame::GetPOPM(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::PopularimeterFrame *>(frame);
     o.SetString("email", f->email());
     o.SetInt32("rating", f->rating()); // 0 - 255
     o.SetUint32("counter", f->counter());
 }
 
-void ID3v2Frame::SetPOPM(Wrapper &o, TagLib::ID3v2::Tag *tag) {
+inline void ID3v2Frame::SetPOPM(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f = new TagLib::ID3v2::PopularimeterFrame();
     f->setEmail(o.GetString("email"));
     f->setRating(o.GetInt32("rating")); // 0 - 255
