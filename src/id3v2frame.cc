@@ -279,12 +279,17 @@ inline void ID3v2Frame::SetUFID(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLi
 inline void ID3v2Frame::GetUSLT(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame *>(frame);
     o.SetString("description", f->description());
+    o.SetString("language", TagLib::String(f->language()));
+    o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("text", f->toString());
 }
 
 inline void ID3v2Frame::SetUSLT(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLib::ByteVector &id) {
-    auto *f = new TagLib::ID3v2::UrlLinkFrame(id);
-    f->setUrl(o.GetString("url"));
+    auto *f = new TagLib::ID3v2::UnsynchronizedLyricsFrame(id);
+    TagLib::String languageString = o.GetString("language");
+    f->setDescription(o.GetString("description"));
+    f->setLanguage(TagLib::ByteVector(languageString.toCString(false), languageString.size()));
+    f->setTextEncoding(o.GetEncoding("textEncoding"));
     f->setText(o.GetString("text"));
     tag->addFrame(f);
 }

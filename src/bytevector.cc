@@ -10,9 +10,7 @@ using namespace std;
 
 
 TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
-    cout << "pathString=" << pathString << endl;
     string path(StringToPath(pathString.to8Bit(true)));
-    cout << "path=" << path << endl;
     ifstream ifs;
     ifs.open(path, ios::in | ios::binary);
     ifs.seekg(0, ios::end);
@@ -104,7 +102,7 @@ std::string ByteVector::StringToPath(std::string str) {
     if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL) {
         return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
     } else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL) {
-        return NormalizePath(str.substr(filePrefix.length() + 1));
+        return NormalizePath(str.substr(filePrefix.length()));
     } else {
         return NewPath(binaryDataDirectory, str);
     }

@@ -31,6 +31,10 @@ namespace TagIO {
 //        void SetStringArray(const char *key, const TagLib::List<TagLib::String>);
         TagLib::ByteVector GetBytes(const char *key);
         void SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType);
+        TagLib::String::Type GetEncoding(const char *key);
+        void SetEncoding(const char *key, const TagLib::String::Type value);
+        TagLib::ByteVector GetLanguage(const char *key);
+        void SetLanguage(const char *key, const TagLib::ByteVector value);
         ~Wrapper();
     private:
         v8::Isolate *isolate;

@@ -89,6 +89,68 @@ void Wrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::
     SetString(key, ByteVector::Export(value, mimeType));
 }
 
+TagLib::String::Type Wrapper::GetEncoding(const char *key) {
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        String::Utf8Value value(object->Get(keyString));
+        TagLib::String encodingString(*value, TagLib::String::UTF8);
+        if (encodingString == "Latin1") return TagLib::String::Latin1;
+        else if (encodingString == "UTF8") return TagLib::String::UTF8;
+        else if (encodingString == "UTF16") return TagLib::String::UTF16;
+        else if (encodingString == "UTF16BE") return TagLib::String::UTF16BE;
+        else if (encodingString == "UTF16LE") return TagLib::String::UTF16LE;
+        else return TagLib::String::UTF8;
+    } else {
+        return TagLib::String::UTF8;
+    }
+}
+
+void Wrapper::SetEncoding(const char *key, const TagLib::String::Type value) {
+    string enc;
+    switch (value) {
+        case TagLib::String::Latin1:
+            enc = "Latin1";
+            break;
+        case TagLib::String::UTF8:
+            enc = "UTF8";
+            break;
+        case TagLib::String::UTF16:
+            enc = "UTF16";
+            break;
+        case TagLib::String::UTF16BE:
+            enc = "UTF16BE";
+            break;
+        case TagLib::String::UTF16LE:
+            enc = "UTF16LE";
+            break;
+        default:
+            enc = "UTF8";
+
+    }
+    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, enc.c_str()));
+}
+
+TagLib::ByteVector Wrapper::GetLanguage(const char *key) {
+    //TODO: Check valid ISO format
+    //TODO: Find better transoform from ByteVector to char *
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    if (object->Has(keyString)) {
+        String::Utf8Value value(object->Get(keyString));
+        TagLib::String str(*value);
+        return TagLib::ByteVector(str.toCString(), str.size());
+    } else {
+        return TagLib::ByteVector();
+    }
+}
+
+void Wrapper::SetLanguage(const char *key, const TagLib::ByteVector value) {
+    //TODO: Check valid ISO format
+    //TODO: Find better transoform from ByteVector to char *
+    TagLib::String str(value);
+    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, str.toCString(true)));
+}
+
+
 //TagLib::List<TagLib::String> Wrapper::GetStringArray(const char *key) {
 //    Local<Array> array = Local<Array>::Cast(object->Get(key));
 //    TagLib::List<TagLib::String> list;

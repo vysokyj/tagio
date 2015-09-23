@@ -18,12 +18,14 @@ describe("MPEG", function() {
     var sampleFile;
     var testFile;
     var testJPEG;
+    var testTEXT;
 
     before(function () {
         testDir = path.resolve(__dirname, "../build/Test");
         sampleFile = path.resolve(__dirname, "./samples/sample.mp3");
         testFile = path.resolve(testDir, "test.mp3");
         testJPEG = "file://" +  path.resolve(__dirname, "./samples/sample.jpg");
+        testTEXT = "file://" +  path.resolve(__dirname, "./samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
         fs.writeFileSync(testFile, fs.readFileSync(sampleFile));
     });
@@ -80,14 +82,52 @@ describe("MPEG", function() {
                     type: "0",
                     image: testJPEG
                 });
-            //} else if (frame.id === "GEOB") {
-            //    it.push({
-            //        id: frame.id,
-            //        filename: "sample.jpg",
-            //        description: frame.title,
-            //        mimeType: "image/jpeg",
-            //        object: testJPEG
-            //    });
+            } else if (frame.id === "GEOB") {
+                it.push({
+                    id: frame.id,
+                    mimeType: "text/plain",
+                    fileMame: "sample.txt",
+                    description: frame.title,
+                    object: testTEXT
+                });
+            } else if (frame.id === "POPM") {
+                it.push({
+                    id: frame.id,
+                    email: "someone@somewhere.com",
+                    rating: 120,
+                    counter: 25
+                });
+            } else if (frame.id === "PRIV") {
+                it.push({
+                    id: frame.id,
+                    owner: "Someone"
+                });
+            } else if (frame.id === "RVA2") {
+                it.push({
+                    id: frame.id,
+                    channels: [
+                        {
+                            channelType: 1, // master volume
+                            volumeAdjustment: 0.5,
+                            bitsRepresentingPeak: 125,
+                            peakVolume: "",
+                        }
+                    ]
+                });
+            } else if (frame.id === "UFID") {
+                it.push({
+                    id: frame.id,
+                    owner: "Someone",
+                    file: testTEXT
+                });
+            } else if (frame.id === "USLT") {
+                it.push({
+                    id: frame.id,
+                    description: frame.title,
+                    language: "CZE",
+                    textEncoding: "UTF8",
+                    text: "Some text"
+                });
             } else {
                 console.log("Unsupported frame %s", frame.id);
             }
