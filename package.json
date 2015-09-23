@@ -14,16 +14,21 @@
     "mp3",
     "mpeg"
   ],
-  "os" : [ "darwin", "linux" ],
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "main": "./lib/tagio.js",
+  "author": "Jiri Vysoky <jiri.vysoky@gmail.com> (http://jiri.vysoky.name/)",
+  "license": "GPL-3.0",
   "scripts": {
-    "test": "node ./test/test.js",
+    "test": "./node_modules/.bin/mocha ./test/* --reporter spec",
     "rebuild": "./node_modules/.bin/cmake-js rebuild",
     "install": "./node_modules/.bin/cmake-js rebuild"
   },
-  "author": "Jiri Vysoky <jiri.vysoky@gmail.com> (http://jiri.vysoky.name/)",
-  "license": "GPL-3.0",
-  "dependencies": {
-    "cmake-js": "^0.12.2"
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "cmake-js": "^0.12.2",
+    "mocha": "^2.3.2"
   }
 }
