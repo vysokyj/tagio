@@ -91,7 +91,10 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     if (cfg.GetSaveID3v2Tag())  tags = tags | ID3v2;
     if (cfg.GetSaveApeTag())    tags = tags | APE;
     if (cfg.GetSaveID3v1Tag() && cfg.GetSaveID3v2Tag() && cfg.GetSaveApeTag()) tags = AllTags;
-    bool result = mpeg->file->save(tags, true, cfg.GetId3v2Version(), true);
+    bool stripOthers = true;
+    uint32_t id3v2Version = cfg.GetId3v2Version();
+    bool duplicateTags = true;
+    bool result = mpeg->file->save(tags, stripOthers, id3v2Version, duplicateTags);
     args.GetReturnValue().Set(Boolean::New(isolate, result));
 }
 
@@ -151,6 +154,8 @@ void MPEG::GetIncludedTags(const FunctionCallbackInfo<Value>& args) {
         array->Set(i++, String::NewFromUtf8(isolate, str.c_str()));
     }
     if (mpeg->file->hasAPETag()) {
+        //cout << "HAS APE TAG!!" << endl;
+        //TODO: Not working - looks like taglib bug.
         array->Set(i, String::NewFromUtf8(isolate, "APE"));
     }
     args.GetReturnValue().Set(array);

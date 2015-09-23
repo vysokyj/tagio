@@ -28,7 +28,7 @@ namespace TagIO {
         bool GetSaveID3v1Tag() { return  saveID3v1Tag; }
         bool GetSaveID3v2Tag() { return  saveID3v2Tag; }
         bool GetSaveApeTag() { return  saveApeTag; }
-        bool GetId3v2Version() { return  id3v2Version; }
+        uint32_t GetId3v2Version() { return  id3v2Version; }
     protected:
         ~Configuration() {}
     private:
