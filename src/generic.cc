@@ -83,6 +83,8 @@ void GENERIC::GetPath(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     string path = ref->GetFilePath();
+    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+        path = "file://" + path;
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }
 

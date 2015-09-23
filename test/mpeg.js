@@ -36,7 +36,7 @@ describe("MPEG", function() {
 
     it("id3v2", function(done) {
         var mp3 = tagio.open(testFile, config);
-        assert.equal(mp3.getPath(), testFile);
+        assert.equal(mp3.getPath(), "file://" + testFile);
 
 
         //mp3.log();
@@ -86,7 +86,7 @@ describe("MPEG", function() {
                 it.push({
                     id: frame.id,
                     mimeType: "text/plain",
-                    fileMame: "sample.txt",
+                    fileName: "sample.txt",
                     description: frame.title,
                     object: testTEXT
                 });
