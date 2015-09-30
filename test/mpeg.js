@@ -17,10 +17,11 @@ var config = {
     binaryDataDirectory: "/tmp",
     binaryDataUrlPrefix: "/attachments",
     binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-    saveID3v1Tag: false,
-    saveID3v2Tag: true,
-    saveApeTag: true,
-    id3v2Version: 4
+    apeSave: true,
+    id3v1Save: false,
+    id3v2Save: true,
+    id3v2Version: 4,
+    id3v2Encoding: tagio.Encoding.UTF8
 };
 
 describe("MPEG", function() {
@@ -49,10 +50,11 @@ describe("MPEG", function() {
             binaryDataDirectory: "/tmp",
             binaryDataUrlPrefix: "/attachments",
             binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-            saveID3v1Tag: true,
-            saveID3v2Tag: false,
-            saveApeTag: false,
-            id3v2Version: 3
+            apeSave: false,
+            id3v1Save: true,
+            id3v2Save: false,
+            id3v2Version: 3,
+            id3v2Encoding: tagio.Encoding.UTF16
         };
         var mp3 = tagio.open(testFile, config1);
         assert.equal(mp3.getPath(), "file://" + testFile);

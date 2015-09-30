@@ -28,7 +28,11 @@ Local<Object> Configuration::New(Isolate *isolate) {
             o.SetString("binaryDataMethod", "PREFIXED_URL");
             break;
     }
-
+    o.SetBoolean("apeSave", conf.apeSave);
+    o.SetBoolean("id3v1Save", conf.id3v1Save);
+    o.SetBoolean("id3v2Save", conf.id3v2Save);
+    o.SetUint32("id3v2Version", conf.id3v2Version);
+    o.SetEncoding("id3v2Encoding", conf.id3v2Encoding);
     return handleScope.Escape(object);
 }
 
@@ -45,10 +49,12 @@ void Configuration::Set(Isolate *isolate, Object *object) {
 
     conf.binaryDataDirectory = o.GetString("binaryDataDirectory").toCString(true);
     conf.binaryDataUrlPrefix = o.GetString("binaryDataUrlPrefix").toCString(true);
-    conf.saveID3v1Tag = o.GetBoolean("saveID3v1Tag");
-    conf.saveID3v2Tag = o.GetBoolean("saveID3v2Tag");
-    conf.saveApeTag = o.GetBoolean("saveApeTag");
-    conf.id3v2Version = o.GetUint32("id3v2Version");
+    conf.apeSave       = o.GetBoolean("apeSave");
+    conf.id3v1Save     = o.GetBoolean("id3v1Save");
+    conf.id3v2Save     = o.GetBoolean("id3v2Save");
+    conf.id3v2Version  = o.GetUint32("id3v2Version");
+    conf.id3v2Encoding = o.GetEncoding("id3v2Encoding");
+    conf.id3v2Save     = o.GetBoolean("id3v2Save");
 
 //    cout << "binaryDataMethod: " << conf.binaryDataMethod << endl;
 //    cout << "binaryDataDirectory: " << conf.binaryDataDirectory << endl;

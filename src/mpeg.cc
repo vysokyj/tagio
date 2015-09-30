@@ -45,7 +45,7 @@ void MPEG::Init(Handle<Object> exports) {
 
 void MPEG::New(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
+    //HandleScope scope(isolate);
 
     if (args.Length() < 2) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
@@ -87,12 +87,12 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     int AllTags = 0xffff;
     int tags = NoTags;
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    if (cfg.GetSaveID3v1Tag())  tags = tags | ID3v1;
-    if (cfg.GetSaveID3v2Tag())  tags = tags | ID3v2;
-    if (cfg.GetSaveApeTag())    tags = tags | APE;
-    if (cfg.GetSaveID3v1Tag() && cfg.GetSaveID3v2Tag() && cfg.GetSaveApeTag()) tags = AllTags;
+    if (cfg.GetID3V1Save())  tags = tags | ID3v1;
+    if (cfg.GetID3V2Save())  tags = tags | ID3v2;
+    if (cfg.GetAPESave())    tags = tags | APE;
+    if (cfg.GetID3V1Save() && cfg.GetID3V2Save() && cfg.GetAPESave()) tags = AllTags;
     bool stripOthers = true;
-    uint32_t id3v2Version = cfg.GetId3v2Version();
+    uint32_t id3v2Version = cfg.GetID3V2Version();
     bool duplicateTags = true;
     bool result = mpeg->file->save(tags, stripOthers, id3v2Version, duplicateTags);
     args.GetReturnValue().Set(Boolean::New(isolate, result));
