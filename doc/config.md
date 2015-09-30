@@ -9,7 +9,8 @@ var config = {
   id3v1Save: false,
   id3v2Save: true,
   id3v2Version: 4,
-  id3v2Encoding: tagio.Encoding.UTF8
+  id3v2Encoding: tagio.Encoding.UTF8,
+  id3v2UseFrameEncoding: false
 };
 ```
 
