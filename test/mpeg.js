@@ -70,8 +70,68 @@ describe("MPEG", function() {
         mp3.setTag(tag);
         mp3.save();
         mp3 = tagio.open(testFile, config);
-        mp3.log();
+        //mp3.log();
         assert.equal(JSON.stringify(mp3.getTag()), JSON.stringify(tag));
+        done();
+    });
+
+    //it("ape", function(done) {
+    //    var apeConfig = {
+    //        binaryDataDirectory: "/tmp",
+    //        binaryDataUrlPrefix: "/attachments",
+    //        binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
+    //        apeSave: true,
+    //        id3v1Save: false,
+    //        id3v2Save: false,
+    //        id3v2Version: 3,
+    //        id3v2Encoding: tagio.Encoding.UTF16
+    //    };
+    //    var mp3 = tagio.open(testFile, apeConfig);
+    //    assert.equal(mp3.getPath(), "file://" + testFile);
+    //    var tag = {
+    //        "title": "Generic Title",
+    //        "album": "Generic Album",
+    //        "artist": "Generic Artist",
+    //        "track": 1,
+    //        "year": 2015,
+    //        "genre": "Speech",
+    //        "comment": "Generic Comment"
+    //    };
+    //    mp3.setAPETag(tag);
+    //    mp3.save();
+    //    mp3 = tagio.open(testFile, config);
+    //    mp3.log();
+    //    assert.equal(JSON.stringify(mp3.getAPETag()), JSON.stringify(tag));
+    //    done();
+    //});
+
+    it("id3v1", function(done) {
+        var id3v1Config = {
+            binaryDataDirectory: "/tmp",
+            binaryDataUrlPrefix: "/attachments",
+            binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
+            apeSave: false,
+            id3v1Save: true,
+            id3v2Save: false,
+            id3v2Version: 3,
+            id3v2Encoding: tagio.Encoding.UTF16
+        };
+        var mp3 = tagio.open(testFile, id3v1Config);
+        assert.equal(mp3.getPath(), "file://" + testFile);
+        var tag = {
+            "title": "Generic Title",
+            "album": "Generic Album",
+            "artist": "Generic Artist",
+            "track": 1,
+            "year": 2015,
+            "genre": "Speech",
+            "comment": "Generic Comment"
+        };
+        mp3.setID3v1Tag(tag);
+        mp3.save();
+        mp3 = tagio.open(testFile, config);
+        //mp3.log();
+        assert.equal(JSON.stringify(mp3.getID3v1Tag()), JSON.stringify(tag));
         done();
     });
 

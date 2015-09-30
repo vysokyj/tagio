@@ -2,6 +2,8 @@
 #include "configuration.h"
 #include "audioproperties.h"
 #include "tag.h"
+#include "apetag.h"
+#include "apetag.h"
 #include "id3v1tag.h"
 #include "id3v2tag.h"
 
@@ -37,6 +39,8 @@ void MPEG::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
     // MPEG API
     NODE_SET_PROTOTYPE_METHOD(tpl, "getIncludedTags", GetIncludedTags);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getAPETag", GetAPETag);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setAPETag", SetAPETag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v1Tag", GetID3v1Tag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setID3v1Tag", SetID3v1Tag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v2Tag", GetID3v2Tag);
@@ -82,18 +86,23 @@ void MPEG::New(const FunctionCallbackInfo<Value>& args) {
 
 void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     Configuration &cfg = Configuration::Get();
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
     Isolate *isolate = Isolate::GetCurrent();
+
+    if (mpeg->saved) return; //TODO: Throw exception.
+    else mpeg->saved = true;
+
     int NoTags  = 0x0000;
     int ID3v1   = 0x0001;
     int ID3v2   = 0x0002;
     int APE     = 0x0004;
     int AllTags = 0xffff;
     int tags = NoTags;
-    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
     if (cfg.ID3V1Save())  tags = tags | ID3v1;
     if (cfg.ID3V2Save())  tags = tags | ID3v2;
     if (cfg.APESave())    tags = tags | APE;
     if (cfg.ID3V1Save() && cfg.ID3V2Save() && cfg.APESave()) tags = AllTags;
+    //cout << "SAVE TAGS: " << tags << endl;
     bool stripOthers = true;
     uint32_t id3v2Version = cfg.ID3V2Version();
     bool duplicateTags = true;
@@ -163,6 +172,28 @@ void MPEG::GetIncludedTags(const FunctionCallbackInfo<Value>& args) {
     }
     args.GetReturnValue().Set(array);
 }
+
+void MPEG::GetAPETag(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    if (!mpeg->file->hasAPETag()) return;
+    TagLib::APE::Tag *tag = mpeg->file->APETag(false);
+    Local<Object> object = APETag::New(isolate, tag);
+    args.GetReturnValue().Set(object);
+}
+
+void MPEG::SetAPETag(const FunctionCallbackInfo<Value> &args) {
+    if (args.Length() != 1 || !args[0]->IsArray()) return;
+    Isolate *isolate = Isolate::GetCurrent();
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    TagLib::APE::Tag *tag = mpeg->file->APETag(true);
+    Local<Object> object1 = Local<Object>::Cast(args[0]);
+    APETag::Set(isolate, *object1, tag);
+    // return tag
+    Local<Object> object2 = APETag::New(isolate, tag);
+    args.GetReturnValue().Set(object2);
+}
+
 
 void MPEG::GetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
     Isolate *isolate = Isolate::GetCurrent();
