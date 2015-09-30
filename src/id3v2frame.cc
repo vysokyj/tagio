@@ -1,5 +1,5 @@
 #include "id3v2frame.h"
-
+#include "configuration.h"
 #include <taglib/id3v2tag.h>
 #include <taglib/attachedpictureframe.h>
 #include <taglib/commentsframe.h>
@@ -101,12 +101,20 @@ void ID3v2Frame::Set(Isolate *isolate, Object *object, TagLib::ID3v2::Tag *tag )
 
 inline void ID3v2Frame::GetTXXX(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::UserTextIdentificationFrame *>(frame);
+    string s1 = f->description().to8Bit(true);
+    string s2 = "[" + s1 + "] " + s1 + " "; // yes - so stupid
+    string s3 = f->toString().to8Bit(true);
+    string s4 = s3.substr(s2.length());
+    TagLib::String text(s4);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("description", f->description());
-    o.SetString("text", f->toString());
+    o.SetString("text", text);
 }
 
 inline void ID3v2Frame::SetTXXX(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f= new TagLib::ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
     f->setDescription(o.GetString("description"));
     f->setText(o.GetString("text"));
     tag->addFrame(f);
@@ -114,23 +122,30 @@ inline void ID3v2Frame::SetTXXX(Wrapper &o, TagLib::ID3v2::Tag *tag) {
 
 inline void ID3v2Frame::GetTYYY(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::TextIdentificationFrame *>(frame);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("text", f->toString());
 }
 
 inline void ID3v2Frame::SetTYYY(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLib::ByteVector &id) {
     auto *f= new TagLib::ID3v2::TextIdentificationFrame(id, TagLib::String::UTF8);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
     f->setText(o.GetString("text"));
     tag->addFrame(f);
 }
 
 inline void ID3v2Frame::GetWXXX(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::UserUrlLinkFrame *>(frame);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("description", f->description());
     o.SetString("url", f->url());
 }
 
 inline void ID3v2Frame::SetWXXX(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f = new TagLib::ID3v2::UserUrlLinkFrame();
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
+    f->setTextEncoding(Configuration::Get().ID3V2Encoding());
     f->setDescription(o.GetString("description"));
     f->setUrl(o.GetString("url"));
     tag->addFrame(f);
@@ -149,17 +164,22 @@ inline void ID3v2Frame::SetWYYY(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLi
 
 inline void ID3v2Frame::GetCOMM(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::CommentsFrame *>(frame);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("text", f->toString());
 }
 
 inline void ID3v2Frame::SetCOMM(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f = new TagLib::ID3v2::CommentsFrame();
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
+    f->setTextEncoding(Configuration::Get().ID3V2Encoding());
     f->setText(o.GetString("text"));
     tag->addFrame(f);
 }
 
 inline void ID3v2Frame::GetAPIC(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frame);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("mimeType", f->mimeType());
     o.SetString("description", f->description());
     o.SetUint32("type", f->type());
@@ -169,6 +189,9 @@ inline void ID3v2Frame::GetAPIC(Wrapper &o, TagLib::ID3v2::Frame *frame) {
 inline void ID3v2Frame::SetAPIC(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     uint32_t type = o.GetUint32("type");
     auto *f = new TagLib::ID3v2::AttachedPictureFrame();
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
+    f->setTextEncoding(Configuration::Get().ID3V2Encoding());
     f->setMimeType(o.GetString("mimeType"));
     if (APIC.count(type)) f->setType(APIC[type]);
     else f->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
@@ -179,27 +202,33 @@ inline void ID3v2Frame::SetAPIC(Wrapper &o, TagLib::ID3v2::Tag *tag) {
 
 inline void ID3v2Frame::GetGEOB(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::GeneralEncapsulatedObjectFrame *>(frame);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("mimeType", f->mimeType());
     o.SetString("fileName", f->fileName());
+    o.SetString("description", f->description());
     o.SetBytes("object", f->object(), f->mimeType());
 }
 
 inline void ID3v2Frame::SetGEOB(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
+    f->setTextEncoding(Configuration::Get().ID3V2Encoding());
     f->setMimeType(o.GetString("mimeType"));
     f->setFileName(o.GetString("fileName"));
+    f->setDescription(o.GetString("description"));
     f->setObject(o.GetBytes("object"));
     tag->addFrame(f);
 }
 
-void ID3v2Frame::GetPOPM(Wrapper &o, TagLib::ID3v2::Frame *frame) {
+inline void ID3v2Frame::GetPOPM(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::PopularimeterFrame *>(frame);
     o.SetString("email", f->email());
     o.SetInt32("rating", f->rating()); // 0 - 255
     o.SetUint32("counter", f->counter());
 }
 
-void ID3v2Frame::SetPOPM(Wrapper &o, TagLib::ID3v2::Tag *tag) {
+inline void ID3v2Frame::SetPOPM(Wrapper &o, TagLib::ID3v2::Tag *tag) {
     auto *f = new TagLib::ID3v2::PopularimeterFrame();
     f->setEmail(o.GetString("email"));
     f->setRating(o.GetInt32("rating")); // 0 - 255
@@ -271,13 +300,20 @@ inline void ID3v2Frame::SetUFID(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLi
 
 inline void ID3v2Frame::GetUSLT(Wrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame *>(frame);
+    if (Configuration::Get().ID3V2UseFrameEncoding()) o.SetEncoding("textEncoding", f->textEncoding());
     o.SetString("description", f->description());
+    o.SetString("language", TagLib::String(f->language()));
     o.SetString("text", f->toString());
 }
 
 inline void ID3v2Frame::SetUSLT(Wrapper &o, TagLib::ID3v2::Tag *tag, const TagLib::ByteVector &id) {
-    auto *f = new TagLib::ID3v2::UrlLinkFrame(id);
-    f->setUrl(o.GetString("url"));
+    auto *f = new TagLib::ID3v2::UnsynchronizedLyricsFrame(id);
+    TagLib::String languageString = o.GetString("language");
+    if (Configuration::Get().ID3V2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(Configuration::Get().ID3V2Encoding());
+    f->setTextEncoding(Configuration::Get().ID3V2Encoding());
+    f->setDescription(o.GetString("description"));
+    f->setLanguage(TagLib::ByteVector(languageString.toCString(false), languageString.size()));
     f->setText(o.GetString("text"));
     tag->addFrame(f);
 }

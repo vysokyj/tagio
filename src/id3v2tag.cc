@@ -38,6 +38,8 @@ void ID3v2Tag::Clear(TagLib::ID3v2::Tag *tag) {
             id.compare("COMM") == 0 ||
             id.compare("APIC") == 0 ||
             id.compare("GEOB") == 0 ||
+            id.compare("POPM") == 0 ||
+            id.compare("PRIV") == 0 ||
             id.compare("RVA2") == 0 ||
             id.compare("UFID") == 0 ||
             id.compare("USLT") == 0) {

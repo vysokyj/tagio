@@ -4,17 +4,19 @@
 #include <node/node.h>
 #include <v8.h>
 #include <string>
+#include <taglib/tstring.h>
 
 namespace TagIO {
 
+    enum BinaryDataMethod {
+        IGNORE,       // IGNORE BINARY FILES
+        FILENAME,     // JSON contains just the filename -> somefile.ext
+        ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
+        PREFIXED_URL  // JSON contains file URL with given prefix -> /somepath/somefile.ext
+    };
+
     class Configuration {
     public:
-        enum BinaryDataMethod {
-            IGNORE,       // IGNORE BINARY FILES
-            FILENAME,     // JSON contains just the filename -> somefile.ext
-            ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
-            PREFIXED_URL  // JSON contains file URL with given prefix -> /somepath/somefile.ext
-        };
         static Configuration &Get() {
             static Configuration instance;
             return instance;
@@ -22,12 +24,19 @@ namespace TagIO {
         static v8::Local<v8::Object> New(v8::Isolate *isolate);
         static void Set(v8::Isolate *isolate, v8::Object *object);
 
-        BinaryDataMethod GetBinaryDataMethod() { return binaryDataMethod; }
-        const char *GetBinaryDataDirectory() { return binaryDataDirectory.c_str(); }
-        const char *GetBinaryDataUrlPrefix() { return binaryDataUrlPrefix.c_str(); }
-        bool GetSaveID3v1Tag() { return  saveID3v1Tag; }
-        bool GetSaveID3v2Tag() { return  saveID3v2Tag; }
-        bool GetSaveApeTag() { return  saveApeTag; }
+        // Accessor methods
+        TagIO::BinaryDataMethod BinaryDataMethod()   { return binaryDataMethod; }
+        const char *BinaryDataDirectory()     { return binaryDataDirectory.c_str(); }
+        const char *BinaryDataUrlPrefix()     { return binaryDataUrlPrefix.c_str(); }
+        bool                 APESave()        { return apeSave; }
+        bool                 ID3V1Save()      { return id3v1Save; }
+        TagLib::String::Type ID3V1Encoding()  { return id3v1Encoding; }
+        bool                 ID3V2Save()      { return id3v2Save; }
+        uint32_t             ID3V2Version()   { return id3v2Version; }
+        TagLib::String::Type ID3V2Encoding()  { return id3v2Encoding; }
+        bool        ID3V2UseFrameEncoding()   { return id3v2UseFrameEncoding; }
+
+
     protected:
         ~Configuration() {}
     private:
@@ -35,15 +44,21 @@ namespace TagIO {
         Configuration(Configuration const&)   = delete;
         void operator=(Configuration const&)  = delete;
 
-        static Configuration *instance;
+        // Helper methods
+        static TagIO::BinaryDataMethod StringToBinaryDataMethod(TagLib::String string);
+        static TagLib::String BinaryDataMethodToString(TagIO::BinaryDataMethod binaryDataMethod);
 
         // Base configuration
-        BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
+        TagIO::BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
-        std::string binaryDataUrlPrefix = "";   // relative URL prefix for BinaryDataMethod::RELATIVE_URL
-        bool saveID3v1Tag = false;
-        bool saveID3v2Tag = true;
-        bool saveApeTag = false;
+        std::string binaryDataUrlPrefix = "";     // relative URL prefix for BinaryDataMethod::RELATIVE_URL
+        bool apeSave = false;
+        bool id3v1Save = false;
+        TagLib::String::Type id3v1Encoding = TagLib::String::UTF8;
+        bool id3v2Save = true;
+        uint32_t id3v2Version = 4;
+        TagLib::String::Type id3v2Encoding = TagLib::String::UTF8;
+        bool id3v2UseFrameEncoding = false;
     };
 }
 
