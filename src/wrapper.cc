@@ -99,9 +99,9 @@ TagLib::String::Type Wrapper::GetEncoding(const char *key) {
         else if (encodingString == "UTF16") return TagLib::String::UTF16;
         else if (encodingString == "UTF16BE") return TagLib::String::UTF16BE;
         else if (encodingString == "UTF16LE") return TagLib::String::UTF16LE;
-        else return TagLib::String::UTF8;
+        else return TagLib::String::UTF16;
     } else {
-        return TagLib::String::UTF8;
+        return TagLib::String::UTF16;
     }
 }
 
@@ -124,7 +124,7 @@ void Wrapper::SetEncoding(const char *key, const TagLib::String::Type value) {
             enc = "UTF16LE";
             break;
         default:
-            enc = "UTF8";
+            enc = "UTF16";
 
     }
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, enc.c_str()));
