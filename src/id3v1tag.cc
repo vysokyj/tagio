@@ -1,11 +1,23 @@
 #include "id3v1tag.h"
 #include "wrapper.h"
+#include "configuration.h"
 
 using namespace TagIO;
 using namespace v8;
 using namespace std;
 
+TagLib::String StringHandler::parse(const TagLib::ByteVector &data) const {
+    TagLib::String s(data, Configuration::Get().ID3V1Encoding());
+    return s;
+}
+
+TagLib::ByteVector StringHandler::render(const TagLib::String &s) const {
+    TagLib::ByteVector v(s.data(Configuration::Get().ID3V1Encoding()));
+    return v;
+}
+
 Local<Object> ID3v1Tag::New(Isolate *isolate, TagLib::ID3v1::Tag *tag) {
+    tag->setStringHandler(new StringHandler());
     EscapableHandleScope handleScope(isolate);
     Local<Object> object = Object::New(isolate);
     Wrapper o(isolate, *object);
@@ -21,6 +33,7 @@ Local<Object> ID3v1Tag::New(Isolate *isolate, TagLib::ID3v1::Tag *tag) {
 }
 
 void ID3v1Tag::Set(Isolate *isolate, Object *object, TagLib::ID3v1::Tag *tag) {
+    tag->setStringHandler(new StringHandler());
     Wrapper o(isolate, object);
     tag->setTitle(o.GetString("title"));
     tag->setAlbum(o.GetString("album"));

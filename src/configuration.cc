@@ -15,6 +15,7 @@ Local<Object> Configuration::New(Isolate *isolate) {
     o.SetString("binaryDataUrlPrefix", conf.binaryDataUrlPrefix);
     o.SetBoolean("apeSave", conf.apeSave);
     o.SetBoolean("id3v1Save", conf.id3v1Save);
+    o.SetEncoding("id3v1Encoding", conf.id3v1Encoding);
     o.SetBoolean("id3v2Save", conf.id3v2Save);
     o.SetUint32("id3v2Version", conf.id3v2Version);
     o.SetEncoding("id3v2Encoding", conf.id3v2Encoding);
@@ -30,6 +31,7 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.binaryDataUrlPrefix = o.GetString("binaryDataUrlPrefix").toCString(true);
     conf.apeSave       = o.GetBoolean("apeSave");
     conf.id3v1Save     = o.GetBoolean("id3v1Save");
+    conf.id3v1Encoding = o.GetEncoding("id3v1Encoding");
     conf.id3v2Save     = o.GetBoolean("id3v2Save");
     conf.id3v2Version  = o.GetUint32("id3v2Version");
     conf.id3v2Encoding = o.GetEncoding("id3v2Encoding");

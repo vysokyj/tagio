@@ -183,7 +183,6 @@ void MPEG::GetAPETag(const FunctionCallbackInfo<Value> &args) {
 }
 
 void MPEG::SetAPETag(const FunctionCallbackInfo<Value> &args) {
-    if (args.Length() != 1 || !args[0]->IsArray()) return;
     Isolate *isolate = Isolate::GetCurrent();
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
     TagLib::APE::Tag *tag = mpeg->file->APETag(true);
@@ -205,7 +204,6 @@ void MPEG::GetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
 }
 
 void MPEG::SetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
-    if (args.Length() != 1 || !args[0]->IsArray()) return;
     Isolate *isolate = Isolate::GetCurrent();
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
     TagLib::ID3v1::Tag *tag = mpeg->file->ID3v1Tag(true);

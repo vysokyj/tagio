@@ -30,6 +30,7 @@ namespace TagIO {
         const char *BinaryDataUrlPrefix()     { return binaryDataUrlPrefix.c_str(); }
         bool                 APESave()        { return apeSave; }
         bool                 ID3V1Save()      { return id3v1Save; }
+        TagLib::String::Type ID3V1Encoding()  { return id3v1Encoding; }
         bool                 ID3V2Save()      { return id3v2Save; }
         uint32_t             ID3V2Version()   { return id3v2Version; }
         TagLib::String::Type ID3V2Encoding()  { return id3v2Encoding; }
@@ -53,6 +54,7 @@ namespace TagIO {
         std::string binaryDataUrlPrefix = "";     // relative URL prefix for BinaryDataMethod::RELATIVE_URL
         bool apeSave = false;
         bool id3v1Save = false;
+        TagLib::String::Type id3v1Encoding = TagLib::String::UTF8;
         bool id3v2Save = true;
         uint32_t id3v2Version = 4;
         TagLib::String::Type id3v2Encoding = TagLib::String::UTF8;

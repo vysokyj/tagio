@@ -4,6 +4,9 @@ var path = require("path");
 var tagio = require("../lib");
 var assert = require("chai").assert;
 
+
+var fileCounter = 0;
+
 var timestampFrames = [
    "TDRC",
    "TDOR",
@@ -18,6 +21,7 @@ var config = {
     binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
     apeSave: true,
     id3v1Save: false,
+    id3v1Encoding: tagio.Encoding.UTF8,
     id3v2Save: true,
     id3v2Version: 4,
     id3v2Encoding: tagio.Encoding.UTF8,
@@ -31,33 +35,42 @@ describe("MPEG", function() {
     var testJPEG;
     var testTEXT;
 
-    before(function () {
+    beforeEach(function () {
         testDir = path.resolve(__dirname, "../build/Test");
         sampleFile = path.resolve(__dirname, "../samples/sample.mp3");
-        testFile = path.resolve(testDir, "test.mp3");
+        testFile = path.resolve(testDir, "test" + fileCounter++ + ".mp3");
         testJPEG = "file://" +  path.resolve(__dirname, "../samples/sample.jpg");
         testTEXT = "file://" +  path.resolve(__dirname, "../samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
         fs.writeFileSync(testFile, fs.readFileSync(sampleFile));
     });
 
-    after(function () {
+    afterEach(function () {
         //fs.rmdirSync(testDir);
+        //fs.rmSync(testFile);
     });
 
     it("generic", function(done) {
-        var config1 = {
+        var config = {
             binaryDataDirectory: "/tmp",
             binaryDataUrlPrefix: "/attachments",
             binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
             apeSave: false,
             id3v1Save: true,
+            //id3v1Encoding: tagio.Encoding.UTF8,
             id3v2Save: false,
             id3v2Version: 3,
             id3v2Encoding: tagio.Encoding.UTF16
         };
-        var mp3 = tagio.open(testFile, config1);
+        var mp3 = tagio.open(testFile, config);
+        var cfg = mp3.getConfiguration();
         assert.equal(mp3.getPath(), "file://" + testFile);
+        assert.equal(true, cfg.id3v1Save);
+        assert.equal("UTF8", cfg.id3v1Encoding);
+        assert.equal("UTF16", cfg.id3v2Encoding);
+        assert.equal(3, cfg.id3v2Version);
+
+
         var tag = {
             "title": "Generic Title",
             "album": "Generic Album",
@@ -100,32 +113,33 @@ describe("MPEG", function() {
     //    mp3.setAPETag(tag);
     //    mp3.save();
     //    mp3 = tagio.open(testFile, config);
-    //    mp3.log();
+    //    //mp3.log();
     //    assert.equal(JSON.stringify(mp3.getAPETag()), JSON.stringify(tag));
     //    done();
     //});
 
     it("id3v1", function(done) {
-        var id3v1Config = {
+        var config = {
             binaryDataDirectory: "/tmp",
             binaryDataUrlPrefix: "/attachments",
             binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
             apeSave: false,
             id3v1Save: true,
+            id3v1Encoding: tagio.Encoding.UTF8,
             id3v2Save: false,
             id3v2Version: 3,
             id3v2Encoding: tagio.Encoding.UTF16
         };
-        var mp3 = tagio.open(testFile, id3v1Config);
+        var mp3 = tagio.open(testFile, config);
         assert.equal(mp3.getPath(), "file://" + testFile);
         var tag = {
-            "title": "Generic Title",
-            "album": "Generic Album",
-            "artist": "Generic Artist",
+            "title": "Generic Title 2",
+            "album": "Generic Album 2",
+            "artist": "Generic Artist 2",
             "track": 1,
             "year": 2015,
             "genre": "Speech",
-            "comment": "Generic Comment"
+            "comment": "Generic Comment 2"
         };
         mp3.setID3v1Tag(tag);
         mp3.save();
@@ -134,6 +148,39 @@ describe("MPEG", function() {
         assert.equal(JSON.stringify(mp3.getID3v1Tag()), JSON.stringify(tag));
         done();
     });
+
+    it("id3v1-unicode", function(done) {
+        var config = {
+            binaryDataDirectory: "/tmp",
+            binaryDataUrlPrefix: "/attachments",
+            binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
+            apeSave: false,
+            id3v1Save: true,
+            id3v1Encoding: tagio.Encoding.UTF8,
+            id3v2Save: false,
+            id3v2Version: 3,
+            id3v2Encoding: tagio.Encoding.UTF16
+        };
+        var mp3 = tagio.open(testFile, config);
+        assert.equal(mp3.getPath(), "file://" + testFile);
+        var tag = {
+            "title": "Příšerně",
+            "album": "žluťoučký",
+            "artist": "kůň",
+            "track": 1,
+            "year": 2015,
+            "genre": "Speech",
+            "comment": "úpěl ďábelské ódy"
+        };
+        mp3.setID3v1Tag(tag);
+        mp3.save();
+        mp3 = tagio.open(testFile, config);
+        //mp3.log();
+        assert.equal(JSON.stringify(mp3.getID3v1Tag()), JSON.stringify(tag));
+        done();
+    });
+
+
 
     it("id3v2", function(done) {
         var mp3 = tagio.open(testFile, config);
@@ -239,9 +286,9 @@ describe("MPEG", function() {
             }
         }
         mp3.setID3v2Tag(itag);
-        mp3.save();
+        //mp3.save();
+        //mp3 = tagio.open(testFile, config);
 
-        mp3 = tagio.open(testFile, config);
         var otag = mp3.getID3v2Tag();
         //mp3.log();
         //console.log(otag);
