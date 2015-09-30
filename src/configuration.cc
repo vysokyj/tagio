@@ -8,26 +8,11 @@ using namespace std;
 Local<Object> Configuration::New(Isolate *isolate) {
     EscapableHandleScope handleScope(isolate);
     Local<Object> object = Object::New(isolate);
-
     Configuration &conf = Configuration::Get();
     Wrapper o(isolate, *object);
+    o.SetString("binaryDataMethod", BinaryDataMethodToString(conf.binaryDataMethod));
     o.SetString("binaryDataDirectory", conf.binaryDataDirectory);
     o.SetString("binaryDataUrlPrefix", conf.binaryDataUrlPrefix);
-
-    switch(conf.binaryDataMethod) {
-        case BinaryDataMethod::IGNORE:
-            o.SetString("binaryDataMethod", "IGNORE");
-            break;
-        case BinaryDataMethod::FILENAME:
-            o.SetString("binaryDataMethod", "FILENAME");
-            break;
-        case BinaryDataMethod::ABSOLUTE_URL:
-            o.SetString("binaryDataMethod", "ABSOLUTE_URL");
-            break;
-        case BinaryDataMethod::PREFIXED_URL:
-            o.SetString("binaryDataMethod", "PREFIXED_URL");
-            break;
-    }
     o.SetBoolean("apeSave", conf.apeSave);
     o.SetBoolean("id3v1Save", conf.id3v1Save);
     o.SetBoolean("id3v2Save", conf.id3v2Save);
@@ -38,15 +23,8 @@ Local<Object> Configuration::New(Isolate *isolate) {
 
 void Configuration::Set(Isolate *isolate, Object *object) {
     Configuration &conf = Configuration::Get();
-
     Wrapper o(isolate, object);
-
-    string s = o.GetString("binaryDataMethod").to8Bit(true);
-    if (s.compare("IGNORE") == 0)        conf.binaryDataMethod = Configuration::BinaryDataMethod::IGNORE;
-    if (s.compare("FILENAME") == 0)      conf.binaryDataMethod = Configuration::BinaryDataMethod::FILENAME;
-    if (s.compare("ABSOLUTE_URL") == 0)  conf.binaryDataMethod = Configuration::BinaryDataMethod::ABSOLUTE_URL;
-    if (s.compare("PREFIXED_URL") == 0)  conf.binaryDataMethod = Configuration::BinaryDataMethod::PREFIXED_URL;
-
+    conf.binaryDataMethod = StringToBinaryDataMethod(o.GetString("binaryDataMethod"));
     conf.binaryDataDirectory = o.GetString("binaryDataDirectory").toCString(true);
     conf.binaryDataUrlPrefix = o.GetString("binaryDataUrlPrefix").toCString(true);
     conf.apeSave       = o.GetBoolean("apeSave");
@@ -54,16 +32,30 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.id3v2Save     = o.GetBoolean("id3v2Save");
     conf.id3v2Version  = o.GetUint32("id3v2Version");
     conf.id3v2Encoding = o.GetEncoding("id3v2Encoding");
-    conf.id3v2Save     = o.GetBoolean("id3v2Save");
-
-//    cout << "binaryDataMethod: " << conf.binaryDataMethod << endl;
-//    cout << "binaryDataDirectory: " << conf.binaryDataDirectory << endl;
-//    cout << "binaryDataUrlPrefix: " << conf.binaryDataUrlPrefix << endl;
-//    cout << "saveID3v1Tag: " << conf.saveID3v1Tag << endl;
-//    cout << "saveID3v2Tag: " << conf.saveID3v2Tag << endl;
-//    cout << "saveApeTag: " << conf.saveApeTag << endl;
-//    cout << "id3v2Version: " << conf.id3v2Version << endl;
-
 }
 
+inline Configuration::BinaryDataMethodEnum Configuration::StringToBinaryDataMethod(TagLib::String string) {
+    Configuration &conf = Configuration::Get();
+    std::string s = string.to8Bit(true);
+    if (s.compare("IGNORE") == 0)
+        return Configuration::BinaryDataMethodEnum::IGNORE;
+    if (s.compare("FILENAME") == 0)
+        return Configuration::BinaryDataMethodEnum::FILENAME;
+    if (s.compare("ABSOLUTE_URL") == 0)
+        return Configuration::BinaryDataMethodEnum::ABSOLUTE_URL;
+    if (s.compare("PREFIXED_URL") == 0)
+        return Configuration::BinaryDataMethodEnum::PREFIXED_URL;
+}
 
+inline TagLib::String Configuration::BinaryDataMethodToString(Configuration::BinaryDataMethodEnum method) {
+    switch(method) {
+        case BinaryDataMethodEnum::IGNORE:
+            return "IGNORE";
+        case BinaryDataMethodEnum::FILENAME:
+            return "FILENAME";
+        case BinaryDataMethodEnum::ABSOLUTE_URL:
+            return "ABSOLUTE_URL";
+        case BinaryDataMethodEnum::PREFIXED_URL:
+            return "PREFIXED_URL";
+    }
+}

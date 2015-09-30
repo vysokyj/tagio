@@ -10,7 +10,7 @@ namespace TagIO {
 
     class Configuration {
     public:
-        enum BinaryDataMethod {
+        enum BinaryDataMethodEnum {
             IGNORE,       // IGNORE BINARY FILES
             FILENAME,     // JSON contains just the filename -> somefile.ext
             ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
@@ -24,7 +24,7 @@ namespace TagIO {
         static void Set(v8::Isolate *isolate, v8::Object *object);
 
         // Accessor methods
-        BinaryDataMethod BinaryDataMethod()   { return binaryDataMethod; }
+        BinaryDataMethodEnum BinaryDataMethod()   { return binaryDataMethod; }
         const char *BinaryDataDirectory()     { return binaryDataDirectory.c_str(); }
         const char *BinaryDataUrlPrefix()     { return binaryDataUrlPrefix.c_str(); }
         bool                 APESave()        { return apeSave; }
@@ -41,8 +41,12 @@ namespace TagIO {
         Configuration(Configuration const&)   = delete;
         void operator=(Configuration const&)  = delete;
 
+        // Helper methods
+        static BinaryDataMethodEnum StringToBinaryDataMethod(TagLib::String string);
+        static TagLib::String BinaryDataMethodToString(BinaryDataMethodEnum binaryDataMethod);
+
         // Base configuration
-        enum BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
+        BinaryDataMethodEnum binaryDataMethod = FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
         std::string binaryDataUrlPrefix = "";   // relative URL prefix for BinaryDataMethod::RELATIVE_URL
         bool apeSave = false;

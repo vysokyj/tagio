@@ -24,7 +24,7 @@ TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
 
 TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
     Configuration &cfg = Configuration::Get();
-    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::IGNORE)
+    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethodEnum::IGNORE)
         return TagLib::String("IGNORED");
     string binaryDataDirectory(cfg.BinaryDataDirectory());
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
@@ -90,9 +90,9 @@ std::string ByteVector::PathToString(std::string filePath, std::string fileName)
     Configuration &cfg = Configuration::Get();
     string retval = fileName;
     string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
-    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL)
+    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethodEnum::PREFIXED_URL)
         retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
-    else if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+    else if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethodEnum::ABSOLUTE_URL)
         retval = NewAbsoluteUrl(filePath);
     return retval;
 }
@@ -102,9 +102,9 @@ std::string ByteVector::StringToPath(std::string str) {
     string filePrefix = "file://";
     string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
     string binaryDataDirectory(cfg.BinaryDataDirectory());
-    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL) {
+    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethodEnum::PREFIXED_URL) {
         return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
-    } else if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL) {
+    } else if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethodEnum::ABSOLUTE_URL) {
         return NormalizePath(str.substr(filePrefix.length()));
     } else {
         return NewPath(binaryDataDirectory, str);

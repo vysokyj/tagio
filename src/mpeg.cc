@@ -102,7 +102,7 @@ void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     string path = ref->GetFilePath();
-    if (Configuration::Get().BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+    if (Configuration::Get().BinaryDataMethod() == Configuration::BinaryDataMethodEnum::ABSOLUTE_URL)
         path = "file://" + path;
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }
