@@ -18,6 +18,7 @@ Local<Object> Configuration::New(Isolate *isolate) {
     o.SetBoolean("id3v2Save", conf.id3v2Save);
     o.SetUint32("id3v2Version", conf.id3v2Version);
     o.SetEncoding("id3v2Encoding", conf.id3v2Encoding);
+    o.SetBoolean("id3v2UseFrameEncoding", conf.id3v2UseFrameEncoding);
     return handleScope.Escape(object);
 }
 
@@ -32,6 +33,7 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.id3v2Save     = o.GetBoolean("id3v2Save");
     conf.id3v2Version  = o.GetUint32("id3v2Version");
     conf.id3v2Encoding = o.GetEncoding("id3v2Encoding");
+    conf.id3v2UseFrameEncoding = o.GetBoolean("id3v2UseFrameEncoding");
 }
 
 inline TagIO::BinaryDataMethod Configuration::StringToBinaryDataMethod(TagLib::String string) {

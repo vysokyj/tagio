@@ -17,7 +17,6 @@ namespace TagIO {
 
     class Configuration {
     public:
-
         static Configuration &Get() {
             static Configuration instance;
             return instance;
@@ -34,6 +33,7 @@ namespace TagIO {
         bool                 ID3V2Save()      { return id3v2Save; }
         uint32_t             ID3V2Version()   { return id3v2Version; }
         TagLib::String::Type ID3V2Encoding()  { return id3v2Encoding; }
+        bool        ID3V2UseFrameEncoding()   { return id3v2UseFrameEncoding; }
 
 
     protected:
@@ -50,12 +50,13 @@ namespace TagIO {
         // Base configuration
         TagIO::BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
-        std::string binaryDataUrlPrefix = "";   // relative URL prefix for BinaryDataMethod::RELATIVE_URL
+        std::string binaryDataUrlPrefix = "";     // relative URL prefix for BinaryDataMethod::RELATIVE_URL
         bool apeSave = false;
         bool id3v1Save = false;
         bool id3v2Save = true;
         uint32_t id3v2Version = 4;
         TagLib::String::Type id3v2Encoding = TagLib::String::UTF8;
+        bool id3v2UseFrameEncoding = false;
     };
 }
 

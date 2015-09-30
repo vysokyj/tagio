@@ -21,7 +21,8 @@ var config = {
     id3v1Save: false,
     id3v2Save: true,
     id3v2Version: 4,
-    id3v2Encoding: tagio.Encoding.UTF8
+    id3v2Encoding: tagio.Encoding.UTF8,
+    id3v2UseFrameEncoding: false
 };
 
 describe("MPEG", function() {
@@ -172,7 +173,6 @@ describe("MPEG", function() {
                     id: frame.id,
                     description: frame.title,
                     language: "CZE",
-                    textEncoding: "UTF8",
                     text: "Some text"
                 });
             } else {

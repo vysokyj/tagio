@@ -35,6 +35,7 @@ var config = {
 
 * **id3v2Save** - TagLib will save ID3v2 tag if possible
 * **id3v2Version** - Used tag version. Possible values are 3 and 4.
-* **id3v2Encoding** - Text encoding
+* **id3v2Encoding** - Global text encoding
+* **id3v2UseFrameEncoding** - Text encoding is set from frame input data - global text encoding ignored
 
 
