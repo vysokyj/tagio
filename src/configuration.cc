@@ -34,28 +34,32 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.id3v2Encoding = o.GetEncoding("id3v2Encoding");
 }
 
-inline Configuration::BinaryDataMethodEnum Configuration::StringToBinaryDataMethod(TagLib::String string) {
+inline TagIO::BinaryDataMethod Configuration::StringToBinaryDataMethod(TagLib::String string) {
     Configuration &conf = Configuration::Get();
     std::string s = string.to8Bit(true);
     if (s.compare("IGNORE") == 0)
-        return Configuration::BinaryDataMethodEnum::IGNORE;
-    if (s.compare("FILENAME") == 0)
-        return Configuration::BinaryDataMethodEnum::FILENAME;
-    if (s.compare("ABSOLUTE_URL") == 0)
-        return Configuration::BinaryDataMethodEnum::ABSOLUTE_URL;
-    if (s.compare("PREFIXED_URL") == 0)
-        return Configuration::BinaryDataMethodEnum::PREFIXED_URL;
+        return TagIO::BinaryDataMethod::IGNORE;
+    else if (s.compare("FILENAME") == 0)
+        return TagIO::BinaryDataMethod::FILENAME;
+    else if (s.compare("ABSOLUTE_URL") == 0)
+        return TagIO::BinaryDataMethod::ABSOLUTE_URL;
+    else if (s.compare("PREFIXED_URL") == 0)
+        return TagIO::BinaryDataMethod::PREFIXED_URL;
+    else
+        return TagIO::BinaryDataMethod::IGNORE;
 }
 
-inline TagLib::String Configuration::BinaryDataMethodToString(Configuration::BinaryDataMethodEnum method) {
+inline TagLib::String Configuration::BinaryDataMethodToString(TagIO::BinaryDataMethod method) {
     switch(method) {
-        case BinaryDataMethodEnum::IGNORE:
+        case TagIO::BinaryDataMethod::IGNORE:
             return "IGNORE";
-        case BinaryDataMethodEnum::FILENAME:
+        case TagIO::BinaryDataMethod::FILENAME:
             return "FILENAME";
-        case BinaryDataMethodEnum::ABSOLUTE_URL:
+        case TagIO::BinaryDataMethod::ABSOLUTE_URL:
             return "ABSOLUTE_URL";
-        case BinaryDataMethodEnum::PREFIXED_URL:
+        case TagIO::BinaryDataMethod::PREFIXED_URL:
             return "PREFIXED_URL";
+        default:
+            return "IGNORE";
     }
 }
