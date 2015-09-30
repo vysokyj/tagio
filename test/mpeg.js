@@ -33,10 +33,10 @@ describe("MPEG", function() {
 
     before(function () {
         testDir = path.resolve(__dirname, "../build/Test");
-        sampleFile = path.resolve(__dirname, "./samples/sample.mp3");
+        sampleFile = path.resolve(__dirname, "../samples/sample.mp3");
         testFile = path.resolve(testDir, "test.mp3");
-        testJPEG = "file://" +  path.resolve(__dirname, "./samples/sample.jpg");
-        testTEXT = "file://" +  path.resolve(__dirname, "./samples/sample.txt");
+        testJPEG = "file://" +  path.resolve(__dirname, "../samples/sample.jpg");
+        testTEXT = "file://" +  path.resolve(__dirname, "../samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
         fs.writeFileSync(testFile, fs.readFileSync(sampleFile));
     });
