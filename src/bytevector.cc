@@ -23,9 +23,10 @@ TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
 }
 
 TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
-    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::IGNORE)
+    Configuration &cfg = Configuration::Get();
+    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::IGNORE)
         return TagLib::String("IGNORED");
-    string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
+    string binaryDataDirectory(cfg.BinaryDataDirectory());
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
     string filePath = NewPath(binaryDataDirectory, fileName);
     TagLib::String filePathString = PathToString(filePath, fileName);
@@ -86,22 +87,24 @@ std::string ByteVector::NewRelativeUrl(std::string relativeUrl, std::string file
 }
 
 std::string ByteVector::PathToString(std::string filePath, std::string fileName) {
+    Configuration &cfg = Configuration::Get();
     string retval = fileName;
-    string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
-    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL)
+    string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
+    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL)
         retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
-    else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+    else if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
         retval = NewAbsoluteUrl(filePath);
     return retval;
 }
 
 std::string ByteVector::StringToPath(std::string str) {
+    Configuration &cfg = Configuration::Get();
     string filePrefix = "file://";
-    string binaryDataUrlPrefix(Configuration::Get().GetBinaryDataUrlPrefix());
-    string binaryDataDirectory(Configuration::Get().GetBinaryDataDirectory());
-    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL) {
+    string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
+    string binaryDataDirectory(cfg.BinaryDataDirectory());
+    if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::PREFIXED_URL) {
         return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
-    } else if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL) {
+    } else if (cfg.BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL) {
         return NormalizePath(str.substr(filePrefix.length()));
     } else {
         return NewPath(binaryDataDirectory, str);

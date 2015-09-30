@@ -87,12 +87,12 @@ void MPEG::Save(const FunctionCallbackInfo<Value>& args) {
     int AllTags = 0xffff;
     int tags = NoTags;
     MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
-    if (cfg.GetID3V1Save())  tags = tags | ID3v1;
-    if (cfg.GetID3V2Save())  tags = tags | ID3v2;
-    if (cfg.GetAPESave())    tags = tags | APE;
-    if (cfg.GetID3V1Save() && cfg.GetID3V2Save() && cfg.GetAPESave()) tags = AllTags;
+    if (cfg.ID3V1Save())  tags = tags | ID3v1;
+    if (cfg.ID3V2Save())  tags = tags | ID3v2;
+    if (cfg.APESave())    tags = tags | APE;
+    if (cfg.ID3V1Save() && cfg.ID3V2Save() && cfg.APESave()) tags = AllTags;
     bool stripOthers = true;
-    uint32_t id3v2Version = cfg.GetID3V2Version();
+    uint32_t id3v2Version = cfg.ID3V2Version();
     bool duplicateTags = true;
     bool result = mpeg->file->save(tags, stripOthers, id3v2Version, duplicateTags);
     args.GetReturnValue().Set(Boolean::New(isolate, result));
@@ -102,7 +102,7 @@ void MPEG::GetPath(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<MPEG>(args.Holder());
     string path = ref->GetFilePath();
-    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+    if (Configuration::Get().BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
         path = "file://" + path;
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }

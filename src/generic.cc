@@ -40,7 +40,7 @@ void GENERIC::Init(Handle<Object> exports) {
 
 void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
+    //HandleScope scope(isolate);
 
     if (args.Length() < 2) {
         isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
@@ -83,7 +83,7 @@ void GENERIC::GetPath(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
     string path = ref->GetFilePath();
-    if (Configuration::Get().GetBinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
+    if (Configuration::Get().BinaryDataMethod() == Configuration::BinaryDataMethod::ABSOLUTE_URL)
         path = "file://" + path;
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }

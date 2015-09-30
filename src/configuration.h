@@ -24,14 +24,14 @@ namespace TagIO {
         static void Set(v8::Isolate *isolate, v8::Object *object);
 
         // Accessor methods
-        BinaryDataMethod GetBinaryDataMethod()   { return binaryDataMethod; }
-        const char *GetBinaryDataDirectory()     { return binaryDataDirectory.c_str(); }
-        const char *GetBinaryDataUrlPrefix()     { return binaryDataUrlPrefix.c_str(); }
-        bool                 GetAPESave()        { return apeSave; }
-        bool                 GetID3V1Save()      { return id3v1Save; }
-        bool                 GetID3V2Save()      { return id3v2Save; }
-        uint32_t             GetID3V2Version()   { return id3v2Version; }
-        TagLib::String::Type GetID3V2Encoding()  { return id3v2Encoding; }
+        BinaryDataMethod BinaryDataMethod()   { return binaryDataMethod; }
+        const char *BinaryDataDirectory()     { return binaryDataDirectory.c_str(); }
+        const char *BinaryDataUrlPrefix()     { return binaryDataUrlPrefix.c_str(); }
+        bool                 APESave()        { return apeSave; }
+        bool                 ID3V1Save()      { return id3v1Save; }
+        bool                 ID3V2Save()      { return id3v2Save; }
+        uint32_t             ID3V2Version()   { return id3v2Version; }
+        TagLib::String::Type ID3V2Encoding()  { return id3v2Encoding; }
 
 
     protected:
