@@ -2,6 +2,7 @@
 #include "configuration.h"
 #include "audioproperties.h"
 #include "tag.h"
+#include "id3v1tag.h"
 #include "id3v2tag.h"
 
 using namespace TagIO;
@@ -36,6 +37,8 @@ void MPEG::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
     // MPEG API
     NODE_SET_PROTOTYPE_METHOD(tpl, "getIncludedTags", GetIncludedTags);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v1Tag", GetID3v1Tag);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setID3v1Tag", SetID3v1Tag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v2Tag", GetID3v2Tag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setID3v2Tag", SetID3v2Tag);
 
@@ -159,6 +162,27 @@ void MPEG::GetIncludedTags(const FunctionCallbackInfo<Value>& args) {
         array->Set(i, String::NewFromUtf8(isolate, "APE"));
     }
     args.GetReturnValue().Set(array);
+}
+
+void MPEG::GetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    if (!mpeg->file->hasID3v1Tag()) return;
+    TagLib::ID3v1::Tag *tag = mpeg->file->ID3v1Tag(false);
+    Local<Object> object = ID3v1Tag::New(isolate, tag);
+    args.GetReturnValue().Set(object);
+}
+
+void MPEG::SetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
+    if (args.Length() != 1 || !args[0]->IsArray()) return;
+    Isolate *isolate = Isolate::GetCurrent();
+    MPEG *mpeg = ObjectWrap::Unwrap<MPEG>(args.Holder());
+    TagLib::ID3v1::Tag *tag = mpeg->file->ID3v1Tag(true);
+    Local<Object> object1 = Local<Object>::Cast(args[0]);
+    ID3v1Tag::Set(isolate, *object1, tag);
+    // return tag
+    Local<Object> object2 = ID3v1Tag::New(isolate, tag);
+    args.GetReturnValue().Set(object2);
 }
 
 void MPEG::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {

@@ -12,7 +12,6 @@ var timestampFrames = [
    "TDTG"
 ];
 
-
 var config = {
     binaryDataDirectory: "/tmp",
     binaryDataUrlPrefix: "/attachments",
@@ -71,7 +70,7 @@ describe("MPEG", function() {
         mp3.setTag(tag);
         mp3.save();
         mp3 = tagio.open(testFile, config);
-        //mp3.log();
+        mp3.log();
         assert.equal(JSON.stringify(mp3.getTag()), JSON.stringify(tag));
         done();
     });

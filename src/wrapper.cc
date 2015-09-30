@@ -67,7 +67,7 @@ TagLib::String Wrapper::GetString(const char *key) {
         String::Utf8Value value(object->Get(keyString));
         return TagLib::String(*value, TagLib::String::UTF8);
     } else {
-        return TagLib::String("", TagLib::String::UTF8);
+        return TagLib::String::null;
     }
 }
 
