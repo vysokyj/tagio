@@ -7,6 +7,7 @@ var config = {
   binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
   apeSave: false,
   id3v1Save: false,
+  id3v1Encoding: tagio.Encoding.UTF8,
   id3v2Save: true,
   id3v2Version: 4,
   id3v2Encoding: tagio.Encoding.UTF8,
@@ -31,12 +32,13 @@ var config = {
 #### ID3v1 Tag
 
 * **id3v1Save** - TagLib will save ID3v1 tag if possible
+* **id3v2Encoding** - Text encoding used for read and save
 
 #### ID3v2 Tag
 
 * **id3v2Save** - TagLib will save ID3v2 tag if possible
 * **id3v2Version** - Used tag version. Possible values are 3 and 4.
-* **id3v2Encoding** - Global text encoding
-* **id3v2UseFrameEncoding** - Text encoding is set from frame input data - global text encoding ignored
+* **id3v2Encoding** - Text encoding used for read and save
+* **id3v2UseFrameEncoding** - Text encoding is set from each frame input data field named textEncoding - id3v2Encoding ignored
 
 

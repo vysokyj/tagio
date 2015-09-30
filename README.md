@@ -9,7 +9,7 @@ Advanced TagLib wrapper for Node.JS
 | *Format*   | *Status*         |
 | ---------- | ---------------- |
 | Generic    | done             |
-| MP3        | generic, ID3v2   |
+| MP3        | ID3v1, ID3v2     |
 | MPC        | not started      |
 | FLAC       | not started      |
 | MP4        | not started      |
@@ -28,7 +28,7 @@ Advanced TagLib wrapper for Node.JS
 
 * Mac or Linux OS
 * Installed cmake
-* Installed taglib
+* Installed taglib - tested with version 1.9.1
 
 ## Documentation
 
