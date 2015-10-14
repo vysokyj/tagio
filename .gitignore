@@ -27,6 +27,10 @@
 *.out
 *.app
 
+
+.DS_Store
+.idea
+
 TagIO.xcodeproj/*
 node_modules/*
 build/*
