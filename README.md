@@ -27,7 +27,7 @@ Advanced TagLib wrapper for Node.JS
 ## Prerequisites
 
 * Mac or Linux OS
-* Installed cmake
+* Installed cmake 2.8 or above
 * Installed taglib - tested with version 1.9.1
 
 ## Documentation
