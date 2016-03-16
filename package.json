@@ -14,10 +14,6 @@
     "mp3",
     "mpeg"
   ],
-  "os": [
-    "darwin",
-    "linux"
-  ],
   "main": "./lib/index.js",
   "author": "Jiri Vysoky <jiri.vysoky@gmail.com> (http://jiri.vysoky.name/)",
   "license": "GPL-3.0",
@@ -27,8 +23,8 @@
     "install": "./node_modules/.bin/cmake-js rebuild"
   },
   "devDependencies": {
-    "chai": "^3.2.0",
-    "cmake-js": "^0.12.2",
-    "mocha": "^2.3.2"
+    "chai": "^3.5.0",
+    "cmake-js": "^3.1.2",
+    "mocha": "^2.4.5"
   }
 }

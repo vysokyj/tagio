@@ -1,8 +1,7 @@
 #ifndef TAGIO_CONFIGURATION_H
 #define TAGIO_CONFIGURATION_H
 
-#include <node/node.h>
-#include <v8.h>
+#include <node.h>
 #include <string>
 #include <taglib/tstring.h>
 
