@@ -3,7 +3,7 @@
 
 
 #include <string>
-#include <node/node.h>
+#include <node.h>
 #include <taglib/tlist.h>
 #include <taglib/tstring.h>
 #include <taglib/tbytevector.h>

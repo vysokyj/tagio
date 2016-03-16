@@ -1,7 +1,7 @@
 #ifndef TAGIO_APETAG_H
 #define TAGIO_APETAG_H
 
-#include <node/node.h>
+#include <node.h>
 #include <taglib/apetag.h>
 
 namespace TagIO {

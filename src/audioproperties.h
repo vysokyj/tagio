@@ -1,7 +1,7 @@
 #ifndef TAGIO_AUDIOPROPERTIES_H
 #define TAGIO_AUDIOPROPERTIES_H
 
-#include <node/node.h>
+#include <node.h>
 #include <taglib/audioproperties.h>
 
 namespace TagIO {

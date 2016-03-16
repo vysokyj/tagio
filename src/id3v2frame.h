@@ -2,7 +2,7 @@
 #define TAGIO_ID3V2FRAME_H
 
 #include "wrapper.h"
-#include <node/node.h>
+#include <node.h>
 #include <taglib/id3v2frame.h>
 
 namespace TagIO {

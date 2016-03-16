@@ -1,7 +1,7 @@
 #ifndef TAGIO_TAG_H
 #define TAGIO_TAG_H
 
-#include <node/node.h>
+#include <node.h>
 #include <taglib/tag.h>
 
 namespace TagIO {

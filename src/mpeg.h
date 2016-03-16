@@ -1,8 +1,8 @@
 #ifndef TAGIO_MPEG_H
 #define TAGIO_MPEG_H
 
-#include <node/node.h>
-#include <node/node_object_wrap.h>
+#include <node.h>
+#include <node_object_wrap.h>
 
 #include <string>
 #include <iostream>
