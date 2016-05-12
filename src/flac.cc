@@ -183,6 +183,7 @@ void FLAC::GetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
     args.GetReturnValue().Set(object);
 }
 
+//TODO: SetID3v1Tag not working
 void FLAC::SetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
     Isolate *isolate = Isolate::GetCurrent();
     FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
@@ -203,6 +204,7 @@ void FLAC::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(array);
 }
 
+//TODO: SetID3v2Tag not working
 void FLAC::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
     if (args.Length() != 1 || !args[0]->IsArray()) return;
     Isolate *isolate = Isolate::GetCurrent();
