@@ -92,12 +92,26 @@ describe("FLAC", function() {
             id3v2Version: 3,
             id3v2Encoding: tagio.Encoding.UTF16
         };
-        //TODO: Save tag
+
+        var tag = [
+            {"key": "ALBUM", "values": ["My another album"]},
+            {"key": "ARTIST","values": ["My another artist"]},
+            {"key": "COMMENT","values": ["Comment"]}
+        ];
 
         var flac = tagio.open(testFile, config);
+        assert.equal(flac.getPath(), "file://" + testFile);
+        flac.setXiphComment(tag);
+        flac.save();
+
         flac = tagio.open(testFile, config);
-        flac.log();
-        //assert.equal(JSON.stringify(flac.getID3v1Tag()), JSON.stringify(tag));
+        var byKey = function(a, b) { a.key.localeCompare(b.key); };
+        var actual = flac.getXiphComment().sort(byKey);
+        var expected = tag.sort(byKey);
+        console.log(actual);
+        console.log(expected);
+        //flac.log();
+        assert.equal(JSON.stringify(actual), JSON.stringify(expected));
         done();
     });
 

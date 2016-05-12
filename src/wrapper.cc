@@ -1,9 +1,6 @@
 #include "wrapper.h"
 #include "bytevector.h"
 
-#include <sstream>
-#include "util.h"
-
 using namespace TagIO;
 using namespace v8;
 using namespace std;
@@ -80,25 +77,25 @@ void Wrapper::SetString(const char *key, TagLib::String value) {
 
 TagLib::StringList Wrapper::GetStringList(const char *key) {
     Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
-    TagLib::StringList value;
+    Local<Array> array = Local<Array>::Cast(object->Get(keyString));
+    TagLib::StringList list;
+    //cout << "LENGTH" << array->Length() << endl;
     if (object->Has(keyString)) {
-        String::Utf8Value rawValue(object->Get(keyString));
-        string s = string(*rawValue);
-        vector<string> lines = TagIO::Util::split(s, '\n');
-        for (auto const& line: lines)
-            value.append(TagLib::String(line, TagLib::String::UTF8));
-        return value;
-    } else {
-        return value;
+       for (uint32_t i = 0; i < array->Length(); i++) {
+           String::Utf8Value value(array->Get(i)->ToString());
+           TagLib::String string(*value, TagLib::String::UTF8);
+           list.append(string);
+       }
     }
+    return list;
 }
 
 void Wrapper::SetStringList(const char *key, TagLib::StringList value) {
-    stringstream ss;
-    for (uint32_t i = 0; i < value.size(); i++)
-        ss << value[i].toCString(true) << '\n';
-    const char* s = ss.str().c_str();
-    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, s));
+    Local<Array> array = Array::New(isolate, value.size());
+    for (uint32_t i = 0; i < value.size(); i++) {
+        array->Set(i, String::NewFromUtf8(isolate, value[i].toCString(true)));
+    }
+    object->Set(String::NewFromUtf8(isolate, key), array);
 }
 
 TagLib::ByteVector Wrapper::GetBytes(const char *key) {

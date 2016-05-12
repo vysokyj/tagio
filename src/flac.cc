@@ -167,7 +167,7 @@ void FLAC::SetXiphComment(const FunctionCallbackInfo<Value> &args) {
     Isolate *isolate = Isolate::GetCurrent();
     FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
     TagLib::Ogg::XiphComment *tag = flac->file->xiphComment(true);
-    Local<Object> object1 = Local<Object>::Cast(args[0]);
+    Local<Array> object1 = Local<Array>::Cast(args[0]);
     XiphComment::Set(isolate, *object1, tag);
     // return tag
     Local<Object> object2 = XiphComment::New(isolate, tag);
