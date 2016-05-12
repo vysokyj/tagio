@@ -7,6 +7,7 @@
 namespace TagIO {
 
     class XiphComment {
+        static void Clear(TagLib::Ogg::XiphComment *tag);
     public:
         static v8::Local<v8::Array> New(v8::Isolate *isolate, TagLib::Ogg::XiphComment *tag);
         static void Set(v8::Isolate *isolate, v8::Array *array, TagLib::Ogg::XiphComment *tag);

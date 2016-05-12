@@ -25,12 +25,25 @@ Local<Array> XiphComment::New(Isolate *isolate, TagLib::Ogg::XiphComment *tag) {
 
 void XiphComment::Set(Isolate *isolate, Array *array, TagLib::Ogg::XiphComment *tag) {
     //tag->removeAllFields(); // in new version
-    //Clear();
+    Clear(tag);
+    TagLib::Ogg::FieldListMap map = tag->fieldListMap();
+    map.clear();
     for (unsigned int i = 0; i < array->Length(); i++) {
         Local<Object> object = array->Get(i)->ToObject();
         Wrapper o(isolate, *object);
         TagLib::StringList values = o.GetStringList("values");
         for (uint32_t i = 0; i < values.size(); i++)
             tag->addField(o.GetString("key"), values[i]);
+    }
+}
+
+void XiphComment::Clear(TagLib::Ogg::XiphComment *tag) {
+    TagLib::Ogg::FieldListMap map = tag->fieldListMap();
+    for (auto it = map.begin(); it != map.end(); it++) {
+        TagLib::String key = it->first;
+        TagLib::StringList values = it->second;
+        for( auto const& value: values) {
+            tag->removeField(key, value);
+        }
     }
 }
