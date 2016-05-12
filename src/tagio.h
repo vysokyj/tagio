@@ -4,6 +4,6 @@
 #include <node.h>
 #include "generic.h"
 #include "mpeg.h"
-
+#include "flac.h"
 
 #endif //TAGIO_TAGIO_H
