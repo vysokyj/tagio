@@ -7,18 +7,28 @@ using namespace v8;
 using namespace std;
 
 Local<Array> XiphComment::New(Isolate *isolate, TagLib::Ogg::XiphComment *tag) {
+    uint32_t i = 0;
+    uint32_t c = 0;
     EscapableHandleScope handleScope(isolate);
     TagLib::Ogg::FieldListMap map = tag->fieldListMap();
-    Local<Array> array = Array::New(isolate, map.size());
-    int i = 0;
+    // count items
+    for (auto it = map.begin(); it != map.end(); it++) {
+        TagLib::StringList values = it->second;
+        c += values.size();
+    }
+
+    Local<Array> array = Array::New(isolate, c);
+
     for (auto it = map.begin(); it != map.end(); it++) {
         TagLib::String key = it->first;
         TagLib::StringList values = it->second;
-        Local<Object> object = Object::New(isolate);
-        Wrapper o(isolate, *object);
-        o.SetString("key", key);
-        o.SetStringList("values", values);
-        array->Set(i++, object);
+        for (auto const& value: values) {
+            Local<Object> object = Object::New(isolate);
+            Wrapper o(isolate, *object);
+            o.SetString("key", key);
+            o.SetString("value", value);
+            array->Set(i++, object);
+        }
     }
     return handleScope.Escape(array);
 }
@@ -31,9 +41,7 @@ void XiphComment::Set(Isolate *isolate, Array *array, TagLib::Ogg::XiphComment *
     for (unsigned int i = 0; i < array->Length(); i++) {
         Local<Object> object = array->Get(i)->ToObject();
         Wrapper o(isolate, *object);
-        TagLib::StringList values = o.GetStringList("values");
-        for (uint32_t i = 0; i < values.size(); i++)
-            tag->addField(o.GetString("key"), values[i]);
+        tag->addField(o.GetString("key"), o.GetString("value"));
     }
 }
 
@@ -42,8 +50,7 @@ void XiphComment::Clear(TagLib::Ogg::XiphComment *tag) {
     for (auto it = map.begin(); it != map.end(); it++) {
         TagLib::String key = it->first;
         TagLib::StringList values = it->second;
-        for( auto const& value: values) {
+        for (auto const& value: values)
             tag->removeField(key, value);
-        }
     }
 }

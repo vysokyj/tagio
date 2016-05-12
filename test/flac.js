@@ -94,9 +94,9 @@ describe("FLAC", function() {
         };
 
         var tag = [
-            {"key": "ALBUM", "values": ["My another album"]},
-            {"key": "ARTIST","values": ["My another artist"]},
-            {"key": "COMMENT","values": ["Comment"]}
+            {"key": "ALBUM", "value": "My another album"},
+            {"key": "ARTIST", "value": "My another artist"},
+            {"key": "COMMENT", "value": "Comment"}
         ];
 
         var flac = tagio.open(testFile, config);
