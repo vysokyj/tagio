@@ -3,7 +3,6 @@
 #include "audioproperties.h"
 #include "tag.h"
 #include "apetag.h"
-#include "apetag.h"
 #include "id3v1tag.h"
 #include "id3v2tag.h"
 
