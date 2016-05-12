@@ -23,14 +23,10 @@ Advanced TagLib wrapper for Node.JS
 | Speex      | not started      |
 | Opus       | not started      |
 
-
 ## Prerequisites
 
 * Installed C++ compiler (GCC, CLANG)
 * Installed cmake (version 2.8 or above)
-
-Uses system installed taglib library and headers.
-Ensure that taglib library (e.g. libtag.so) and headers are accessible for compiler.
 
 ## Documentation
 

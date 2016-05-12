@@ -5,10 +5,10 @@
 TagIO.xcodeproj/*
 node_modules/*
 build/*
+taglib/*
 .codelite/*
 *.project
 *.workspace
 
 example/input.mp3
 example/output.mp3
-
