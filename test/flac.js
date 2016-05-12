@@ -94,9 +94,9 @@ describe("FLAC", function() {
         };
 
         var tag = [
-            {"key": "ALBUM", "value": "My another album"},
-            {"key": "ARTIST", "value": "My another artist"},
-            {"key": "COMMENT", "value": "Comment"}
+            {"id": "ALBUM", "text": "My another album"},
+            {"id": "ARTIST", "text": "My another artist"},
+            {"id": "COMMENT", "text": "Comment"}
         ];
 
         var flac = tagio.open(testFile, config);
@@ -105,7 +105,7 @@ describe("FLAC", function() {
         flac.save();
 
         flac = tagio.open(testFile, config);
-        var byKey = function(a, b) { a.key.localeCompare(b.key); };
+        var byKey = function(a, b) { a.id.localeCompare(b.id) };
         var actual = flac.getXiphComment().sort(byKey);
         var expected = tag.sort(byKey);
         //flac.log();

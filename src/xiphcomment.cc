@@ -25,8 +25,8 @@ Local<Array> XiphComment::New(Isolate *isolate, TagLib::Ogg::XiphComment *tag) {
         for (auto const& value: values) {
             Local<Object> object = Object::New(isolate);
             Wrapper o(isolate, *object);
-            o.SetString("key", key);
-            o.SetString("value", value);
+            o.SetString("id", key);
+            o.SetString("text", value);
             array->Set(i++, object);
         }
     }
@@ -41,7 +41,7 @@ void XiphComment::Set(Isolate *isolate, Array *array, TagLib::Ogg::XiphComment *
     for (unsigned int i = 0; i < array->Length(); i++) {
         Local<Object> object = array->Get(i)->ToObject();
         Wrapper o(isolate, *object);
-        tag->addField(o.GetString("key"), o.GetString("value"));
+        tag->addField(o.GetString("id"), o.GetString("text"));
     }
 }
 
