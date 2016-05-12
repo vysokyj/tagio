@@ -6,6 +6,7 @@
 #include <node.h>
 #include <taglib/tlist.h>
 #include <taglib/tstring.h>
+#include <taglib/tstringlist.h>
 #include <taglib/tbytevector.h>
 #include "md5.h"
 
@@ -27,6 +28,8 @@ namespace TagIO {
         void SetUint32(const char *key, const TagLib::uint value);
         TagLib::String GetString(const char *key);
         void SetString(const char *key, const TagLib::String value);
+        TagLib::StringList GetStringList(const char *key);
+        void SetStringList(const char *key, const TagLib::StringList value);
 //        TagLib::List<TagLib::String> GetStringArray(const char *key);
 //        void SetStringArray(const char *key, const TagLib::List<TagLib::String>);
         TagLib::ByteVector GetBytes(const char *key);

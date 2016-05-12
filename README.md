@@ -11,7 +11,7 @@ Advanced TagLib wrapper for Node.JS
 | Generic    | done             |
 | MP3        | ID3v1, ID3v2     |
 | MPC        | not started      |
-| FLAC       | not started      |
+| FLAC       | ID3v1, ID3v2     |
 | MP4        | not started      |
 | ASF        | not started      |
 | AIFF       | not started      |

@@ -2,6 +2,9 @@
 #include "configuration.h"
 #include "audioproperties.h"
 #include "tag.h"
+#include "xiphcomment.h"
+#include "id3v1tag.h"
+#include "id3v2tag.h"
 
 using namespace TagIO;
 using namespace v8;
@@ -34,6 +37,13 @@ void FLAC::Init(Handle<Object> exports) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
     // FLAC API
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getIncludedTags", GetIncludedTags);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getXiphComment", GetXiphComment);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setXiphComment", SetXiphComment);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v1Tag", GetID3v1Tag);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setID3v1Tag", SetID3v1Tag);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getID3v2Tag", GetID3v2Tag);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "setID3v2Tag", SetID3v2Tag);
 
     constructor.Reset(isolate, tpl->GetFunction());
     exports->Set(String::NewFromUtf8(isolate, "FLAC"), tpl->GetFunction());
@@ -116,3 +126,91 @@ void FLAC::SetTag(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 //----------------------------------------------------------------------------------------------------------------------
 // FLAC API
+
+void FLAC::GetIncludedTags(const FunctionCallbackInfo<Value>& args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    int c = 0;
+    uint32_t i = 0;
+
+    if (flac->file->hasXiphComment()) c++;
+    if (flac->file->hasID3v1Tag()) c++;
+    if (flac->file->hasID3v2Tag()) c++;
+
+    Local<Array> array = Array::New(isolate, c);
+    if (flac->file->hasXiphComment()) {
+        array->Set(i++, String::NewFromUtf8(isolate, "xiphComment"));
+    }
+    if (flac->file->hasID3v1Tag()) {
+        array->Set(i++, String::NewFromUtf8(isolate, "ID3v1"));
+    }
+    if (flac->file->hasID3v2Tag()) {
+        TagLib::ID3v2::Tag *tag = flac->file->ID3v2Tag(false);
+        string str = "ID3v2";
+        str = str + "." + to_string(tag->header()->majorVersion());
+        str = str + "." + to_string(tag->header()->revisionNumber());
+        array->Set(i++, String::NewFromUtf8(isolate, str.c_str()));
+    }
+    args.GetReturnValue().Set(array);
+}
+
+void FLAC::GetXiphComment(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    if (!flac->file->hasXiphComment()) return;
+    TagLib::Ogg::XiphComment *tag = flac->file->xiphComment(false);
+    Local<Object> object = XiphComment::New(isolate, tag);
+    args.GetReturnValue().Set(object);
+}
+
+void FLAC::SetXiphComment(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    TagLib::Ogg::XiphComment *tag = flac->file->xiphComment(true);
+    Local<Object> object1 = Local<Object>::Cast(args[0]);
+    XiphComment::Set(isolate, *object1, tag);
+    // return tag
+    Local<Object> object2 = XiphComment::New(isolate, tag);
+    args.GetReturnValue().Set(object2);
+}
+
+void FLAC::GetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    if (!flac->file->hasID3v1Tag()) return;
+    TagLib::ID3v1::Tag *tag = flac->file->ID3v1Tag(false);
+    Local<Object> object = ID3v1Tag::New(isolate, tag);
+    args.GetReturnValue().Set(object);
+}
+
+void FLAC::SetID3v1Tag(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    TagLib::ID3v1::Tag *tag = flac->file->ID3v1Tag(true);
+    Local<Object> object1 = Local<Object>::Cast(args[0]);
+    ID3v1Tag::Set(isolate, *object1, tag);
+    // return tag
+    Local<Object> object2 = ID3v1Tag::New(isolate, tag);
+    args.GetReturnValue().Set(object2);
+}
+
+void FLAC::GetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    if (!flac->file->hasID3v2Tag()) return;
+    TagLib::ID3v2::Tag *tag = flac->file->ID3v2Tag(false);
+    Local<Array> array = ID3v2Tag::New(isolate, tag);
+    args.GetReturnValue().Set(array);
+}
+
+void FLAC::SetID3v2Tag(const FunctionCallbackInfo<Value>& args) {
+    if (args.Length() != 1 || !args[0]->IsArray()) return;
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    TagLib::ID3v2::Tag *tag = flac->file->ID3v2Tag(true);
+    Local<Array> frames = Local<Array>::Cast(args[0]);
+    ID3v2Tag::Set(isolate, *frames, tag);
+    // return frames
+    Local<Array> array = ID3v2Tag::New(isolate, tag);
+    args.GetReturnValue().Set(array);
+}
