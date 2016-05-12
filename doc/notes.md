@@ -1,6 +1,6 @@
 # Development notes
 
-#### Trace errors
+## Trace errors
 
 ```bash
 nm -C build/Release/tagio.node

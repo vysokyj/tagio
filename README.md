@@ -25,20 +25,20 @@ Advanced TagLib wrapper for Node.JS
 
 ## Prerequisites
 
-* Installed C++ compiler (GCC, CLANG)
-* Installed cmake (version 2.8 or above)
+*   Installed C++ compiler (GCC, CLANG)
+*   Installed cmake (version 2.8 or above)
 
 ## Documentation
 
 ### General Usage Information
 
-* [Configuration Format](./doc/config.md)
-* [Generic Interface](./doc/generic.md)
-* [MPEG (MP3) File Interface](./doc/mpeg.md)
+*   [Configuration Format](./doc/config.md)
+*   [Generic Interface](./doc/generic.md)
+*   [MPEG (MP3) File Interface](./doc/mpeg.md)
 
 ### Other
 
-* [Development Notes](./doc/notes.md)
+*   [Development Notes](./doc/notes.md)
 
 ## Copyright
 
