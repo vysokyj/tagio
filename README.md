@@ -32,14 +32,15 @@ Advanced TagLib wrapper for Node.JS
 * Installed cmake (version 2.8 or above)
 * Installed taglib 1.9.1 or above
 
-Compiled against an installed taglib library.
+Uses system installed taglib library and headers.
+Ensure that taglib library (e.g. libtag.so) and headers are accessible for compiler.
 
 ### Windows
 
 * Installed C++ compiler (GCC, CLANG)
 * Installed cmake (version 2.8 or above)
 
-Pre-compiled Windows version of the Taglib library is included.
+Uses pre-compiled taglib 1.9.1 library and headers.
 
 ## Documentation
 
