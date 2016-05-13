@@ -8,6 +8,12 @@ include(ExternalProject)
 # Configure variables
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MACOSX_RPATH 0)
+# Sanitise IDE suport - CMAKE_JS_INC is defined by cmake-js itself
+if(NOT DEFINED CMAKE_JS_INC)
+    set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v5.11.1/include/node")
+    message(WARNING "CMAKE_JS_INC not defined!")
+endif()
+
 
 # Download and make TagLib
 ExternalProject_Add(

@@ -1,6 +1,5 @@
 #include "xiphcomment.h"
 #include "wrapper.h"
-#include "configuration.h"
 
 using namespace TagIO;
 using namespace v8;

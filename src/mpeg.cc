@@ -159,9 +159,9 @@ void MPEG::GetIncludedTags(const FunctionCallbackInfo<Value>& args) {
     }
     if (mpeg->file->hasID3v2Tag()) {
         TagLib::ID3v2::Tag *tag = mpeg->file->ID3v2Tag(false);
-        string str = "ID3v2";
-        str = str + "." + to_string(tag->header()->majorVersion());
-        str = str + "." + to_string(tag->header()->revisionNumber());
+        string maj = to_string(tag->header()->majorVersion());
+        string min = to_string(tag->header()->revisionNumber());
+        string str = "ID3v2." + maj + "." + min;
         array->Set(i++, String::NewFromUtf8(isolate, str.c_str()));
     }
     if (mpeg->file->hasAPETag()) {

@@ -4,30 +4,30 @@ Advanced TagLib wrapper for Node.JS
 
 ## Status
 
-**This module is under hard development!**
+**Added Windows support!**
 
-| *Format*   | *Status*         |
-| ---------- | ---------------- |
-| Generic    | done             |
-| MP3        | ID3v1,ID3v2      |
-| MPC        | not started      |
-| FLAC       | XIPH,ID3v1,ID3v2 |
-| MP4        | not started      |
-| ASF        | not started      |
-| AIFF       | not started      |
-| WAV        | not started      |
-| TrueAudio  | not started      |
-| WavPack    | not started      |
-| Ogg FLAC   | not started      |
-| Ogg Vorbis | not started      |
-| Speex      | not started      |
-| Opus       | not started      |
+| *Format*   | *Status - supported tags*         |
+| ---------- | -------------------------------- |
+| MP3        | generic, ID3v1, ID3v2            |
+| MPC        | generic                          |
+| FLAC       | generic, XIPH, ID3v, ID3v2       |
+| MP4        | generic                          |
+| ASF        | generic                          |
+| AIFF       | generic                          |
+| WAV        | generic                          |
+| TrueAudio  | generic                          |
+| WavPack    | generic                          |
+| Ogg FLAC   | generic                          |
+| Ogg Vorbis | generic                          |
+| Speex      | generic                          |
+| Opus       | generic                          |
 
 ## Prerequisites
 
-*   Installed C++ compiler (GCC, CLANG)
-*   Installed cmake (version 2.8 or above)
-
+*   Installed C++ compiler supporting C++11 (GCC, CLANG, MSVC)
+*   Installed [cmake](https://cmake.org/) (version 2.8 or above)
+*   Installed [cmake-js](https://www.npmjs.com/package/cmake-j)
+ 
 ## Documentation
 
 ### General Usage Information
