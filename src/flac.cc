@@ -3,6 +3,7 @@
 #include "audioproperties.h"
 #include "tag.h"
 #include "xiphcomment.h"
+#include "flacpicture.h"
 #include "id3v1tag.h"
 #include "id3v2tag.h"
 
@@ -171,6 +172,25 @@ void FLAC::SetXiphComment(const FunctionCallbackInfo<Value> &args) {
     XiphComment::Set(isolate, *object1, tag);
     // return tag
     Local<Object> object2 = XiphComment::New(isolate, tag);
+    args.GetReturnValue().Set(object2);
+}
+
+void FLAC::GetFLACPictures(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    TagLib::List<TagLib::FLAC::Picture *> tag = flac->file->pictureList();
+    Local<Object> object = FLACPictures::New(isolate, tag);
+    args.GetReturnValue().Set(object);
+}
+
+void FLAC::SetFLACPictures(const FunctionCallbackInfo<Value> &args) {
+    Isolate *isolate = Isolate::GetCurrent();
+    FLAC *flac = ObjectWrap::Unwrap<FLAC>(args.Holder());
+    TagLib::List<TagLib::FLAC::Picture *> tag = flac->file->pictureList();
+    Local<Array> object1 = Local<Array>::Cast(args[0]);
+    FLACPictures::Set(isolate, *object1, tag);
+    // return tag
+    Local<Object> object2 = FLACPictures::New(isolate, tag);
     args.GetReturnValue().Set(object2);
 }
 
