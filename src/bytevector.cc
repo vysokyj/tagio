@@ -19,7 +19,7 @@ TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
     ifs.seekg(0, ios::beg);
     ifs.read(data, length);
     ifs.close();
-    return TagLib::ByteVector(data, (uint) length);
+    return TagLib::ByteVector(data, (TagLib::uint) length);
 }
 
 TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {

@@ -51,7 +51,7 @@ void Wrapper::SetInt32(const char *key, int value) {
 TagLib::uint Wrapper::GetUint32(const char *key) {
     Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
     if (object->Has(keyString)) {
-        return (uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
+        return (TagLib::uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
     } else {
         return 0;
     }
