@@ -7,7 +7,7 @@
 
 namespace TagIO {
 
-    enum BinaryDataMethod {
+    enum class BinaryDataMethod {
         IGNORE,       // IGNORE BINARY FILES
         FILENAME,     // JSON contains just the filename -> somefile.ext
         ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
@@ -48,7 +48,7 @@ namespace TagIO {
         static TagLib::String BinaryDataMethodToString(TagIO::BinaryDataMethod binaryDataMethod);
 
         // Base configuration
-        TagIO::BinaryDataMethod binaryDataMethod = FILENAME; // how to process binary attachments and images
+        TagIO::BinaryDataMethod binaryDataMethod = TagIO::BinaryDataMethod::FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
         std::string binaryDataUrlPrefix = "";     // relative URL prefix for BinaryDataMethod::RELATIVE_URL
         bool apeSave = false;
