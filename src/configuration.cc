@@ -39,7 +39,6 @@ void Configuration::Set(Isolate *isolate, Object *object) {
 }
 
 inline TagIO::BinaryDataMethod Configuration::StringToBinaryDataMethod(TagLib::String string) {
-    Configuration &conf = Configuration::Get();
     std::string s = string.to8Bit(true);
     if (s.compare("IGNORE") == 0)
         return TagIO::BinaryDataMethod::IGNORE;
