@@ -114,5 +114,6 @@ std::string ByteVector::StringToPath(std::string str) {
 inline bool ByteVector::FileExist(const std::string &name) {
     struct stat buffer;
     return (stat (name.c_str(), &buffer) == 0);
-};
+}
+
 
