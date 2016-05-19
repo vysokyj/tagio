@@ -7,12 +7,12 @@
 
 namespace TagIO {
 
-    enum class BinaryDataMethod {
+    typedef enum eBinaryDataMethod {
         IGNORE,       // IGNORE BINARY FILES
         FILENAME,     // JSON contains just the filename -> somefile.ext
         ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
         PREFIXED_URL  // JSON contains file URL with given prefix -> /somepath/somefile.ext
-    };
+    } BinaryDataMethod;
 
     class Configuration {
     public:
