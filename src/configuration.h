@@ -7,6 +7,11 @@
 
 namespace TagIO {
 
+    const int BDM_IGNORE = 1;       // IGNORE BINARY FILES
+    const int BDM_FILENAME = 2;     // JSON contains just the filename -> somefile.ext
+    const int BDM_ABSOLUTE_URL = 3; // JSON contains compete file URL -> file://somepath/somefile.ext
+    const int BDM_PREFIXED_URL = 4; // JSON contains file URL with given prefix -> /somepath/somefile.ext
+
     class Configuration {
     public:
         static Configuration &Get() {
@@ -16,12 +21,7 @@ namespace TagIO {
         static v8::Local<v8::Object> New(v8::Isolate *isolate);
         static void Set(v8::Isolate *isolate, v8::Object *object);
 
-        enum BinaryDataMethodTypes {
-            IGNORE = 1,       // IGNORE BINARY FILES
-            FILENAME = 2,     // JSON contains just the filename -> somefile.ext
-            ABSOLUTE_URL = 3, // JSON contains compete file URL -> file://somepath/somefile.ext
-            PREFIXED_URL = 4  // JSON contains file URL with given prefix -> /somepath/somefile.ext
-        };
+
 
         // Accessor methods
         int BinaryDataMethod()   { return binaryDataMethod; }
@@ -48,9 +48,9 @@ namespace TagIO {
         static TagLib::String BinaryDataMethodToString(int binaryDataMethod);
 
         // Base configuration
-        int binaryDataMethod = BinaryDataMethodTypes::FILENAME; // how to process binary attachments and images
+        int binaryDataMethod = BDM_FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
-        std::string binaryDataUrlPrefix = "";     // relative URL prefix for BinaryDataMethod::RELATIVE_URL
+        std::string binaryDataUrlPrefix = "";     // relative URL prefix for BDM_RELATIVE_URL
         bool apeSave = false;
         bool id3v1Save = false;
         TagLib::String::Type id3v1Encoding = TagLib::String::UTF8;

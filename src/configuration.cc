@@ -41,26 +41,26 @@ void Configuration::Set(Isolate *isolate, Object *object) {
 inline int Configuration::StringToBinaryDataMethod(TagLib::String string) {
     std::string s = string.to8Bit(true);
     if (s.compare("IGNORE") == 0)
-        return Configuration::BinaryDataMethodTypes::IGNORE;
+        return BDM_IGNORE;
     else if (s.compare("FILENAME") == 0)
-        return Configuration::BinaryDataMethodTypes::FILENAME;
+        return BDM_FILENAME;
     else if (s.compare("ABSOLUTE_URL") == 0)
-        return Configuration::BinaryDataMethodTypes::ABSOLUTE_URL;
+        return BDM_ABSOLUTE_URL;
     else if (s.compare("PREFIXED_URL") == 0)
-        return Configuration::BinaryDataMethodTypes::PREFIXED_URL;
+        return BDM_PREFIXED_URL;
     else
-        return Configuration::BinaryDataMethodTypes::IGNORE;
+        return BDM_IGNORE;
 }
 
 inline TagLib::String Configuration::BinaryDataMethodToString(int method) {
     switch(method) {
-        case Configuration::BinaryDataMethodTypes::IGNORE:
+        case BDM_IGNORE:
             return "IGNORE";
-        case Configuration::BinaryDataMethodTypes::FILENAME:
+        case BDM_FILENAME:
             return "FILENAME";
-        case Configuration::BinaryDataMethodTypes::ABSOLUTE_URL:
+        case BDM_ABSOLUTE_URL:
             return "ABSOLUTE_URL";
-        case Configuration::BinaryDataMethodTypes::PREFIXED_URL:
+        case BDM_PREFIXED_URL:
             return "PREFIXED_URL";
         default:
             return "IGNORE";
