@@ -6,8 +6,16 @@ project(tagio)
 include(ExternalProject)
 
 # Configure variables
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pedantic -Wall")
-set(CMAKE_MACOSX_RPATH 0)
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pedantic -Wall")
+endif()
+
+if (APPLE)
+    set(CMAKE_MACOSX_RPATH 0)
+endif()
+
 # Sanitise IDE suport - CMAKE_JS_INC is defined by cmake-js itself
 if(NOT DEFINED CMAKE_JS_INC)
     set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v5.11.1/include/node")
