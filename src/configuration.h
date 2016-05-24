@@ -7,13 +7,6 @@
 
 namespace TagIO {
 
-    typedef enum eBinaryDataMethod {
-        IGNORE,       // IGNORE BINARY FILES
-        FILENAME,     // JSON contains just the filename -> somefile.ext
-        ABSOLUTE_URL, // JSON contains compete file URL -> file://somepath/somefile.ext
-        PREFIXED_URL  // JSON contains file URL with given prefix -> /somepath/somefile.ext
-    } BinaryDataMethod;
-
     class Configuration {
     public:
         static Configuration &Get() {
@@ -23,8 +16,15 @@ namespace TagIO {
         static v8::Local<v8::Object> New(v8::Isolate *isolate);
         static void Set(v8::Isolate *isolate, v8::Object *object);
 
+        enum BinaryDataMethodTypes {
+            IGNORE = 1,       // IGNORE BINARY FILES
+            FILENAME = 2,     // JSON contains just the filename -> somefile.ext
+            ABSOLUTE_URL = 3, // JSON contains compete file URL -> file://somepath/somefile.ext
+            PREFIXED_URL = 4  // JSON contains file URL with given prefix -> /somepath/somefile.ext
+        };
+
         // Accessor methods
-        TagIO::BinaryDataMethod BinaryDataMethod()   { return binaryDataMethod; }
+        int BinaryDataMethod()   { return binaryDataMethod; }
         const char *BinaryDataDirectory()     { return binaryDataDirectory.c_str(); }
         const char *BinaryDataUrlPrefix()     { return binaryDataUrlPrefix.c_str(); }
         bool                 APESave()        { return apeSave; }
@@ -44,11 +44,11 @@ namespace TagIO {
         void operator=(Configuration const&)  = delete;
 
         // Helper methods
-        static TagIO::BinaryDataMethod StringToBinaryDataMethod(TagLib::String string);
-        static TagLib::String BinaryDataMethodToString(TagIO::BinaryDataMethod binaryDataMethod);
+        static int StringToBinaryDataMethod(TagLib::String string);
+        static TagLib::String BinaryDataMethodToString(int binaryDataMethod);
 
         // Base configuration
-        TagIO::BinaryDataMethod binaryDataMethod = TagIO::BinaryDataMethod::FILENAME; // how to process binary attachments and images
+        int binaryDataMethod = BinaryDataMethodTypes::FILENAME; // how to process binary attachments and images
         std::string binaryDataDirectory = ".";    // default directory for exporting and importing files
         std::string binaryDataUrlPrefix = "";     // relative URL prefix for BinaryDataMethod::RELATIVE_URL
         bool apeSave = false;

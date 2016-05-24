@@ -99,7 +99,7 @@ void FLAC::GetPath(const FunctionCallbackInfo<Value>& args) {
     Isolate *isolate = Isolate::GetCurrent();
     auto *ref = ObjectWrap::Unwrap<FLAC>(args.Holder());
     string path = ref->GetFilePath();
-    if (Configuration::Get().BinaryDataMethod() == BinaryDataMethod::ABSOLUTE_URL)
+    if (Configuration::Get().BinaryDataMethod() == Configuration::BinaryDataMethodTypes::ABSOLUTE_URL)
         path = "file://" + path;
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
 }
