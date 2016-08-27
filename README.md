@@ -1,16 +1,21 @@
 # TagIO
 
+[![Build Status](https://secure.travis-ci.org/vysokyj/tagio.svg?branch=master)](http://travis-ci.org/vysokyj/tagio)
+[![Dependency Status](https://david-dm.org/vysokyj/tagio.svg)](https://david-dm.org/vysokyj/tagio)
+<span class="badge-npmversion"><a href="https://npmjs.org/package/pg" title="View this project on NPM"><img src="https://img.shields.io/npm/v/tagio.svg" alt="NPM version" /></a></span>
+<span class="badge-npmdownloads"><a href="https://npmjs.org/package/tagio" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/tagio.svg" alt="NPM downloads" /></a></span>
+
 Advanced TagLib wrapper for Node.JS
 
 ## Status
 
 **Added Windows support!**
 
-| *Format*   | *Status - supported tags*         |
+| *Format*   | *Status - supported tags*        |
 | ---------- | -------------------------------- |
 | MP3        | generic, ID3v1, ID3v2            |
 | MPC        | generic                          |
-| FLAC       | generic, XIPH, ID3v, ID3v2       |
+| FLAC       | generic, XIPH, ID3v1, ID3v2      |
 | MP4        | generic                          |
 | ASF        | generic                          |
 | AIFF       | generic                          |
@@ -27,7 +32,7 @@ Advanced TagLib wrapper for Node.JS
 *   Installed C++ compiler supporting C++11 (GCC, CLANG, MSVC)
 *   Installed [cmake](https://cmake.org/) (version 2.8 or above)
 *   Installed [cmake-js](https://www.npmjs.com/package/cmake-j)
- 
+
 ## Documentation
 
 ### General Usage Information
