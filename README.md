@@ -9,7 +9,7 @@ Advanced TagLib wrapper for Node.JS
 
 ## Status
 
-**Added Windows support!**
+**Windows build still not working. Help wanted.**
 
 | *Format*   | *Status - supported tags*        |
 | ---------- | -------------------------------- |
