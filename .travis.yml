@@ -1,0 +1,12 @@
+language: node_js
+dist: trusty
+
+env:
+  - CC=clang CXX=clang++ npm_config_clang=1
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-3.7
