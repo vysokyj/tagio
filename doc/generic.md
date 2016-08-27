@@ -8,6 +8,7 @@ var config = { ... };
 var ogg = tagio.open(__dirname + "/samples/sample.ogg", config);
 ogg.log();
 ```
+
 Output:
 
 ```json

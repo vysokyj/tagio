@@ -1,46 +1,49 @@
 # TagIO
 
+[![Build Status](https://secure.travis-ci.org/vysokyj/tagio.svg?branch=master)](http://travis-ci.org/vysokyj/tagio)
+[![Dependency Status](https://david-dm.org/vysokyj/tagio.svg)](https://david-dm.org/vysokyj/tagio)
+[![NPM Version](https://img.shields.io/npm/v/tagio.svg)](https://npmjs.org/package/tagio)
+[![NPM Downloads](https://img.shields.io/npm/dm/tagio.svg)](https://npmjs.org/package/tagio)
+
 Advanced TagLib wrapper for Node.JS
 
 ## Status
 
-**This module is under hard development!**
+**Windows build still not working. Help wanted.**
 
-| *Format*   | *Status*         |
-| ---------- | ---------------- |
-| Generic    | done             |
-| MP3        | ID3v1, ID3v2     |
-| MPC        | not started      |
-| FLAC       | not started      |
-| MP4        | not started      |
-| ASF        | not started      |
-| AIFF       | not started      |
-| WAV        | not started      |
-| TrueAudio  | not started      |
-| WavPack    | not started      |
-| Ogg FLAC   | not started      |
-| Ogg Vorbis | not started      |
-| Speex      | not started      |
-| Opus       | not started      |
-
+| *Format*   | *Status - supported tags*        |
+| ---------- | -------------------------------- |
+| MP3        | generic, ID3v1, ID3v2            |
+| MPC        | generic                          |
+| FLAC       | generic, XIPH, ID3v1, ID3v2      |
+| MP4        | generic                          |
+| ASF        | generic                          |
+| AIFF       | generic                          |
+| WAV        | generic                          |
+| TrueAudio  | generic                          |
+| WavPack    | generic                          |
+| Ogg FLAC   | generic                          |
+| Ogg Vorbis | generic                          |
+| Speex      | generic                          |
+| Opus       | generic                          |
 
 ## Prerequisites
 
-* Mac or Linux OS
-* Installed cmake
-* Installed taglib - tested with version 1.9.1
+*   Installed C++ compiler supporting C++11 (GCC, CLANG, MSVC)
+*   Installed [cmake](https://cmake.org/) (version 2.8 or above)
+*   Installed [cmake-js](https://www.npmjs.com/package/cmake-j)
 
 ## Documentation
 
 ### General Usage Information
 
-* [Configuration Format](./doc/config.md)
-* [Generic Interface](./doc/generic.md)
-* [MPEG (MP3) File Interface](./doc/mpeg.md)
+*   [Configuration Format](./doc/config.md)
+*   [Generic Interface](./doc/generic.md)
+*   [MPEG (MP3) File Interface](./doc/mpeg.md)
 
 ### Other
 
-* [Development Notes](./doc/notes.md)
+*   [Development Notes](./doc/notes.md)
 
 ## Copyright
 

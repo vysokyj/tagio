@@ -1,37 +1,16 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+.DS_Store
+.idea
 
 .DS_Store
 .idea/*
 TagIO.xcodeproj/*
 node_modules/*
 build/*
+taglib/*
+.codelite/*
+*.project
+*.workspace
 
 example/input.mp3
 example/output.mp3

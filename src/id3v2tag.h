@@ -2,7 +2,7 @@
 #define TAGIO_ID3V2TAG_H
 
 
-#include <v8.h>
+#include <node.h>
 #include <taglib/id3v2tag.h>
 
 namespace TagIO {

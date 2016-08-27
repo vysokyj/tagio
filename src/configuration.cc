@@ -38,30 +38,29 @@ void Configuration::Set(Isolate *isolate, Object *object) {
     conf.id3v2UseFrameEncoding = o.GetBoolean("id3v2UseFrameEncoding");
 }
 
-inline TagIO::BinaryDataMethod Configuration::StringToBinaryDataMethod(TagLib::String string) {
-    Configuration &conf = Configuration::Get();
+inline int Configuration::StringToBinaryDataMethod(TagLib::String string) {
     std::string s = string.to8Bit(true);
     if (s.compare("IGNORE") == 0)
-        return TagIO::BinaryDataMethod::IGNORE;
+        return BDM_IGNORE;
     else if (s.compare("FILENAME") == 0)
-        return TagIO::BinaryDataMethod::FILENAME;
+        return BDM_FILENAME;
     else if (s.compare("ABSOLUTE_URL") == 0)
-        return TagIO::BinaryDataMethod::ABSOLUTE_URL;
+        return BDM_ABSOLUTE_URL;
     else if (s.compare("PREFIXED_URL") == 0)
-        return TagIO::BinaryDataMethod::PREFIXED_URL;
+        return BDM_PREFIXED_URL;
     else
-        return TagIO::BinaryDataMethod::IGNORE;
+        return BDM_IGNORE;
 }
 
-inline TagLib::String Configuration::BinaryDataMethodToString(TagIO::BinaryDataMethod method) {
+inline TagLib::String Configuration::BinaryDataMethodToString(int method) {
     switch(method) {
-        case TagIO::BinaryDataMethod::IGNORE:
+        case BDM_IGNORE:
             return "IGNORE";
-        case TagIO::BinaryDataMethod::FILENAME:
+        case BDM_FILENAME:
             return "FILENAME";
-        case TagIO::BinaryDataMethod::ABSOLUTE_URL:
+        case BDM_ABSOLUTE_URL:
             return "ABSOLUTE_URL";
-        case TagIO::BinaryDataMethod::PREFIXED_URL:
+        case BDM_PREFIXED_URL:
             return "PREFIXED_URL";
         default:
             return "IGNORE";

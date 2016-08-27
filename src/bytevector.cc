@@ -19,12 +19,12 @@ TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
     ifs.seekg(0, ios::beg);
     ifs.read(data, length);
     ifs.close();
-    return TagLib::ByteVector(data, (uint) length);
+    return TagLib::ByteVector(data, (TagLib::uint) length);
 }
 
 TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
     Configuration &cfg = Configuration::Get();
-    if (cfg.BinaryDataMethod() == BinaryDataMethod::IGNORE)
+    if (cfg.BinaryDataMethod() == BDM_IGNORE)
         return TagLib::String("IGNORED");
     string binaryDataDirectory(cfg.BinaryDataDirectory());
     string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
@@ -90,9 +90,9 @@ std::string ByteVector::PathToString(std::string filePath, std::string fileName)
     Configuration &cfg = Configuration::Get();
     string retval = fileName;
     string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
-    if (cfg.BinaryDataMethod() == BinaryDataMethod::PREFIXED_URL)
+    if (cfg.BinaryDataMethod() == BDM_PREFIXED_URL)
         retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
-    else if (cfg.BinaryDataMethod() == BinaryDataMethod::ABSOLUTE_URL)
+    else if (cfg.BinaryDataMethod() == BDM_ABSOLUTE_URL)
         retval = NewAbsoluteUrl(filePath);
     return retval;
 }
@@ -102,9 +102,9 @@ std::string ByteVector::StringToPath(std::string str) {
     string filePrefix = "file://";
     string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
     string binaryDataDirectory(cfg.BinaryDataDirectory());
-    if (cfg.BinaryDataMethod() == BinaryDataMethod::PREFIXED_URL) {
+    if (cfg.BinaryDataMethod() == BDM_PREFIXED_URL) {
         return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
-    } else if (cfg.BinaryDataMethod() == BinaryDataMethod::ABSOLUTE_URL) {
+    } else if (cfg.BinaryDataMethod() == BDM_ABSOLUTE_URL) {
         return NormalizePath(str.substr(filePrefix.length()));
     } else {
         return NewPath(binaryDataDirectory, str);
@@ -114,5 +114,6 @@ std::string ByteVector::StringToPath(std::string str) {
 inline bool ByteVector::FileExist(const std::string &name) {
     struct stat buffer;
     return (stat (name.c_str(), &buffer) == 0);
-};
+}
+
 

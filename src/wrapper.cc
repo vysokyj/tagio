@@ -51,7 +51,7 @@ void Wrapper::SetInt32(const char *key, int value) {
 TagLib::uint Wrapper::GetUint32(const char *key) {
     Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
     if (object->Has(keyString)) {
-        return (uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
+        return (TagLib::uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
     } else {
         return 0;
     }
@@ -73,6 +73,29 @@ TagLib::String Wrapper::GetString(const char *key) {
 
 void Wrapper::SetString(const char *key, TagLib::String value) {
     object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
+}
+
+TagLib::StringList Wrapper::GetStringList(const char *key) {
+    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    Local<Array> array = Local<Array>::Cast(object->Get(keyString));
+    TagLib::StringList list;
+    //cout << "LENGTH" << array->Length() << endl;
+    if (object->Has(keyString)) {
+       for (uint32_t i = 0; i < array->Length(); i++) {
+           String::Utf8Value value(array->Get(i)->ToString());
+           TagLib::String string(*value, TagLib::String::UTF8);
+           list.append(string);
+       }
+    }
+    return list;
+}
+
+void Wrapper::SetStringList(const char *key, TagLib::StringList value) {
+    Local<Array> array = Array::New(isolate, value.size());
+    for (uint32_t i = 0; i < value.size(); i++) {
+        array->Set(i, String::NewFromUtf8(isolate, value[i].toCString(true)));
+    }
+    object->Set(String::NewFromUtf8(isolate, key), array);
 }
 
 TagLib::ByteVector Wrapper::GetBytes(const char *key) {
@@ -170,4 +193,3 @@ void Wrapper::SetLanguage(const char *key, const TagLib::ByteVector value) {
 //    }
 //    object->Set(key, array);
 //}
-

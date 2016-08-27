@@ -8,6 +8,7 @@ var config = { ... };
 var mp3 = tagio.open(__dirname + "/samples/sample.mp3", config);
 mp3.log();
 ```
+
 Output:
 
 ```json
@@ -93,10 +94,10 @@ Output:
   }
 }
 ```
-### Available additional methods
 
-* **hasAPETag()**
-* **hasID3v1Tag()**
-* **hasID3v2Tag()**
-* **getID3v2Tag()**
-* **setID3v2Tag(tagio)**
+## Available additional methods
+
+*   **getID3v1Tag()**
+*   **setID3v1Tag(tag)**
+*   **getID3v2Tag()**
+*   s**setID3v2Tag(tag)**

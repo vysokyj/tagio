@@ -1,7 +1,7 @@
 #ifndef TAGIO_ID3V1_TAG_H
 #define TAGIO_ID3V1_TAG_H
 
-#include <v8.h>
+#include <node.h>
 #include <taglib/id3v1tag.h>
 #include <taglib/tstring.h>
 #include <taglib/tbytevector.h>

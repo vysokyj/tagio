@@ -20,7 +20,7 @@ using namespace TagIO;
 using namespace v8;
 using namespace std;
 
-static map<uint, TagLib::ID3v2::AttachedPictureFrame::Type> APIC = {
+static map<TagLib::uint, TagLib::ID3v2::AttachedPictureFrame::Type> APIC = {
     {0x00, TagLib::ID3v2::AttachedPictureFrame::Other},
     {0x01, TagLib::ID3v2::AttachedPictureFrame::FileIcon},
     {0x02, TagLib::ID3v2::AttachedPictureFrame::OtherFileIcon},
@@ -44,7 +44,7 @@ static map<uint, TagLib::ID3v2::AttachedPictureFrame::Type> APIC = {
     {0x14, TagLib::ID3v2::AttachedPictureFrame::PublisherLogo}
 };
 
-static map<uint, TagLib::ID3v2::RelativeVolumeFrame::ChannelType> RVA2 = {
+static map<TagLib::uint, TagLib::ID3v2::RelativeVolumeFrame::ChannelType> RVA2 = {
     {0x00, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::Other},
     {0x01, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::MasterVolume},
     {0x02, TagLib::ID3v2::RelativeVolumeFrame::ChannelType::FrontRight},

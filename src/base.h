@@ -2,7 +2,7 @@
 #define TAGIO_BASE_H
 
 
-#include <v8.h>
+#include <node.h>
 #include "md5.h"
 #include "wrapper.h"
 
