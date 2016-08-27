@@ -2,8 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/vysokyj/tagio.svg?branch=master)](http://travis-ci.org/vysokyj/tagio)
 [![Dependency Status](https://david-dm.org/vysokyj/tagio.svg)](https://david-dm.org/vysokyj/tagio)
-<span class="badge-npmversion"><a href="https://npmjs.org/package/pg" title="View this project on NPM"><img src="https://img.shields.io/npm/v/tagio.svg" alt="NPM version" /></a></span>
-<span class="badge-npmdownloads"><a href="https://npmjs.org/package/tagio" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/tagio.svg" alt="NPM downloads" /></a></span>
+[![NPM Version](https://img.shields.io/npm/v/tagio.svg)](https://npmjs.org/package/tagio)
+[![NPM Downloads](https://img.shields.io/npm/dm/tagio.svg)](https://npmjs.org/package/tagio)
 
 Advanced TagLib wrapper for Node.JS
 
