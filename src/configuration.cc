@@ -46,8 +46,8 @@ inline int Configuration::StringToBinaryDataMethod(TagLib::String string) {
         return BDM_FILENAME;
     else if (s.compare("ABSOLUTE_URL") == 0)
         return BDM_ABSOLUTE_URL;
-    else if (s.compare("PREFIXED_URL") == 0)
-        return BDM_PREFIXED_URL;
+    else if (s.compare("RELATIVE_URL") == 0)
+        return BDM_RELATIVE_URL;
     else
         return BDM_IGNORE;
 }
@@ -60,8 +60,8 @@ inline TagLib::String Configuration::BinaryDataMethodToString(int method) {
             return "FILENAME";
         case BDM_ABSOLUTE_URL:
             return "ABSOLUTE_URL";
-        case BDM_PREFIXED_URL:
-            return "PREFIXED_URL";
+        case BDM_RELATIVE_URL:
+            return "RELATIVE_URL";
         default:
             return "IGNORE";
     }
