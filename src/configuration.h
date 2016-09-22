@@ -10,7 +10,7 @@ namespace TagIO {
     const int BDM_IGNORE = 1;       // IGNORE BINARY FILES
     const int BDM_FILENAME = 2;     // JSON contains just the filename -> somefile.ext
     const int BDM_ABSOLUTE_URL = 3; // JSON contains compete file URL -> file://somepath/somefile.ext
-    const int BDM_PREFIXED_URL = 4; // JSON contains file URL with given prefix -> /somepath/somefile.ext
+    const int BDM_RELATIVE_URL = 4; // JSON contains file URL with given prefix -> /somepath/somefile.ext
 
     class Configuration {
     public:

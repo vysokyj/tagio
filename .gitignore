@@ -2,6 +2,8 @@
 .DS_Store
 .idea
 
+.DS_Store
+.idea/*
 TagIO.xcodeproj/*
 node_modules/*
 build/*

@@ -90,7 +90,7 @@ std::string ByteVector::PathToString(std::string filePath, std::string fileName)
     Configuration &cfg = Configuration::Get();
     string retval = fileName;
     string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
-    if (cfg.BinaryDataMethod() == BDM_PREFIXED_URL)
+    if (cfg.BinaryDataMethod() == BDM_RELATIVE_URL)
         retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
     else if (cfg.BinaryDataMethod() == BDM_ABSOLUTE_URL)
         retval = NewAbsoluteUrl(filePath);
@@ -102,7 +102,7 @@ std::string ByteVector::StringToPath(std::string str) {
     string filePrefix = "file://";
     string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
     string binaryDataDirectory(cfg.BinaryDataDirectory());
-    if (cfg.BinaryDataMethod() == BDM_PREFIXED_URL) {
+    if (cfg.BinaryDataMethod() == BDM_RELATIVE_URL) {
         return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
     } else if (cfg.BinaryDataMethod() == BDM_ABSOLUTE_URL) {
         return NormalizePath(str.substr(filePrefix.length()));
