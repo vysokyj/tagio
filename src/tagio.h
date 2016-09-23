@@ -5,5 +5,6 @@
 #include "generic.h"
 #include "mpeg.h"
 #include "flac.h"
+#include "async.h"
 
 #endif //TAGIO_TAGIO_H
