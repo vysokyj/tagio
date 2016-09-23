@@ -19,8 +19,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test/* --reporter spec",
-    "rebuild": "./node_modules/.bin/cmake-js rebuild",
-    "install": "./node_modules/.bin/cmake-js rebuild"
+    "rebuild": "./node_modules/.bin/cmake-js rebuild -C",
+    "install": "./node_modules/.bin/cmake-js rebuild -C"
   },
   "devDependencies": {
     "chai": "^3.5.0",
