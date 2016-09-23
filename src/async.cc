@@ -54,7 +54,7 @@ static void WorkAsyncComplete(uv_work_t *req, int status) {
     delete work;
 }
 
-void TagIO::TagReadAsync(const FunctionCallbackInfo<Value> &args) {
+static void TagReadAsync(const FunctionCallbackInfo<Value> &args) {
     Isolate* isolate = args.GetIsolate();
     String::Utf8Value path(args[0]->ToString());
     Local<Function> callback = Local<Function>::Cast(args[1]);
@@ -73,6 +73,6 @@ void TagIO::TagReadAsync(const FunctionCallbackInfo<Value> &args) {
     args.GetReturnValue().Set(Undefined(isolate));
 }
 
-void TagIO::TagInit(Handle<Object> exports) {
+void TagIO::ASYNC::Init(Handle<Object> exports) {
     NODE_SET_METHOD(exports, "tagReadAsync", TagReadAsync);
 }

@@ -7,7 +7,7 @@ void InitAll(Handle<Object> exports) {
     GENERIC::Init(exports);
     MPEG::Init(exports);
     FLAC::Init(exports);
-    TagInit(exports);
+    ASYNC::Init(exports);
 }
 
 NODE_MODULE(tagio, InitAll)
