@@ -20,11 +20,14 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test/* --reporter spec",
     "rebuild": "./node_modules/.bin/cmake-js rebuild -C",
-    "install": "./node_modules/.bin/cmake-js rebuild -C"
+    "install": "./node_modules/.bin/cmake-js compile -C"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "cmake-js": "^3.2.1",
     "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "nan": "^2.4.0"
   }
 }

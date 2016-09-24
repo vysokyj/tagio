@@ -1,15 +1,13 @@
 #include "tag.h"
 #include "wrapper.h"
 
-using Nan::EscapableHandleScope;
-using Nan::New;
-using v8::Local;
-using v8::Object;
+using namespace TagIO;
+using namespace v8;
 
-Local<Object> ExportTag(TagLib::Tag *tag) {
-    EscapableHandleScope scope;
-    Local<Object> object = New<Object>();
-    TagLibWrapper o(*object);
+Local<Object> Tag::New(Isolate *isolate, TagLib::Tag *tag) {
+    EscapableHandleScope handleScope(isolate);
+    Local<Object> object = Object::New(isolate);
+    Wrapper o(isolate, *object);
     o.SetString("title", tag->title());
     o.SetString("album", tag->album());
     o.SetString("artist", tag->artist());
@@ -17,11 +15,11 @@ Local<Object> ExportTag(TagLib::Tag *tag) {
     o.SetUint32("year", tag->year());
     o.SetString("genre", tag->genre());
     o.SetString("comment", tag->comment());
-    return scope.Escape(object);
+    return handleScope.Escape(object);
 }
 
-void ImportTag(Object *object, TagLib::Tag *tag) {
-    TagLibWrapper o(object);
+void Tag::Set(Isolate *isolate, Object *object, TagLib::Tag *tag) {
+    Wrapper o(isolate, object);
     tag->setTitle(o.GetString("title"));
     tag->setAlbum(o.GetString("album"));
     tag->setArtist(o.GetString("artist"));

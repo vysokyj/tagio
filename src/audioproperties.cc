@@ -1,17 +1,19 @@
 #include "audioproperties.h"
 #include "wrapper.h"
 
-using namespace TagIO;
-using namespace v8;
+using Nan::EscapableHandleScope;
+using Nan::New;
+using v8::Local;
+using v8::Object;
 
-Local<Object> AudioProperties::New(Isolate *isolate, TagLib::AudioProperties *audioProperties) {
-    EscapableHandleScope handleScope(isolate);
-    Local<Object> object = Object::New(isolate);
-    Wrapper o(isolate, *object);
+Local<Object> ExportAudioProperties(TagLib::AudioProperties *audioProperties) {
+    EscapableHandleScope scope;
+    Local<Object> object = New<Object>();
+    TagLibWrapper o( *object);
     o.SetInt32("length", audioProperties->length());
-    o.SetInt32("bitrate ", audioProperties->bitrate());
+    o.SetInt32("bitrate", audioProperties->bitrate());
     o.SetInt32("sampleRate", audioProperties->sampleRate());
     o.SetInt32("channels", audioProperties->channels());
-    return handleScope.Escape(object);
+    return scope.Escape(object);
 }
 

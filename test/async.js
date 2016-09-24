@@ -30,7 +30,7 @@ describe("ASYNC", function() {
     });
 
     it("readAsync", function (done) {
-        tagio.tagReadAsync(testFile, function (err, result) {
+        tagio.readGeneric(testFile, function (err, result) {
             console.log(result);
             done();
         });

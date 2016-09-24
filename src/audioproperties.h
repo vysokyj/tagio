@@ -1,15 +1,10 @@
 #ifndef TAGIO_AUDIOPROPERTIES_H
 #define TAGIO_AUDIOPROPERTIES_H
 
-#include <node.h>
+#include <nan.h>
 #include <taglib/audioproperties.h>
 
-namespace TagIO {
-    class AudioProperties {
-    public:
-        static v8::Local<v8::Object> New(v8::Isolate *isolate, TagLib::AudioProperties *audioProperties);
-    };
-}
+v8::Local<v8::Object> ExportAudioProperties(TagLib::AudioProperties *audioProperties);
 
 
 #endif //TAGIO_AUDIOPROPERTIES_H

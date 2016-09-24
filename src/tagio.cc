@@ -1,13 +1,20 @@
-#include "tagio.h"
+#include <nan.h>
+#include "generic.h"   // NOLINT(build/include)
 
-using namespace v8;
-using namespace TagIO;
 
-void InitAll(Handle<Object> exports) {
-    GENERIC::Init(exports);
-    MPEG::Init(exports);
-    FLAC::Init(exports);
-    ASYNC::Init(exports);
+using v8::FunctionTemplate;
+using v8::Handle;
+using v8::Object;
+using v8::String;
+using Nan::GetFunction;
+using Nan::New;
+using Nan::Set;
+
+
+NAN_MODULE_INIT(InitAll) {
+    Set(target, New<String>("readGeneric").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadGeneric)).ToLocalChecked());
+
 }
 
-NODE_MODULE(tagio, InitAll)
+NODE_MODULE(addon, InitAll)
+
