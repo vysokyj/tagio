@@ -4,7 +4,7 @@
 #include <nan.h>
 #include <taglib/audioproperties.h>
 
-v8::Local<v8::Object> ExportAudioProperties(TagLib::AudioProperties *audioProperties);
+void ExportAudioProperties(TagLib::AudioProperties *audioProperties, v8::Object *object);
 
 
 #endif //TAGIO_AUDIOPROPERTIES_H

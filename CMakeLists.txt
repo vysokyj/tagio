@@ -28,7 +28,7 @@ endif()
 ExternalProject_Add(
 taglib
 PREFIX "${CMAKE_SOURCE_DIR}/taglib"
-URL http://taglib.github.io/releases/taglib-1.9.1.tar.gz
+#URL http://taglib.github.io/releases/taglib-1.9.1.tar.gz
 INSTALL_DIR "${CMAKE_SOURCE_DIR}/taglib"
 #CMAKE_ARGS "-DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib"
 CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib -DCMAKE_BUILD_TYPE=Release

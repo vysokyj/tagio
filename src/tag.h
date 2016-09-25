@@ -6,7 +6,7 @@
 
 
 
-v8::Local<v8::Object> ExportTag(TagLib::Tag *tag);
+void ExportTag(TagLib::Tag *tag, v8::Object *object);
 void ImportTag(v8::Object *object, TagLib::Tag *tag);
 
 
