@@ -39,6 +39,8 @@ public:
     void HandleOKCallback () {
         HandleScope scope;
         Local<Object> resultObj = New<Object>();
+        Local<String> pathKey = New<String>("path").ToLocalChecked();
+        Local<String> pathStr = New<String>(path->c_str()).ToLocalChecked();
         Local<String> confKey = New<String>("configuration").ToLocalChecked();
         Local<Object> confObj = New<Object>();
         Local<String> audioPropertiesKey = New<String>("audioProperties").ToLocalChecked();
@@ -48,6 +50,7 @@ public:
         ExportConfiguration(conf, *confObj);
         ExportAudioProperties(file->audioProperties(), *audioPropertiesObj);
         ExportTag(file->tag(), *tagObj);
+        resultObj->Set(pathKey, pathStr);
         resultObj->Set(confKey, confObj);
         resultObj->Set(audioPropertiesKey, audioPropertiesObj);
         resultObj->Set(tagKey, tagObj);

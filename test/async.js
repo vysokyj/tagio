@@ -1,7 +1,8 @@
 "use strict";
 var fs = require("fs");
 var path = require("path");
-var tagio = require("../build/Release/tagio");
+//var tagio = require("../build/Release/tagio");
+var tagio = require("../lib");
 var assert = require("chai").assert;
 
 var fileCounter = 0;
@@ -34,8 +35,16 @@ describe("ASYNC", function() {
             path: testFile,
             configuration: { }
         };
-        tagio.readGeneric(request, function (err, result) {
+        // tagio.readGeneric(request, function (err, result) {
+        //     console.log(result);
+        //     done();
+        // });
+        tagio.read(request).then(function (result) {
             console.log(result);
+            done();
+        }).catch(function (err) {
+            console.log("ERROR");
+            console.error(err);
             done();
         });
     });
