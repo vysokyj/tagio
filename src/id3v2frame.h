@@ -9,8 +9,8 @@
 #include <taglib/id3v2frame.h>
 
 
-static void ExportID3v2Frame(TagLib::ID3v2::Frame *frame, v8::Object *object, Configuration *conf);
-static void ImportID3v2Frame(v8::Object *object, TagLib::ID3v2::Tag *tag, Configuration *conf);
+void ExportID3v2Frame(TagLib::ID3v2::Frame *frame, v8::Object *object, Configuration *conf);
+void ImportID3v2Frame(v8::Object *object, TagLib::ID3v2::Tag *tag, Configuration *conf);
 
 
 #endif //TAGIO_ID3V2FRAME_H

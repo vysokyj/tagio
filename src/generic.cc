@@ -5,7 +5,6 @@
 
 #include <taglib/fileref.h>
 
-
 using std::string;
 using v8::Function;
 using v8::Local;
