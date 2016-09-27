@@ -1,10 +1,11 @@
 #ifndef TAGIO_ID3V2FRAME_H
 #define TAGIO_ID3V2FRAME_H
 
-#include "wrapper.h"
+
 #include "configuration.h"
 
-#include <node.h>
+#include <nan.h>
+#include <taglib/id3v2tag.h>
 #include <taglib/id3v2frame.h>
 
 

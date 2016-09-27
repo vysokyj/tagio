@@ -1,5 +1,6 @@
-#include "ID3v2frame.h"
-#include <taglib/ID3v2tag.h>
+#include "id3v2frame.h"
+#include "wrapper.h"
+
 #include <taglib/attachedpictureframe.h>
 #include <taglib/commentsframe.h>
 #include <taglib/generalencapsulatedobjectframe.h>
