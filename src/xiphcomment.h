@@ -4,7 +4,7 @@
 #include <nan.h>
 #include <taglib/xiphcomment.h>
 
-void ExportXiphComment(TagLib::Ogg::XiphComment *tag, v8::Array);
+void ExportXiphComment(TagLib::Ogg::XiphComment *tag, v8::Array *array);
 void ImportXiphComment(v8::Array *array, TagLib::Ogg::XiphComment *tag);
 
 #endif //TAGIO_XIPH_COMMENT_H

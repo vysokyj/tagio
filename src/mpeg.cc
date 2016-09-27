@@ -39,37 +39,48 @@ public:
         file = new TagLib::MPEG::File(path->c_str());
         audioProperties = file->audioProperties();
         tag = file->tag();
-        id3v1Tag = file->ID3v1Tag(true);
-        id3v2Tag = file->ID3v2Tag(true);
+        id3v1Tag = file->ID3v1Tag(false);
+        id3v2Tag = file->ID3v2Tag(false);
     }
 
     void HandleOKCallback () {
         HandleScope scope;
-        Local<Object> resultObj = New<Object>();
+        Local<Object> result= New<Object>();
+
         Local<String> pathKey = New<String>("path").ToLocalChecked();
         Local<String> pathVal = New<String>(path->c_str()).ToLocalChecked();
+        result->Set(pathKey, pathVal);
+
         Local<String> confKey = New<String>("configuration").ToLocalChecked();
         Local<Object> confVal = New<Object>();
+        ExportConfiguration(conf, *confVal);
+        result->Set(confKey, confVal);
+
         Local<String> audioPropertiesKey = New<String>("audioProperties").ToLocalChecked();
         Local<Object> audioPropertiesVal = New<Object>();
+        ExportAudioProperties(audioProperties, *audioPropertiesVal);
+        result->Set(audioPropertiesKey, audioPropertiesVal);
+
         Local<String> tagKey = New<String>("tag").ToLocalChecked();
         Local<Object> tagVal = New<Object>();
-        Local<String> id3v1Key = New<String>("id3v1").ToLocalChecked();
-        Local<Object> id3v1Val = New<Object>();
-        Local<String> id3v2Key = New<String>("id3v2").ToLocalChecked();
-        Local<Array> id3v2Val = New<Array>(id3v2Tag->frameList().size());
-        ExportConfiguration(conf, *confVal);
-        ExportAudioProperties(audioProperties, *audioPropertiesVal);
         ExportTag(tag, *tagVal);
-        ExportID3v1Tag(id3v1Tag, *id3v1Val);
-        ExportID3v2Tag(id3v2Tag, *id3v2Val, conf);
-        resultObj->Set(pathKey, pathVal);
-        resultObj->Set(confKey, confVal);
-        resultObj->Set(audioPropertiesKey, audioPropertiesVal);
-        resultObj->Set(tagKey, tagVal);
-        resultObj->Set(id3v1Key, id3v1Val);
-        resultObj->Set(id3v2Key, id3v2Val);
-        Local<Value> argv[] = { Null(), resultObj };
+        result->Set(tagKey, tagVal);
+
+        if (id3v1Tag != nullptr) {
+            Local<String> id3v1Key = New<String>("id3v1").ToLocalChecked();
+            Local<Object> id3v1Val = New<Object>();
+            ExportID3v1Tag(id3v1Tag, *id3v1Val);
+            result->Set(id3v1Key, id3v1Val);
+        }
+
+        if (id3v2Tag != nullptr) {
+            Local<String> id3v2Key = New<String>("id3v2").ToLocalChecked();
+            Local<Array> id3v2Val = New<Array>(id3v2Tag->frameList().size());
+            ExportID3v2Tag(id3v2Tag, *id3v2Val, conf);
+            result->Set(id3v2Key, id3v2Val);
+        }
+
+        Local<Value> argv[] = { Null(), result };
         callback->Call(2, argv);
     }
 

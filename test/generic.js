@@ -8,7 +8,7 @@ var assert = require("chai").assert;
 var fileCounter = 0;
 
 
-describe("ASYNC", function() {
+describe("Generic Tag", function() {
     var testDir;
     var sampleFile;
     var testFile;
@@ -17,8 +17,8 @@ describe("ASYNC", function() {
 
     beforeEach(function () {
         testDir = path.resolve(__dirname, "../build/Test");
-        sampleFile = path.resolve(__dirname, "../samples/sample.flac");
-        testFile = path.resolve(testDir, "test" + fileCounter++ + ".flac");
+        sampleFile = path.resolve(__dirname, "../samples/sample.wav");
+        testFile = path.resolve(testDir, "test" + fileCounter++ + ".wav");
         testJPEG = "file://" + path.resolve(__dirname, "../samples/sample.jpg");
         testTEXT = "file://" + path.resolve(__dirname, "../samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
@@ -26,26 +26,50 @@ describe("ASYNC", function() {
     });
 
     afterEach(function () {
+        //fs.unlinkSync(testFile);
         //fs.rmdirSync(testDir);
-        //fs.rmSync(testFile);
     });
 
-    it("readAsync", function (done) {
-        var request = {
+    it("read", function (done) {
+        var req = {
             path: testFile,
             configuration: { }
         };
-        // tagio.readGeneric(request, function (err, result) {
-        //     console.log(result);
-        //     done();
-        // });
-        tagio.read(request).then(function (result) {
-            console.log(result);
-            done();
-        }).catch(function (err) {
-            console.log("ERROR");
-            console.error(err);
+        tagio.read(req).then(function (res) {
+            assert.isNotNull(res);
+            assert.isNotNull(res.path);
+            assert.isNotNull(res.configuration);
+            assert.isNotNull(res.audioProperties);
+            assert.isNotNull(res.tag);
             done();
         });
+    });
+
+    it("write", function (done) {
+        var req = {
+            path: testFile,
+            configuration: { },
+            tag: {
+                "title": "Generic Title",
+                "album": "Generic Album",
+                "artist": "Generic Artist",
+                "track": 1,
+                "year": 2015,
+                "genre": "Speech",
+                "comment": "Generic Comment"
+            }
+        };
+        tagio.write(req).then(function (res) {
+            //console.log(res.tag);
+            assert.equal(res.tag.title, req.tag.title);
+            assert.equal(res.tag.album, req.tag.album);
+            assert.equal(res.tag.artist, req.tag.artist);
+            assert.equal(res.tag.track, req.tag.track);
+            assert.equal(res.tag.year, req.tag.year);
+            assert.equal(res.tag.genre, req.tag.genre);
+            assert.equal(res.tag.comment, req.tag.comment);
+            done();
+        });
+
     });
 });
