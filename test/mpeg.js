@@ -33,8 +33,8 @@ describe("MPEG", function() {
     });
 
     afterEach(function () {
+        //fs.unlink(testFile);
         //fs.rmdirSync(testDir);
-        //fs.rmSync(testFile);
     });
 
     // it("generic", function(done) {
@@ -106,7 +106,7 @@ describe("MPEG", function() {
     //});
 
 
-    it("mpeg", function(done) {
+    it("Read plain", function(done) {
 
         var request = {
             path: testFile,
@@ -114,208 +114,215 @@ describe("MPEG", function() {
         };
 
         tagio.read(request).then(function (result) {
-            console.log(result);
-            done();
-        }).catch(function (err) {
-            console.log("ERROR");
-            console.error(err);
+            //console.log(result);
             done();
         });
-
     });
 
 
-    // it("id3v1", function(done) {
-    //     var config = {
-    //         binaryDataDirectory: "/tmp",
-    //         binaryDataUrlPrefix: "/attachments",
-    //         binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-    //         apeSave: false,
-    //         id3v1Save: true,
-    //         id3v1Encoding: tagio.Encoding.UTF8,
-    //         id3v2Save: false,
-    //         id3v2Version: 3,
-    //         id3v2Encoding: tagio.Encoding.UTF16
-    //     };
-    //     var mp3 = tagio.open(testFile, config);
-    //     assert.equal(mp3.getPath(), "file://" + testFile);
-    //     var tag = {
-    //         "title": "Generic Title 2",
-    //         "album": "Generic Album 2",
-    //         "artist": "Generic Artist 2",
-    //         "track": 1,
-    //         "year": 2015,
-    //         "genre": "Speech",
-    //         "comment": "Generic Comment 2"
-    //     };
-    //     mp3.setID3v1Tag(tag);
-    //     mp3.save();
-    //     mp3 = tagio.open(testFile, config);
-    //     //mp3.log();
-    //     assert.equal(JSON.stringify(mp3.getID3v1Tag()), JSON.stringify(tag));
-    //     done();
-    // });
+    it("Write and read ID3v1 only", function(done) {
 
-    // it("id3v1-unicode", function(done) {
-    //     var config = {
-    //         binaryDataDirectory: "/tmp",
-    //         binaryDataUrlPrefix: "/attachments",
-    //         binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-    //         apeSave: false,
-    //         id3v1Save: true,
-    //         id3v1Encoding: tagio.Encoding.UTF8,
-    //         id3v2Save: false,
-    //         id3v2Version: 3,
-    //         id3v2Encoding: tagio.Encoding.UTF16
-    //     };
-    //     var mp3 = tagio.open(testFile, config);
-    //     assert.equal(mp3.getPath(), "file://" + testFile);
-    //     var tag = {
-    //         "title": "Příšerně",
-    //         "album": "žluťoučký",
-    //         "artist": "kůň",
-    //         "track": 1,
-    //         "year": 2015,
-    //         "genre": "Speech",
-    //         "comment": "úpěl ďábelské ódy"
-    //     };
-    //     mp3.setID3v1Tag(tag);
-    //     mp3.save();
-    //     mp3 = tagio.open(testFile, config);
-    //     //mp3.log();
-    //     assert.equal(JSON.stringify(mp3.getID3v1Tag()), JSON.stringify(tag));
-    //     done();
-    // });
+        var req = {
+            path: testFile,
+            configuration: {},
+            id3v1: {
+                "title": "Generic Title 2",
+                "album": "Generic Album 2",
+                "artist": "Generic Artist 2",
+                "track": 1,
+                "year": 2015,
+                "genre": "Speech",
+                "comment": "Generic Comment 2"
+            },
+            id3v2: []
+        };
+        tagio.write(req).then(function (res) {
+            //console.log(res.id3v1);
+            assert.equal(res.id3v1.title, req.id3v1.title);
+            assert.equal(res.id3v1.album, req.id3v1.album);
+            assert.equal(res.id3v1.artist, req.id3v1.artist);
+            assert.equal(res.id3v1.track, req.id3v1.track);
+            assert.equal(res.id3v1.year, req.id3v1.year);
+            assert.equal(res.id3v1.genre, req.id3v1.genre);
+            assert.equal(res.id3v1.comment, req.id3v1.comment);
+            tagio.read(req).then(function (res) {
+                assert.equal(res.id3v1.title, req.id3v1.title);
+                assert.equal(res.id3v1.album, req.id3v1.album);
+                assert.equal(res.id3v1.artist, req.id3v1.artist);
+                assert.equal(res.id3v1.track, req.id3v1.track);
+                assert.equal(res.id3v1.year, req.id3v1.year);
+                assert.equal(res.id3v1.genre, req.id3v1.genre);
+                assert.equal(res.id3v1.comment, req.id3v1.comment);
+                done();
+            });
 
 
+        });
+    });
 
-    // it("id3v2", function(done) {
-    //     var mp3 = tagio.open(testFile, config);
-    //     assert.equal(mp3.getPath(), "file://" + testFile);
-    //
-    //
-    //     //mp3.log();
-    //     var itag = [];
-    //
-    //     var frames = tagio.id3v2.frames;
-    //     //console.log(frames);
-    //     for (var i = 0, l = frames.length; i < l; i++) {
-    //         var frame = frames[i];
-    //         //console.log(frame);
-    //         if (frame.id === "TXXX") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 text: frame.title,
-    //                 description: "CUSTOM"
-    //             });
-    //         } else if (timestampFrames.indexOf(frame.id) != -1) {
-    //
-    //             itag.push({
-    //                 id: frame.id,
-    //                 text: "2015-04-01T05:23:30"
-    //             });
-    //         } else if (frame.id[0] === "T") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 text: frame.title
-    //             });
-    //         } else if (frame.id === "WXXX") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 url: "http://www.testurl" + i + ".com",
-    //                 description: frame.title
-    //             });
-    //         } else if (frame.id[0] === "W") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 url: "http://www.testurl" + i + ".com"
-    //             });
-    //         } else if (frame.id === "COMM") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 text: frame.title
-    //             });
-    //         } else if (frame.id === "APIC") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 description: frame.title,
-    //                 mimeType: "image/jpeg",
-    //                 type: "0",
-    //                 image: testJPEG
-    //             });
-    //         } else if (frame.id === "GEOB") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 mimeType: "text/plain",
-    //                 fileName: "sample.txt",
-    //                 description: frame.title,
-    //                 object: testTEXT
-    //             });
-    //         } else if (frame.id === "POPM") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 email: "someone@somewhere.com",
-    //                 rating: 120,
-    //                 counter: 25
-    //             });
-    //         } else if (frame.id === "PRIV") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 owner: "Someone"
-    //             });
-    //         } else if (frame.id === "RVA2") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 channels: [
-    //                     {
-    //                         channelType: 1, // master volume
-    //                         volumeAdjustment: 0.5,
-    //                         bitsRepresentingPeak: 125,
-    //                         peakVolume: ""
-    //                     }
-    //                 ]
-    //             });
-    //         } else if (frame.id === "UFID") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 owner: "Someone",
-    //                 file: testTEXT
-    //             });
-    //         } else if (frame.id === "USLT") {
-    //             itag.push({
-    //                 id: frame.id,
-    //                 description: frame.title,
-    //                 language: "CZE",
-    //                 text: "Some text"
-    //             });
-    //         } else {
-    //             //console.log("Unsupported frame %s", frame.id);
-    //         }
-    //     }
-    //     mp3.setID3v2Tag(itag);
-    //     //mp3.save();
-    //     //mp3 = tagio.open(testFile, config);
-    //
-    //
-    //
-    //     var otag = mp3.getID3v2Tag();
-    //     //mp3.log();
-    //     //console.log(otag);
-    //     itag.forEach(function(iframe) {
-    //         otag.forEach(function(oframe) {
-    //             //TODO: Set by TagLib - why??
-    //             if (iframe.id === oframe.id && iframe.id !== "TIPL" && iframe.id !== "RVA2" ) {
-    //                 Object.keys(iframe).forEach(function(key) {
-    //                    if (key === "id" || key === "image" || key === "object" || key === "file") return;
-    //                    //console.log(iframe.id + "." + key + ": " + iframe[key] + " <-> " + oframe[key]);
-    //                    assert.equal(iframe[key], oframe[key]);
-    //                });
-    //             }
-    //         });
-    //     });
-    //
-    //     //mp3.log();
-    //     done();
-    // });
+    it("Write ID3v1 in unicode", function(done) {
+        var req = {
+            path: testFile,
+            configuration: {},
+            id3v1: {
+                "title": "Příšerně",
+                "album": "žluťoučký",
+                "artist": "kůň",
+                "track": 1,
+                "year": 2015,
+                "genre": "Speech",
+                "comment": "úpěl ďábelské ódy"
+            },
+            id3v2: []
+        };
+        tagio.write(req).then(function (res) {
+            //console.log(res.id3v1);
+            assert.equal(res.id3v1.title, req.id3v1.title);
+            assert.equal(res.id3v1.album, req.id3v1.album);
+            assert.equal(res.id3v1.artist, req.id3v1.artist);
+            assert.equal(res.id3v1.track, req.id3v1.track);
+            assert.equal(res.id3v1.year, req.id3v1.year);
+            assert.equal(res.id3v1.genre, req.id3v1.genre);
+            assert.equal(res.id3v1.comment, req.id3v1.comment);
+            tagio.read(req).then(function (res) {
+                assert.equal(res.id3v1.title, req.id3v1.title);
+                assert.equal(res.id3v1.album, req.id3v1.album);
+                assert.equal(res.id3v1.artist, req.id3v1.artist);
+                assert.equal(res.id3v1.track, req.id3v1.track);
+                assert.equal(res.id3v1.year, req.id3v1.year);
+                assert.equal(res.id3v1.genre, req.id3v1.genre);
+                assert.equal(res.id3v1.comment, req.id3v1.comment);
+                done();
+            });
+        });
+    });
 
+    it("Write ID3v2", function(done) {
+        var frames = tagio.id3v2.frames;
+        var itag = [];
+        //console.log(frames);
+        for (var i = 0, l = frames.length; i < l; i++) {
+            var frame = frames[i];
+            //console.log(frame);
+            if (frame.id === "TXXX") {
+                itag.push({
+                    id: frame.id,
+                    text: frame.title,
+                    description: "CUSTOM"
+                });
+            } else if (timestampFrames.indexOf(frame.id) != -1) {
+
+                itag.push({
+                    id: frame.id,
+                    text: "2015-04-01T05:23:30"
+                });
+            } else if (frame.id[0] === "T") {
+                itag.push({
+                    id: frame.id,
+                    text: frame.title
+                });
+            } else if (frame.id === "WXXX") {
+                itag.push({
+                    id: frame.id,
+                    url: "http://www.testurl" + i + ".com",
+                    description: frame.title
+                });
+            } else if (frame.id[0] === "W") {
+                itag.push({
+                    id: frame.id,
+                    url: "http://www.testurl" + i + ".com"
+                });
+            } else if (frame.id === "COMM") {
+                itag.push({
+                    id: frame.id,
+                    text: frame.title
+                });
+            } else if (frame.id === "APIC") {
+                itag.push({
+                    id: frame.id,
+                    description: frame.title,
+                    mimeType: "image/jpeg",
+                    type: "0",
+                    image: testJPEG
+                });
+            } else if (frame.id === "GEOB") {
+                itag.push({
+                    id: frame.id,
+                    mimeType: "text/plain",
+                    fileName: "sample.txt",
+                    description: frame.title,
+                    object: testTEXT
+                });
+            } else if (frame.id === "POPM") {
+                itag.push({
+                    id: frame.id,
+                    email: "someone@somewhere.com",
+                    rating: 120,
+                    counter: 25
+                });
+            } else if (frame.id === "PRIV") {
+                itag.push({
+                    id: frame.id,
+                    owner: "Someone"
+                });
+            } else if (frame.id === "RVA2") {
+                itag.push({
+                    id: frame.id,
+                    channels: [
+                        {
+                            channelType: 1, // master volume
+                            volumeAdjustment: 0.5,
+                            bitsRepresentingPeak: 125,
+                            peakVolume: ""
+                        }
+                    ]
+                });
+            } else if (frame.id === "UFID") {
+                itag.push({
+                    id: frame.id,
+                    owner: "Someone",
+                    file: testTEXT
+                });
+            } else if (frame.id === "USLT") {
+                itag.push({
+                    id: frame.id,
+                    description: frame.title,
+                    language: "CZE",
+                    text: "Some text"
+                });
+            } else {
+                //console.log("Unsupported frame %s", frame.id);
+            }
+        }
+        var req = {
+            path: testFile,
+            configuration: {},
+            id3v1: {},
+            id3v2: itag
+        };
+
+        //console.log(req.id3v2);
+        tagio.write(req).then(function (res) {
+            console.log(res.id3v2);
+            // itag.forEach(function(iframe) {
+            //     otag.forEach(function(oframe) {
+            //         if (iframe.id === oframe.id && iframe.id !== "TIPL" && iframe.id !== "RVA2" ) {
+            //             Object.keys(iframe).forEach(function(key) {
+            //                 if (key === "id" || key === "image" || key === "object" || key === "file") return;
+            //                 //console.log(iframe.id + "." + key + ": " + iframe[key] + " <-> " + oframe[key]);
+            //                 assert.equal(iframe[key], oframe[key]);
+            //             });
+            //         }
+            //     });
+            // });
+            //var otag = res.id3v2;
+            // for (var i = 0, l = itag.length; i < l; i++) {
+            //     var iframe = itag[i];
+            //     var oframe = otag[i];
+            //     console.log(oframe);
+            //     assertEqual(iframe.id, oframe.id);
+            // }
+            done();
+        });
+    });
 });

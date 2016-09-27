@@ -4,7 +4,6 @@
 #include <nan.h>
 
 NAN_METHOD(ReadMPEG);
-//NAN_METHOD(WriteWRITE);
-
+NAN_METHOD(WriteMPEG);
 
 #endif //TAGIO_MPEG_H

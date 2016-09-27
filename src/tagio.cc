@@ -17,6 +17,7 @@ NAN_MODULE_INIT(InitAll) {
     Set(target, New<String>("readGeneric").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadGeneric)).ToLocalChecked());
     Set(target, New<String>("writeGeneric").ToLocalChecked(), GetFunction(New<FunctionTemplate>(WriteGeneric)).ToLocalChecked());
     Set(target, New<String>("readMPEG").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadMPEG)).ToLocalChecked());
+    Set(target, New<String>("writeMPEG").ToLocalChecked(), GetFunction(New<FunctionTemplate>(WriteMPEG)).ToLocalChecked());
     Set(target, New<String>("readFLAC").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadFLAC)).ToLocalChecked());
 }
 

@@ -1,6 +1,5 @@
 #include "id3v1tag.h"
 #include "wrapper.h"
-#include "configuration.h"
 
 using namespace v8;
 using namespace std;
