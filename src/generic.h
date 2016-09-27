@@ -3,9 +3,8 @@
 
 #include <nan.h>
 
-
 NAN_METHOD(ReadGeneric);
-//NAN_METHOD(Write);
+//NAN_METHOD(WriteGeneric);
 
 
 

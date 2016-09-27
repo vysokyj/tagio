@@ -1,5 +1,6 @@
 #include <nan.h>
 #include "generic.h"   // NOLINT(build/include)
+#include "mpeg.h"   // NOLINT(build/include)
 
 
 using v8::FunctionTemplate;
@@ -13,6 +14,7 @@ using Nan::Set;
 
 NAN_MODULE_INIT(InitAll) {
     Set(target, New<String>("readGeneric").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadGeneric)).ToLocalChecked());
+    Set(target, New<String>("readMPEG").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadMPEG)).ToLocalChecked());
 
 }
 

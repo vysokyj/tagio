@@ -36,7 +36,7 @@ static void Clear(TagLib::ID3v2::Tag *tag) {
     list.clear();
 }
 
-void ExportID3v2(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *conf) {
+void ExportID3v2Tag(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *conf) {
     HandleScope scope;
     TagLib::ID3v2::FrameList frameList = tag->frameList();
     for (unsigned int i = 0; i < frameList.size(); i++) {
@@ -47,7 +47,7 @@ void ExportID3v2(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *conf
     }
 }
 
-void ImportID3v2(v8::Array *frames, TagLib::ID3v2::Tag *tag, Configuration *conf) {
+void ImportID3v2Tag(v8::Array *frames, TagLib::ID3v2::Tag *tag, Configuration *conf) {
     Clear(tag);
     for (unsigned int i = 0; i < frames->Length(); i++) {
         Local<Object> object = frames->Get(i)->ToObject();
