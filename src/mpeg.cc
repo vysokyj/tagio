@@ -55,11 +55,12 @@ public:
 
             TagLib::ID3v2::Tag *t2 = file->ID3v2Tag(true);
             TagLib::ID3v2::FrameList l2 = id3v2Tag->frameList();
+            TagLib::ID3v2::FrameFactory *factory = TagLib::ID3v2::FrameFactory::instance();
 
-            //TODO: Clear t2;
             for (unsigned int i = 0; i < l2.size(); i++) {
                 TagLib::ID3v2::Frame *frame = l2[i];
-                t2->addFrame(frame);
+                //TODO: Slow but safe?
+                t2->addFrame(factory->createFrame(frame->render(), conf->ID3v2Version()));
             }
 
             // save operation
@@ -81,7 +82,7 @@ public:
 
             delete file;
             delete id3v1Tag;
-            //delete id3v2Tag; //TODO: Memory leak...
+            delete id3v2Tag;
         }
 
         file = new TagLib::MPEG::File(path->c_str());
