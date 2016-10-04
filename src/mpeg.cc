@@ -7,6 +7,7 @@
 #include "apetag.h"
 #include "id3v1tag.h"
 #include "id3v2tag.h"
+#include "apetag.h"
 
 #include "taglib/mpegfile.h"
 #include "taglib/id3v1tag.h"
@@ -38,12 +39,16 @@ public:
             : AsyncWorker(callback), path(path), conf(conf) {}
 
     MPEGWorker(Callback *callback, string *path, Configuration *conf,
-               TagLib::ID3v1::Tag *id3v1Tag, TagLib::ID3v2::Tag *id3v2Tag, std::map<uintptr_t, std::string> *fmap)
+               TagLib::ID3v1::Tag *id3v1Tag,
+               TagLib::ID3v2::Tag *id3v2Tag,
+               TagLib::APE::Tag *apeTag,
+               std::map<uintptr_t, std::string> *fmap)
             : AsyncWorker(callback),
               path(path),
               conf(conf),
               id3v1Tag(id3v1Tag),
               id3v2Tag(id3v2Tag),
+              apeTag(apeTag),
               fmap(fmap),
               save(true) {}
 
@@ -68,12 +73,14 @@ public:
             delete file;
             delete id3v1Tag;
             delete id3v2Tag;
+            delete apeTag;
         }
         file = new TagLib::MPEG::File(path->c_str());
         audioProperties = file->audioProperties();
         tag = file->tag();
-        id3v1Tag = file->ID3v1Tag(false);
-        id3v2Tag = file->ID3v2Tag(false);
+        id3v1Tag = file->hasID3v1Tag() ? file->ID3v1Tag(false) : nullptr;
+        id3v2Tag = file->hasID3v2Tag() ? file->ID3v2Tag(false) : nullptr;
+        apeTag = file->hasAPETag() ? file->APETag(false) : nullptr;
     }
 
     void HandleOKCallback () {
@@ -120,7 +127,12 @@ public:
             result->Set(id3v2Key, id3v2Val);
         }
 
-        //TODO: Read ape tag...
+        if (conf->APEReadable() && apeTag != nullptr) {
+            Local<String> apeKey = New<String>("ape").ToLocalChecked();
+            Local<Object> apeVal = New<Object>();
+            ExportAPETag(apeTag, *apeVal);
+            result->Set(apeKey, apeVal);
+        }
 
         Local<Value> argv[] = { Null(), result };
         callback->Call(2, argv);
@@ -137,6 +149,7 @@ private:
     TagLib::Tag *tag;
     TagLib::ID3v1::Tag *id3v1Tag;
     TagLib::ID3v2::Tag *id3v2Tag;
+    TagLib::APE::Tag *apeTag;
     std::map<uintptr_t, std::string> *fmap;
 
     void WriteID3v1();
@@ -185,7 +198,14 @@ inline void MPEGWorker::WriteID3v2() {
 }
 
 inline void MPEGWorker::WriteAPE() {
-    //TODO: Implement
+    TagLib::APE::Tag *t1 = file->APETag(true);
+    t1->setArtist(id3v1Tag->artist());
+    t1->setAlbum(id3v1Tag->album());
+    t1->setTrack(id3v1Tag->track());
+    t1->setTitle(id3v1Tag->title());
+    t1->setGenre(id3v1Tag->genre());
+    t1->setYear(id3v1Tag->year());
+    t1->setComment(id3v1Tag->comment());
 }
 
 inline void MPEGWorker::SaveFile() {
@@ -229,6 +249,7 @@ NAN_METHOD(WriteMPEG) {
     Configuration *conf = new Configuration();
     TagLib::ID3v1::Tag *id3v1Tag = new TagLib::ID3v1::Tag();
     TagLib::ID3v2::Tag *id3v2Tag = new TagLib::ID3v2::Tag();
+    TagLib::APE::Tag *apeTag = new TagLib::APE::Tag();
     std::map<uintptr_t, std::string> *fmap = new std::map<uintptr_t, std::string>();
 
     Local<Object> reqObj = info[0].As<Object>();
@@ -259,8 +280,10 @@ NAN_METHOD(WriteMPEG) {
         ImportID3v2Tag(*id3v2Val, id3v2Tag, fmap, conf);
     }
 
-//
-//    //TODO: Add ape tag.
-//
-    AsyncQueueWorker(new MPEGWorker(callback, path, conf, id3v1Tag, id3v2Tag, fmap));
+    if (conf->APEWritable() && reqObj->Has(apeKey)) {
+        Local<Object> apeVal = reqObj->Get(apeKey).As<Object>();
+        ImportAPETag(*apeVal, apeTag);
+    }
+
+    AsyncQueueWorker(new MPEGWorker(callback, path, conf, id3v1Tag, id3v2Tag, apeTag, fmap));
 }

@@ -79,8 +79,8 @@ private:
     bool audioPropertiesReadable = true;
     bool tagReadable = true;
 
-    bool apeWritable = true;
-    bool apeReadable = true;
+    bool apeWritable = false;
+    bool apeReadable = false;
 
     bool id3v1Writable = true;
     bool id3v1Readable = true;

@@ -103,16 +103,28 @@ describe("MPEG", function() {
         }).catch(function(err) { done(err); });
     });
 
-    it("Write ID3v1 in unicode", function(done) {
+    it("Write ID3v1 and APE tag in unicode", function(done) {
         var req = {
             path: testFile,
             configuration: {
                 id3v1Readable: true,
                 id3v1Writable: true,
+                id3v1Encoding: tagio.Encoding.UTF8,
                 id3v2Readable: false,
-                id3v2Writable: false
+                id3v2Writable: false,
+                apeReadable: true,
+                apeWritable: true
             },
             id3v1: {
+                "title": "Příšerně",
+                "album": "žluťoučký",
+                "artist": "kůň",
+                "track": 1,
+                "year": 2015,
+                "genre": "Speech",
+                "comment": "úpěl ďábelské ódy"
+            },
+            ape: {
                 "title": "Příšerně",
                 "album": "žluťoučký",
                 "artist": "kůň",
@@ -131,16 +143,90 @@ describe("MPEG", function() {
             assert.equal(res.id3v1.year, req.id3v1.year);
             assert.equal(res.id3v1.genre, req.id3v1.genre);
             assert.equal(res.id3v1.comment, req.id3v1.comment);
-            tagio.read(req).then(function (res) {
-                assert.equal(res.id3v1.title, req.id3v1.title);
-                assert.equal(res.id3v1.album, req.id3v1.album);
-                assert.equal(res.id3v1.artist, req.id3v1.artist);
-                assert.equal(res.id3v1.track, req.id3v1.track);
-                assert.equal(res.id3v1.year, req.id3v1.year);
-                assert.equal(res.id3v1.genre, req.id3v1.genre);
-                assert.equal(res.id3v1.comment, req.id3v1.comment);
-                done();
+            assert.equal(res.ape.title, req.ape.title);
+            assert.equal(res.ape.album, req.ape.album);
+            assert.equal(res.ape.artist, req.ape.artist);
+            assert.equal(res.ape.track, req.ape.track);
+            assert.equal(res.ape.year, req.ape.year);
+            assert.equal(res.ape.genre, req.ape.genre);
+            assert.equal(res.ape.comment, req.ape.comment);
+            return tagio.read({
+                path: testFile,
+                configuration: {
+                    id3v1Readable: true,
+                    id3v1Writable: true,
+                    id3v1Encoding: tagio.Encoding.UTF8,
+                    id3v2Readable: false,
+                    id3v2Writable: false,
+                    apeReadable: true,
+                    apeWritable: true
+                }
             });
+        }).then(function (res) {
+            assert.isNotNull(res.path);
+            assert.isUndefined(res.configuration);
+            assert.isUndefined(res.audioProperties);
+            assert.isUndefined(res.tag);
+            assert.isUndefined(res.id3v2);
+            assert.equal(res.id3v1.title, req.id3v1.title);
+            assert.equal(res.id3v1.album, req.id3v1.album);
+            assert.equal(res.id3v1.artist, req.id3v1.artist);
+            assert.equal(res.id3v1.track, req.id3v1.track);
+            assert.equal(res.id3v1.year, req.id3v1.year);
+            assert.equal(res.id3v1.genre, req.id3v1.genre);
+            assert.equal(res.id3v1.comment, req.id3v1.comment);
+            assert.equal(res.ape.title, req.ape.title);
+            assert.equal(res.ape.album, req.ape.album);
+            assert.equal(res.ape.artist, req.ape.artist);
+            assert.equal(res.ape.track, req.ape.track);
+            assert.equal(res.ape.year, req.ape.year);
+            assert.equal(res.ape.genre, req.ape.genre);
+            assert.equal(res.ape.comment, req.ape.comment);
+            req.configurationReadable = true;
+            req.apeReadable = true;
+            req.apeWritable = false;
+            return tagio.write({
+                path: testFile,
+                configuration: {
+                    configurationReadable: true,
+                    audioPropertiesReadable: false,
+                    id3v1Readable: true,
+                    id3v1Writable: true,
+                    id3v1Encoding: tagio.Encoding.UTF8,
+                    id3v2Readable: true,
+                    id3v2Writable: false,
+                    apeReadable: true,
+                    apeWritable: false
+                },
+                id3v1: {
+                    "title": "Příšerně",
+                    "album": "žluťoučký",
+                    "artist": "kůň",
+                    "track": 1,
+                    "year": 2015,
+                    "genre": "Speech",
+                    "comment": "úpěl ďábelské ódy"
+                },
+                ape: {
+                    "title": "Příšerně",
+                    "album": "žluťoučký",
+                    "artist": "kůň",
+                    "track": 1,
+                    "year": 2015,
+                    "genre": "Speech",
+                    "comment": "úpěl ďábelské ódy"
+                }
+            });
+        }).then(function (res) {
+            //console.log(res);
+            assert.isNotNull(res.path);
+            assert.isNotNull(res.configuration);
+            assert.isUndefined(res.audioProperties);
+            assert.isUndefined(res.tag);
+            assert.isUndefined(res.id3v2);
+            assert.equal(res.configuration.apeWritable, false);
+            assert.isUndefined(res.ape); // ape should be ignored
+            done()
         }).catch(function(err) { done(err); });
     });
 
