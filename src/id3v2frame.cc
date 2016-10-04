@@ -1,5 +1,6 @@
 #include "id3v2frame.h"
 #include "wrapper.h"
+#include "bytevector.h"
 
 #include <taglib/attachedpictureframe.h>
 #include <taglib/commentsframe.h>
@@ -140,9 +141,21 @@ static inline void GetAPIC(TagLibWrapper &o, TagLib::ID3v2::Frame *frame, Config
     o.SetString("mimeType", f->mimeType());
     o.SetString("description", f->description());
     o.SetUint32("type", f->type());
-    //TODO: o.SetBytes("picture", f->picture(), f->mimeType());
+    o.SetString("picture", ExportByteVector(f->picture(), f->mimeType(), conf));
+}
 
-    //o.SetString("picture", )
+static inline void SetAPIC(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, Configuration *conf) {
+    uint32_t type = o.GetUint32("type");
+    auto *f = new TagLib::ID3v2::AttachedPictureFrame();
+    if (conf->ID3v2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(conf->ID3v2Encoding());
+    f->setTextEncoding(conf->ID3v2Encoding());
+    f->setMimeType(o.GetString("mimeType"));
+    if (APIC.count(type)) f->setType(APIC[type]);
+    else f->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
+    f->setDescription(o.GetString("description"));
+    f->setPicture(ImportByteVector(o.GetString("picture"), conf));
+    tag->addFrame(f);
 }
 
 static inline void SetAPIC(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf) {
@@ -155,7 +168,6 @@ static inline void SetAPIC(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, std::map<u
     if (APIC.count(type)) f->setType(APIC[type]);
     else f->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
     f->setDescription(o.GetString("description"));
-    //TODO: f->setPicture(o.GetBytes("picture"));
     (*fmap)[(uintptr_t) f] = o.GetString("picture").to8Bit(true);
     tag->addFrame(f);
 }
@@ -166,7 +178,7 @@ static inline void GetGEOB(TagLibWrapper &o, TagLib::ID3v2::Frame *frame, Config
     o.SetString("mimeType", f->mimeType());
     o.SetString("fileName", f->fileName());
     o.SetString("description", f->description());
-    //TODO: o.SetBytes("object", f->object(), f->mimeType());
+    o.SetString("object", ExportByteVector(f->object(), f->mimeType(), conf));
 }
 
 static inline void SetGEOB(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, Configuration *conf) {
@@ -177,9 +189,22 @@ static inline void SetGEOB(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, Configurat
     f->setMimeType(o.GetString("mimeType"));
     f->setFileName(o.GetString("fileName"));
     f->setDescription(o.GetString("description"));
-    //TODO: f->setObject(o.GetBytes("object"));
+    f->setObject(ImportByteVector(o.GetString("object"), conf));
     tag->addFrame(f);
 }
+
+static inline void SetGEOB(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf) {
+    auto *f = new TagLib::ID3v2::GeneralEncapsulatedObjectFrame();
+    if (conf->ID3v2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
+    else f->setTextEncoding(conf->ID3v2Encoding());
+    f->setTextEncoding(conf->ID3v2Encoding());
+    f->setMimeType(o.GetString("mimeType"));
+    f->setFileName(o.GetString("fileName"));
+    f->setDescription(o.GetString("description"));
+    (*fmap)[(uintptr_t) f] = o.GetString("object").to8Bit(true);
+    tag->addFrame(f);
+}
+
 
 static inline void GetPOPM(TagLibWrapper &o, TagLib::ID3v2::Frame *frame) {
     auto *f = dynamic_cast<TagLib::ID3v2::PopularimeterFrame *>(frame);
@@ -244,17 +269,17 @@ static inline void SetPRIV(TagLibWrapper &o, TagLib::ID3v2::Tag *tag) {
 //    tag->addFrame(f);
 //}
 
-static inline void GetUFID(TagLibWrapper &o, TagLib::ID3v2::Frame *frame) {
+static inline void GetUFID(TagLibWrapper &o, TagLib::ID3v2::Frame *frame, Configuration *conf) {
     auto *f = dynamic_cast<TagLib::ID3v2::UniqueFileIdentifierFrame *>(frame);
     TagLib::String mimeType("data/bin", TagLib::String::UTF8); //TODO: Mime type
     o.SetString("owner", f->owner());
-    //TODO: o.SetBytes("file", f->identifier(), mimeType);
+    o.SetString("identifier", ExportByteVector(f->identifier(), mimeType, conf));
 }
 
-static inline void SetUFID(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, const TagLib::ByteVector &id) {
+static inline void SetUFID(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, const TagLib::ByteVector &id) {
     TagLib::String owner = o.GetString("owner");
     auto *f = new TagLib::ID3v2::UniqueFileIdentifierFrame(owner, id);
-    //TODO: f->setIdentifier(o.GetBytes("identifier"));
+    (*fmap)[(uintptr_t) f] = o.GetString("identifier").to8Bit(true);
     tag->addFrame(f);
 }
 
@@ -304,7 +329,7 @@ void ExportID3v2Frame(TagLib::ID3v2::Frame *frame, v8::Object *object, Configura
     else if (id.compare("PRIV") == 0) GetPRIV(o, frame);
     //TODO: Reimplement    
     //else if (id.compare("RVA2") == 0) GetRVA2(o, frame, isolate, *object);
-    else if (id.compare("UFID") == 0) GetUFID(o, frame);
+    else if (id.compare("UFID") == 0) GetUFID(o, frame, conf);
     else if (id.compare("USLT") == 0) GetUSLT(o, frame, conf);
     else                              GetNONE(o, frame);
 }
@@ -320,11 +345,11 @@ void ImportID3v2Frame(Object *object, TagLib::ID3v2::Tag *tag, std::map<uintptr_
     else if (id.at(0) == 'W')         SetWYYY(o, tag, idVector);
     else if (id.compare("COMM") == 0) SetCOMM(o, tag, conf);
     else if (id.compare("APIC") == 0) SetAPIC(o, tag, fmap, conf);
-    else if (id.compare("GEOB") == 0) SetGEOB(o, tag, conf);
+    else if (id.compare("GEOB") == 0) SetGEOB(o, tag, fmap, conf);
     else if (id.compare("POPM") == 0) SetPOPM(o, tag);
     else if (id.compare("PRIV") == 0) SetPRIV(o, tag);
     //else if (id.compare("RVA2") == 0) SetRVA2(o, tag, isolate, object);
-    else if (id.compare("UFID") == 0) SetUFID(o, tag, idVector);
+    else if (id.compare("UFID") == 0) SetUFID(o, tag, fmap, idVector);
     else if (id.compare("USLT") == 0) SetUSLT(o, tag, idVector, conf);
     else                              SetNONE(o, tag, idVector);
 }

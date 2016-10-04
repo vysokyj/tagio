@@ -26,8 +26,10 @@ describe("MPEG", function() {
         testDir = path.resolve(__dirname, "../build/Test");
         sampleFile = path.resolve(__dirname, "../samples/sample.mp3");
         testFile = path.resolve(testDir, "test" + fileCounter++ + ".mp3");
-        testJPEG = "file://" +  path.resolve(__dirname, "../samples/sample.jpg");
-        testTEXT = "file://" +  path.resolve(__dirname, "../samples/sample.txt");
+        //testJPEG = "file://" +  path.resolve(__dirname, "../samples/sample.jpg");
+        testJPEG = path.resolve(__dirname, "../samples/sample.jpg");
+        //testTEXT = "file://" +  path.resolve(__dirname, "../samples/sample.txt");
+        testTEXT = path.resolve(__dirname, "../samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
         fs.writeFileSync(testFile, fs.readFileSync(sampleFile));
     });
@@ -163,7 +165,9 @@ describe("MPEG", function() {
     it("Write ID3v1 in unicode", function(done) {
         var req = {
             path: testFile,
-            configuration: {},
+            configuration: {
+                fileDirectory: "/tmp"
+            },
             id3v1: {
                 "title": "Příšerně",
                 "album": "žluťoučký",
@@ -281,7 +285,7 @@ describe("MPEG", function() {
                 itag.push({
                     id: frame.id,
                     owner: "Someone",
-                    file: testTEXT
+                    identifier: testTEXT
                 });
             } else if (frame.id === "USLT") {
                 itag.push({

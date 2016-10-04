@@ -1,6 +1,8 @@
+#include <taglib/generalencapsulatedobjectframe.h>
 #include "mpeg.h"
 #include "configuration.h"
 #include "audioproperties.h"
+#include "bytevector.h"
 #include "tag.h"
 #include "apetag.h"
 #include "id3v1tag.h"
@@ -9,6 +11,10 @@
 #include "taglib/mpegfile.h"
 #include "taglib/id3v1tag.h"
 #include "taglib/id3v2tag.h"
+#include "taglib/attachedpictureframe.h"
+#include "taglib/generalencapsulatedobjectframe.h"
+#include "taglib/uniquefileidentifierframe.h"
+
 
 using std::string;
 using std::map;
@@ -73,6 +79,21 @@ public:
 
             for (unsigned int i = 0; i < l2.size(); i++) {
                 TagLib::ID3v2::Frame *frame = l2[i];
+                if (auto f = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frame)) {
+                    uintptr_t addr = (uintptr_t) frame;
+                    std::string path = (*fmap)[addr];
+                    f->setPicture(ImportByteVector(path, conf));
+                }
+                if (auto f = dynamic_cast<TagLib::ID3v2::GeneralEncapsulatedObjectFrame *>(frame)) {
+                    uintptr_t addr = (uintptr_t) frame;
+                    std::string path = (*fmap)[addr];
+                    f->setObject(ImportByteVector(path, conf));
+                }
+                if (auto f = dynamic_cast<TagLib::ID3v2::UniqueFileIdentifierFrame *>(frame)) {
+                    uintptr_t addr = (uintptr_t) frame;
+                    std::string path = (*fmap)[addr];
+                    f->setIdentifier(ImportByteVector(path, conf));
+                }
                 //TODO: Slow but safe?
                 t2->addFrame(factory->createFrame(frame->render(), conf->ID3v2Version()));
             }
@@ -203,9 +224,9 @@ NAN_METHOD(WriteMPEG) {
     std::map<uintptr_t, std::string> *fmap = new std::map<uintptr_t, std::string>();
     ImportID3v2Tag(*id3v2Val, id3v2Tag, fmap, conf);
 
-    std::cout << "FMAP:" << std::endl;
-    for (std::map<uintptr_t, std::string>::const_iterator it = fmap->begin(); it != fmap->end(); ++it)
-        std::cout << it->first << ": " << it->second << std::endl;
+//    std::cout << "FMAP:" << std::endl;
+//    for (std::map<uintptr_t, std::string>::const_iterator it = fmap->begin(); it != fmap->end(); ++it)
+//        std::cout << it->first << ": " << it->second << std::endl;
 
 
 //
