@@ -141,9 +141,11 @@ static inline void GetAPIC(TagLibWrapper &o, TagLib::ID3v2::Frame *frame, Config
     o.SetString("description", f->description());
     o.SetUint32("type", f->type());
     //TODO: o.SetBytes("picture", f->picture(), f->mimeType());
+
+    //o.SetString("picture", )
 }
 
-static inline void SetAPIC(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, Configuration *conf) {
+static inline void SetAPIC(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf) {
     uint32_t type = o.GetUint32("type");
     auto *f = new TagLib::ID3v2::AttachedPictureFrame();
     if (conf->ID3v2UseFrameEncoding()) f->setTextEncoding(o.GetEncoding("textEncoding"));
@@ -154,6 +156,7 @@ static inline void SetAPIC(TagLibWrapper &o, TagLib::ID3v2::Tag *tag, Configurat
     else f->setType(TagLib::ID3v2::AttachedPictureFrame::Other);
     f->setDescription(o.GetString("description"));
     //TODO: f->setPicture(o.GetBytes("picture"));
+    (*fmap)[(uintptr_t) f] = o.GetString("picture").to8Bit(true);
     tag->addFrame(f);
 }
 
@@ -306,7 +309,7 @@ void ExportID3v2Frame(TagLib::ID3v2::Frame *frame, v8::Object *object, Configura
     else                              GetNONE(o, frame);
 }
 
-void ImportID3v2Frame(Object *object, TagLib::ID3v2::Tag *tag, Configuration *conf) {
+void ImportID3v2Frame(Object *object, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf) {
     TagLibWrapper o(object);
     const TagLib::String idString = o.GetString("id");
     const TagLib::ByteVector idVector(idString.toCString(), idString.length());
@@ -316,7 +319,7 @@ void ImportID3v2Frame(Object *object, TagLib::ID3v2::Tag *tag, Configuration *co
     else if (id.compare("WXXX") == 0) SetWXXX(o, tag, conf);
     else if (id.at(0) == 'W')         SetWYYY(o, tag, idVector);
     else if (id.compare("COMM") == 0) SetCOMM(o, tag, conf);
-    else if (id.compare("APIC") == 0) SetAPIC(o, tag, conf);
+    else if (id.compare("APIC") == 0) SetAPIC(o, tag, fmap, conf);
     else if (id.compare("GEOB") == 0) SetGEOB(o, tag, conf);
     else if (id.compare("POPM") == 0) SetPOPM(o, tag);
     else if (id.compare("PRIV") == 0) SetPRIV(o, tag);

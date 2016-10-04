@@ -47,11 +47,11 @@ void ExportID3v2Tag(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *c
     }
 }
 
-void ImportID3v2Tag(v8::Array *frames, TagLib::ID3v2::Tag *tag, Configuration *conf) {
+void ImportID3v2Tag(v8::Array *frames, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf) {
     Clear(tag);
     for (unsigned int i = 0; i < frames->Length(); i++) {
         Local<Object> object = frames->Get(i)->ToObject();
-        ImportID3v2Frame(*object, tag, conf);
+        ImportID3v2Frame(*object, tag, fmap, conf);
     }
 }
 

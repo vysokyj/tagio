@@ -11,6 +11,7 @@
 #include "taglib/id3v2tag.h"
 
 using std::string;
+using std::map;
 using v8::Function;
 using v8::Local;
 using v8::Value;
@@ -31,13 +32,26 @@ public:
             : AsyncWorker(callback), path(path), conf(conf) {}
 
     MPEGWorker(Callback *callback, string *path, Configuration *conf,
-               TagLib::ID3v1::Tag *id3v1Tag, TagLib::ID3v2::Tag *id3v2Tag)
-            : AsyncWorker(callback), path(path), conf(conf), id3v1Tag(id3v1Tag), id3v2Tag(id3v2Tag) { save = true; }
+               TagLib::ID3v1::Tag *id3v1Tag, TagLib::ID3v2::Tag *id3v2Tag, std::map<uintptr_t, std::string> *fmap)
+            : AsyncWorker(callback),
+              path(path),
+              conf(conf),
+              id3v1Tag(id3v1Tag),
+              id3v2Tag(id3v2Tag),
+              fmap(fmap),
+              save(true) {}
 
     ~MPEGWorker() {
         delete path;
         delete conf;
         delete file;
+        if (fmap != nullptr) {
+
+
+
+            //fmap->clear();
+            //delete fmap;
+        }
     }
 
     void Execute () {
@@ -144,6 +158,7 @@ private:
     TagLib::Tag *tag;
     TagLib::ID3v1::Tag *id3v1Tag;
     TagLib::ID3v2::Tag *id3v2Tag;
+    std::map<uintptr_t, std::string> *fmap;
 };
 
 NAN_METHOD(ReadMPEG) {
@@ -185,9 +200,16 @@ NAN_METHOD(WriteMPEG) {
     Local<String> id3v2Key = New<String>("id3v2").ToLocalChecked();
     Local<Array> id3v2Val = reqObj->Get(id3v2Key).As<Array>();
     TagLib::ID3v2::Tag *id3v2Tag = new TagLib::ID3v2::Tag();
-    ImportID3v2Tag(*id3v2Val, id3v2Tag, conf);
+    std::map<uintptr_t, std::string> *fmap = new std::map<uintptr_t, std::string>();
+    ImportID3v2Tag(*id3v2Val, id3v2Tag, fmap, conf);
+
+    std::cout << "FMAP:" << std::endl;
+    for (std::map<uintptr_t, std::string>::const_iterator it = fmap->begin(); it != fmap->end(); ++it)
+        std::cout << it->first << ": " << it->second << std::endl;
+
+
 //
 //    //TODO: Add ape tag.
 //
-    AsyncQueueWorker(new MPEGWorker(callback, path, conf, id3v1Tag, id3v2Tag));
+    AsyncQueueWorker(new MPEGWorker(callback, path, conf, id3v1Tag, id3v2Tag, fmap));
 }

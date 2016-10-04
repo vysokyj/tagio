@@ -243,7 +243,7 @@ describe("MPEG", function() {
                     description: frame.title,
                     mimeType: "image/jpeg",
                     type: "0",
-                    image: testJPEG
+                    picture: testJPEG
                 });
             } else if (frame.id === "GEOB") {
                 itag.push({

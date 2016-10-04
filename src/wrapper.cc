@@ -1,10 +1,10 @@
 #include "wrapper.h"
-//#include "bytevector.h"
 
 
 using namespace v8;
 using namespace std;
 using Nan::New;
+
 
 TagLibWrapper::TagLibWrapper(Object *object) : object(object) {}
 
@@ -99,7 +99,7 @@ void TagLibWrapper::SetStringList(const char *key, TagLib::StringList value) {
     object->Set(New<String>(key).ToLocalChecked(), array);
 }
 
-//TagLib::ByteVector TagLibWrapper::GetBytes(const char *key) {
+//TagLib::ByteVector TagLibWrapper::GetBytes(const char *key, std::map<uintptr_t, std::string> *fmap) {
 //    Local<String> keyString = (String::NewFromUtf8(key))->ToString();
 //    if (object->Has(keyString)) {
 //        String::Utf8Value value(object->Get(keyString));
@@ -109,7 +109,7 @@ void TagLibWrapper::SetStringList(const char *key, TagLib::StringList value) {
 //    }
 //}
 //
-//void TagLibWrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {
+//void TagLibWrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType, std::map<uintptr_t, std::string> *fmap,) {
 //    SetString(key, ByteVector::Export(value, mimeType));
 //}
 
