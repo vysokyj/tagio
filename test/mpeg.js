@@ -32,6 +32,7 @@ describe("MPEG", function() {
         testTEXT = path.resolve(__dirname, "../samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
         fs.writeFileSync(testFile, fs.readFileSync(sampleFile));
+        tagio.configure();
     });
 
     afterEach(function () {
@@ -330,13 +331,11 @@ describe("MPEG", function() {
         var req = {
             path: testFile,
             configuration: {},
-            id3v1: {},
             id3v2: itag
         };
 
-        //console.log(req.id3v2);
         tagio.write(req).then(function (res) {
-            console.log(res.id3v2);
+            //console.log(res.id3v2);
             const otag = res.id3v2;
             itag.forEach(function(iframe) {
                 otag.forEach(function(oframe) {

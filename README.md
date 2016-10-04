@@ -9,11 +9,12 @@ Advanced TagLib wrapper for Node.JS
 
 ## Status
 
+**API Changed - TagIO is now multi-threaded and non-blocking and uses promises.**
 **Windows build still not working. Help wanted.**
 
 | *Format*   | *Status - supported tags*        |
 | ---------- | -------------------------------- |
-| MP3        | generic, ID3v1, ID3v2            |
+| MP3        | generic, ID3v1, ID3v2, APE       |
 | MPC        | generic                          |
 | FLAC       | generic, XIPH, ID3v1, ID3v2      |
 | MP4        | generic                          |

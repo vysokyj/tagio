@@ -23,6 +23,7 @@ describe("WAV (generic tag)", function() {
         testTEXT = "file://" + path.resolve(__dirname, "../samples/sample.txt");
         if (!fs.existsSync(testDir)) fs.mkdirSync(testDir);
         fs.writeFileSync(testFile, fs.readFileSync(sampleFile));
+        tagio.configure();
     });
 
     afterEach(function () {

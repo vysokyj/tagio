@@ -1,42 +1,68 @@
-# Configuration Format
+# TagIO Configuration
+
+## Full Configuration Example
 
 ```javascript
-var config = {
-  binaryDataDirectory: "/tmp",
-  binaryDataUrlPrefix: "/attachments",
-  binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-  apeSave: false,
-  id3v1Save: false,
-  id3v1Encoding: tagio.Encoding.UTF8,
-  id3v2Save: true,
-  id3v2Version: 4,
-  id3v2Encoding: tagio.Encoding.UTF8,
-  id3v2UseFrameEncoding: false
+var configuration = {
+    fileExtracted: tagio.FileExtracted.AS_FILENAME,
+    fileDirectory: os.tmpdir(),
+    fileUrlPrefix: "/attachments",
+    configurationReadable: false,
+    audioPropertiesReadable: false,
+    tagReadable: false,
+    apeWritable: true,
+    apeReadable: true,
+    id3v1Writable: true,
+    id3v1Readable: true,
+    id3v1Encoding: tagio.Encoding.UTF8,
+    id3v2Writable: true,
+    id3v2Readable: true,
+    id3v2Encoding: tagio.Encoding.UTF8,
+    id3v2Version: 4,
+    id3v2UseFrameEncoding: false
 };
 ```
 
-## Binary Data Processing
+## Configuration Properties
 
-*   **binaryDataMethod** - method used for handling binary data
-*   FILENAME method output: 01100af24849aec09055a35b0f6dd050.jpg
-*   ABSOLUTE_URL method output: file://tmp/01100af24849aec09055a35b0f6dd050.jpg
-*   RELATIVE_URL method output: /custom/prefix/01100af24849aec09055a35b0f6dd050.jpg
-*   **binaryDataDirectory** - directory used for exporting and importing file attachments such as cover images
-*   **binaryDataUrlPrefix** - prefix used in RELATIVE_URL method
+### fileExtracted
 
+Possible values:
 
-## Ape Tag
+* IS_IGNORED - attached file is not exported and JSON contains "IGNORED" string
+* AS_FILENAME - attached file is exported and JSON contains plain file name
+* AS_ABSOLUTE_URL - attached file is exported and JSON contains full path in format file:///somedir/somefile.ext
+* AS_RELATIVE_URL - attached file is exported and JSON contains relative path = "someprefix/somefile.ext", someprefix is from variable fileUrlPrefix. 
 
-* **apeSave** - TagLib will save APE tag if possible
+### fileDirectory
 
-## ID3v1 Tag
+Directory where attached files are exported. Defaults to system temp directory.
 
-*   **id3v1Save** - TagLib will save ID3v1 tag if possible
-*   **id3v2Encoding** - Text encoding used for read and save
+### fileUrlPrefix
 
-## ID3v2 Tag
+Used when fileExtracted == tagio.FileExtracted.AS_RELATIVE_URL.
 
-*   **id3v2Save** - TagLib will save ID3v2 tag if possible
-*   **id3v2Version** - Used tag version. Possible values are 3 and 4.
-*   **id3v2Encoding** - Text encoding used for read and save
-*   **id3v2UseFrameEncoding** - Text encoding is set from each frame input data field named textEncoding - id3v2Encoding ignored
+### configurationReadable
+
+If true returns parsed configuration in response. Defaults to false.
+
+### audioPropertiesReadable
+
+If true returns audio properties. Defaults to true.
+
+### tagReadable
+
+If true generic tag is included in response. Defaults to false.
+
+### apeWritable
+
+Write or keep APE tag when possible.
+
+### id3v1Writable
+
+Write or keep ID3v1 tag when possible.
+
+### id3v2Writable
+
+Write or keep ID3v2 tag when possible.
+
