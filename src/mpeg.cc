@@ -36,21 +36,24 @@ using Nan::To;
 class MPEGWorker : public AsyncWorker {
 public:
     MPEGWorker(Callback *callback, string *path, Configuration *conf)
-            : AsyncWorker(callback), path(path), conf(conf) {}
+            : save(false),
+              AsyncWorker(callback),
+              path(path),
+              conf(conf) {}
 
     MPEGWorker(Callback *callback, string *path, Configuration *conf,
                TagLib::ID3v1::Tag *id3v1Tag,
                TagLib::ID3v2::Tag *id3v2Tag,
                TagLib::APE::Tag *apeTag,
                std::map<uintptr_t, std::string> *fmap)
-            : AsyncWorker(callback),
+            : save(true),
+              AsyncWorker(callback),
               path(path),
               conf(conf),
               id3v1Tag(id3v1Tag),
               id3v2Tag(id3v2Tag),
               apeTag(apeTag),
-              fmap(fmap),
-              save(true) {}
+              fmap(fmap) {}
 
     ~MPEGWorker() {
         delete path;
@@ -175,6 +178,12 @@ inline void MPEGWorker::WriteID3v2() {
     TagLib::ID3v2::FrameList l2 = id3v2Tag->frameList();
     TagLib::ID3v2::FrameFactory *factory = TagLib::ID3v2::FrameFactory::instance();
 
+    //TODO: Clear all frames not only added!
+    for (unsigned int i = 0; i < l2.size(); i++) {
+        TagLib::ID3v2::Frame *frame = l2[i];
+        t2->removeFrames(frame->frameID());
+    }
+
     for (unsigned int i = 0; i < l2.size(); i++) {
         TagLib::ID3v2::Frame *frame = l2[i];
         if (auto f = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frame)) {
@@ -223,7 +232,8 @@ inline void MPEGWorker::SaveFile() {
     bool stripOthers = true;
     uint32_t id3v2Version = conf->ID3v2Version();
     bool duplicateTags = true;
-    bool result = file->save(tags, stripOthers, id3v2Version, duplicateTags);
+    //bool result = file->save(tags, stripOthers, id3v2Version, duplicateTags);
+    file->save(tags, stripOthers, id3v2Version, duplicateTags);
 }
 
 

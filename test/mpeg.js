@@ -336,25 +336,19 @@ describe("MPEG", function() {
 
         //console.log(req.id3v2);
         tagio.write(req).then(function (res) {
-            //console.log(res.id3v2);
-            // itag.forEach(function(iframe) {
-            //     otag.forEach(function(oframe) {
-            //         if (iframe.id === oframe.id && iframe.id !== "TIPL" && iframe.id !== "RVA2" ) {
-            //             Object.keys(iframe).forEach(function(key) {
-            //                 if (key === "id" || key === "image" || key === "object" || key === "file") return;
-            //                 //console.log(iframe.id + "." + key + ": " + iframe[key] + " <-> " + oframe[key]);
-            //                 assert.equal(iframe[key], oframe[key]);
-            //             });
-            //         }
-            //     });
-            // });
-            //var otag = res.id3v2;
-            // for (var i = 0, l = itag.length; i < l; i++) {
-            //     var iframe = itag[i];
-            //     var oframe = otag[i];
-            //     console.log(oframe);
-            //     assertEqual(iframe.id, oframe.id);
-            // }
+            console.log(res.id3v2);
+            const otag = res.id3v2;
+            itag.forEach(function(iframe) {
+                otag.forEach(function(oframe) {
+                    if (iframe.id === oframe.id && iframe.id !== "TIPL" && iframe.id !== "RVA2" ) {
+                        Object.keys(iframe).forEach(function(key) {
+                            if (key === "id" || key === "picture" || key === "object" || key === "identifier") return;
+                            //console.log(iframe.id + "." + key + ": " + iframe[key] + " <-> " + oframe[key]);
+                            assert.equal(iframe[key], oframe[key]);
+                        });
+                    }
+                });
+            });
             done();
         }).catch(function(err) { done(err); });
     });
