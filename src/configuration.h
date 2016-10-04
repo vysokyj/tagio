@@ -17,53 +17,53 @@ public:
     Configuration() {}
     ~Configuration() {}
     
-    int fileExtracted() { return m_fileExtracted; }
-    void setFileExtracted(int as) { m_fileExtracted = as; }
+    int FileExtracted() { return fileExtracted; }
+    void SetFileExtracted(int as) { fileExtracted = as; }
     
-    TagLib::String fileDirectory() { return m_fileDirectory; }
-    void setFileDirectory(TagLib::String dir) { m_fileDirectory = dir; }
+    TagLib::String FileDirectory() { return fileDirectory; }
+    void SetFileDirectory(TagLib::String dir) { fileDirectory = dir; }
     
-    TagLib::String fileUrlPrefix() { return m_fileUrlPrefix; }
-    void setFileUrlPrefix(TagLib::String prefix) { m_fileUrlPrefix = prefix; }
+    TagLib::String FileUrlPrefix() { return fileUrlPrefix; }
+    void SetFileUrlPrefix(TagLib::String prefix) { fileUrlPrefix = prefix; }
+
+    bool ConfigurationReadable() { return configurationReadable; }
+    void SetConfigurationReadable(bool b) { configurationReadable = b; }
+
+    bool AudioPropertiesReadable() { return audioPropertiesReadable; }
+    void SetAudioPropertiesReadable(bool b) { audioPropertiesReadable = b; }
+
+    bool TagReadable() { return tagReadable; }
+    void SetTagReadable(bool b) { tagReadable = b; }
     
-    bool APEWritable() { return m_APEWritable; }
-    void setAPEWritable(bool b) { m_APEWritable = b; }
+    bool APEWritable() { return apeWritable; }
+    void SetAPEWritable(bool b) { apeWritable = b; }
 
-    bool APEReadable() { return m_APEReadable; }
-    void setAPEReadable(bool b) { m_APEReadable = b; }
+    bool APEReadable() { return apeReadable; }
+    void SetAPEReadable(bool b) { apeReadable = b; }
 
-    bool APEExpunged() { return m_APEExpunged; }
-    void setAPEExpunged(bool b) { m_APEExpunged = b; }
+    bool ID3v1Writable() { return id3v1Writable; }
+    void SetID3v1Writable(bool b) { id3v1Writable = b; }
 
-    bool ID3v1Writable() { return m_ID3v1Writable; }
-    void setID3v1Writable(bool b) { m_ID3v1Writable = b; }
+    bool ID3v1Readable() { return id3v1Readable; }
+    void SetID3v1Readable(bool b) { id3v1Readable = b; }
 
-    bool ID3v1Readable() { return m_ID3v1Readable; }
-    void setID3v1Readable(bool b) { m_ID3v1Readable = b; }
+    TagLib::String::Type ID3v1Encoding() { return id3v1Encoding; }
+    void SetID3v1Encoding(TagLib::String::Type encoding) { id3v1Encoding = encoding; }
 
-    bool ID3v1Expunged() { return m_ID3v1Expunged; }
-    void setID3v1Expunged(bool b) { m_ID3v1Expunged = b; }
+    bool ID3v2Writable() { return id3v2Writable; }
+    void SetID3v2Writable(bool b) { id3v2Writable = b; }
 
-    TagLib::String::Type ID3v1Encoding() { return m_ID3v1Encoding; }
-    void setID3v1Encoding(TagLib::String::Type encoding) { m_ID3v1Encoding = encoding; }
+    bool ID3v2Readable() { return id3v2Readable; }
+    void SetID3v2Readable(bool b) { id3v2Readable = b; }
 
-    bool ID3v2Writable() { return m_ID3v2Writable; }
-    void setID3v2Writable(bool b) { m_ID3v2Writable = b; }
+    uint32_t ID3v2Version() { return id3v2Version; }
+    void SetID3v2Version(uint32_t version) { id3v2Version = version; }
 
-    bool ID3v2Readable() { return m_ID3v2Readable; }
-    void setID3v2Readable(bool b) { m_ID3v2Readable = b; }
+    TagLib::String::Type ID3v2Encoding() { return id3v2Encoding; }
+    void SetID3v2Encoding(TagLib::String::Type encoding) { id3v2Encoding = encoding; }
 
-    bool ID3v2Expunged() { return m_ID3v2Expunged; }
-    void setID3v2Expunged(bool b) { m_ID3v2Expunged = b; }
-
-    uint32_t ID3v2Version() { return m_ID3v2Version; }
-    void setID3v2Version(uint32_t version) { m_ID3v2Version = version; }
-
-    TagLib::String::Type ID3v2Encoding() { return m_ID3v2Encoding; }
-    void setID3v2Encoding(TagLib::String::Type encoding) { m_ID3v2Encoding = encoding; }
-
-    bool ID3v2UseFrameEncoding() { return m_ID3v2UseFrameEncoding; }
-    void setID3v2UseFrameEncoding(bool b) { m_ID3v2UseFrameEncoding = b; }
+    bool ID3v2UseFrameEncoding() { return id3v2UseFrameEncoding; }
+    void SetID3v2UseFrameEncoding(bool b) { id3v2UseFrameEncoding = b; }
 
 
 private:
@@ -71,25 +71,26 @@ private:
     void operator=(Configuration const&)  = delete;
 
 
-    int            m_fileExtracted = FILE_EXTRACTED_AS_FILENAME;
-    TagLib::String m_fileDirectory = ".";
-    TagLib::String m_fileUrlPrefix = "";
+    int            fileExtracted = FILE_EXTRACTED_AS_FILENAME;
+    TagLib::String fileDirectory = ".";
+    TagLib::String fileUrlPrefix = "";
 
-    bool m_APEWritable = true;
-    bool m_APEReadable = true;
-    bool m_APEExpunged = false;
+    bool configurationReadable = false;
+    bool audioPropertiesReadable = true;
+    bool tagReadable = true;
 
-    bool m_ID3v1Writable = true;
-    bool m_ID3v1Readable = true;
-    bool m_ID3v1Expunged = false;
-    TagLib::String::Type m_ID3v1Encoding = TagLib::String::UTF8;
+    bool apeWritable = true;
+    bool apeReadable = true;
+
+    bool id3v1Writable = true;
+    bool id3v1Readable = true;
+    TagLib::String::Type id3v1Encoding = TagLib::String::UTF8;
     
-    bool m_ID3v2Writable = true;
-    bool m_ID3v2Readable = true;
-    bool m_ID3v2Expunged = false;
-    uint32_t m_ID3v2Version = 4;
-    TagLib::String::Type m_ID3v2Encoding = TagLib::String::UTF8;
-    bool m_ID3v2UseFrameEncoding = false;
+    bool id3v2Writable = true;
+    bool id3v2Readable = true;
+    uint32_t id3v2Version = 4;
+    TagLib::String::Type id3v2Encoding = TagLib::String::UTF8;
+    bool id3v2UseFrameEncoding = false;
 
 };
 

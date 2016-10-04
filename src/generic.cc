@@ -53,20 +53,26 @@ public:
         Local<String> pathVal = New<String>(path->c_str()).ToLocalChecked();
         result->Set(pathKey, pathVal);
 
-        Local<String> confKey = New<String>("configuration").ToLocalChecked();
-        Local<Object> confVal = New<Object>();
-        ExportConfiguration(conf, *confVal);
-        result->Set(confKey, confVal);
+        if (conf->ConfigurationReadable()) {
+            Local<String> confKey = New<String>("configuration").ToLocalChecked();
+            Local<Object> confVal = New<Object>();
+            ExportConfiguration(conf, *confVal);
+            result->Set(confKey, confVal);
+        }
 
-        Local<String> audioPropertiesKey = New<String>("audioProperties").ToLocalChecked();
-        Local<Object> audioPropertiesVal = New<Object>();
-        ExportAudioProperties(audioProperties, *audioPropertiesVal);
-        result->Set(audioPropertiesKey, audioPropertiesVal);
+        if (conf->AudioPropertiesReadable()) {
+            Local<String> audioPropertiesKey = New<String>("audioProperties").ToLocalChecked();
+            Local<Object> audioPropertiesVal = New<Object>();
+            ExportAudioProperties(audioProperties, *audioPropertiesVal);
+            result->Set(audioPropertiesKey, audioPropertiesVal);
+        }
 
-        Local<String> tagKey = New<String>("tag").ToLocalChecked();
-        Local<Object> tagVal = New<Object>();
-        ExportTag(tag, *tagVal);
-        result->Set(tagKey, tagVal);
+        if (conf->TagReadable()) {
+            Local<String> tagKey = New<String>("tag").ToLocalChecked();
+            Local<Object> tagVal = New<Object>();
+            ExportTag(tag, *tagVal);
+            result->Set(tagKey, tagVal);
+        }
 
         Local<Value> argv[] = { Null(), result };
         callback->Call(2, argv);
@@ -89,13 +95,13 @@ NAN_METHOD(ReadGeneric) {
 
     Local<String> pathKey = New<String>("path").ToLocalChecked();
     Local<String> pathObj = reqObj->Get(pathKey).As<String>();
-    Local<String> confKey = New<String>("configuration").ToLocalChecked();
-    Local<Object> confObj = reqObj->Get(confKey).As<Object>();
-
     String::Utf8Value pathVal(pathObj);
     std::string *path = new std::string(*pathVal);
+
+    Local<String> confKey = New<String>("configuration").ToLocalChecked();
+    Local<Object> confVal = reqObj->Get(confKey).As<Object>();
     Configuration *conf = new Configuration();
-    ExportConfiguration(conf, *confObj);
+    ImportConfiguration(*confVal, conf);
 
     AsyncQueueWorker(new GenericWorker(callback, path, conf));
 }
@@ -112,7 +118,7 @@ NAN_METHOD(WriteGeneric) {
     Local<String> confKey = New<String>("configuration").ToLocalChecked();
     Local<Object> confVal = reqObj->Get(confKey).As<Object>();
     Configuration *conf = new Configuration();
-    ExportConfiguration(conf, *confVal);
+    ImportConfiguration(*confVal, conf);
 
     //TODO: Open and write tag async? Possible?
     TagLib::FileRef *file = new TagLib::FileRef(path->c_str());

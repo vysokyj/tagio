@@ -39,75 +39,6 @@ describe("MPEG", function() {
         //fs.rmdirSync(testDir);
     });
 
-    // it("generic", function(done) {
-    //     var config = {
-    //         binaryDataDirectory: "/tmp",
-    //         binaryDataUrlPrefix: "/attachments",
-    //         binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-    //         apeSave: false,
-    //         id3v1Save: true,
-    //         //id3v1Encoding: tagio.Encoding.UTF8,
-    //         id3v2Save: false,
-    //         id3v2Version: 3,
-    //         id3v2Encoding: tagio.Encoding.UTF16
-    //     };
-    //     var mp3 = tagio.open(testFile, config);
-    //     var cfg = mp3.getConfiguration();
-    //     assert.equal(mp3.getPath(), "file://" + testFile);
-    //     assert.equal(true, cfg.id3v1Save);
-    //     assert.equal("UTF8", cfg.id3v1Encoding);
-    //     assert.equal("UTF16", cfg.id3v2Encoding);
-    //     assert.equal(3, cfg.id3v2Version);
-    //
-    //
-    //     var tag = {
-    //         "title": "Generic Title",
-    //         "album": "Generic Album",
-    //         "artist": "Generic Artist",
-    //         "track": 1,
-    //         "year": 2015,
-    //         "genre": "Speech",
-    //         "comment": "Generic Comment"
-    //     };
-    //     mp3.setTag(tag);
-    //     mp3.save();
-    //     mp3 = tagio.open(testFile, config);
-    //     //mp3.log();
-    //     assert.equal(JSON.stringify(mp3.getTag()), JSON.stringify(tag));
-    //     done();
-    // });
-
-    //it("ape", function(done) {
-    //    var apeConfig = {
-    //        binaryDataDirectory: "/tmp",
-    //        binaryDataUrlPrefix: "/attachments",
-    //        binaryDataMethod: tagio.BinaryDataMethod.ABSOLUTE_URL,
-    //        apeSave: true,
-    //        id3v1Save: false,
-    //        id3v2Save: false,
-    //        id3v2Version: 3,
-    //        id3v2Encoding: tagio.Encoding.UTF16
-    //    };
-    //    var mp3 = tagio.open(testFile, apeConfig);
-    //    assert.equal(mp3.getPath(), "file://" + testFile);
-    //    var tag = {
-    //        "title": "Generic Title",
-    //        "album": "Generic Album",
-    //        "artist": "Generic Artist",
-    //        "track": 1,
-    //        "year": 2015,
-    //        "genre": "Speech",
-    //        "comment": "Generic Comment"
-    //    };
-    //    mp3.setAPETag(tag);
-    //    mp3.save();
-    //    mp3 = tagio.open(testFile, config);
-    //    //mp3.log();
-    //    assert.equal(JSON.stringify(mp3.getAPETag()), JSON.stringify(tag));
-    //    done();
-    //});
-
-
     it("Read plain", function(done) {
 
         var request = {
@@ -123,10 +54,18 @@ describe("MPEG", function() {
 
 
     it("Write and read ID3v1 only", function(done) {
-
         var req = {
             path: testFile,
-            configuration: {},
+            configuration: {
+                configurationReadable: false,
+                audioPropertiesReadable: false,
+                id3v1Readable: true,
+                id3v1Writable: true,
+                id3v2Readable: false,
+                id3v2Writable: false,
+                apeReadable: false,
+                apeWritable: false
+            },
             id3v1: {
                 "title": "Generic Title 2",
                 "album": "Generic Album 2",
@@ -135,11 +74,14 @@ describe("MPEG", function() {
                 "year": 2015,
                 "genre": "Speech",
                 "comment": "Generic Comment 2"
-            },
-            id3v2: []
+            }
         };
         tagio.write(req).then(function (res) {
-            //console.log(res.id3v1);
+            //console.log(res);
+            assert.isNotNull(res.path);
+            assert.isUndefined(res.configuration);
+            assert.isUndefined(res.audioProperties);
+            assert.isUndefined(res.tag)
             assert.equal(res.id3v1.title, req.id3v1.title);
             assert.equal(res.id3v1.album, req.id3v1.album);
             assert.equal(res.id3v1.artist, req.id3v1.artist);
@@ -158,15 +100,17 @@ describe("MPEG", function() {
                 done();
             });
 
-
-        });
+        }).catch(function(err) { done(err); });
     });
 
     it("Write ID3v1 in unicode", function(done) {
         var req = {
             path: testFile,
             configuration: {
-                fileDirectory: "/tmp"
+                id3v1Readable: true,
+                id3v1Writable: true,
+                id3v2Readable: false,
+                id3v2Writable: false
             },
             id3v1: {
                 "title": "Příšerně",
@@ -176,8 +120,7 @@ describe("MPEG", function() {
                 "year": 2015,
                 "genre": "Speech",
                 "comment": "úpěl ďábelské ódy"
-            },
-            id3v2: []
+            }
         };
         tagio.write(req).then(function (res) {
             //console.log(res.id3v1);
@@ -198,7 +141,7 @@ describe("MPEG", function() {
                 assert.equal(res.id3v1.comment, req.id3v1.comment);
                 done();
             });
-        });
+        }).catch(function(err) { done(err); });
     });
 
     it("Write ID3v2", function(done) {
@@ -307,7 +250,7 @@ describe("MPEG", function() {
 
         //console.log(req.id3v2);
         tagio.write(req).then(function (res) {
-            console.log(res.id3v2);
+            //console.log(res.id3v2);
             // itag.forEach(function(iframe) {
             //     otag.forEach(function(oframe) {
             //         if (iframe.id === oframe.id && iframe.id !== "TIPL" && iframe.id !== "RVA2" ) {
@@ -327,6 +270,6 @@ describe("MPEG", function() {
             //     assertEqual(iframe.id, oframe.id);
             // }
             done();
-        });
+        }).catch(function(err) { done(err); });
     });
 });

@@ -8,7 +8,7 @@ var assert = require("chai").assert;
 var fileCounter = 0;
 
 
-describe("Generic Tag", function() {
+describe("WAV (generic tag)", function() {
     var testDir;
     var sampleFile;
     var testFile;
@@ -31,9 +31,13 @@ describe("Generic Tag", function() {
     });
 
     it("read", function (done) {
-        var req = {
+        const req = {
             path: testFile,
-            configuration: { }
+            configuration: {
+                configurationReadable: true,
+                audioPropertiesReadable: true,
+                tagReadable: true
+            }
         };
         tagio.read(req).then(function (res) {
             assert.isNotNull(res);
@@ -46,9 +50,13 @@ describe("Generic Tag", function() {
     });
 
     it("write", function (done) {
-        var req = {
+        const req = {
             path: testFile,
-            configuration: { },
+            configuration: {
+                configurationReadable: false,
+                audioPropertiesReadable: false,
+                tagReadable: true
+            },
             tag: {
                 "title": "Generic Title",
                 "album": "Generic Album",
@@ -60,7 +68,11 @@ describe("Generic Tag", function() {
             }
         };
         tagio.write(req).then(function (res) {
-            //console.log(res.tag);
+            //console.log(res);
+            assert.isNotNull(res.path);
+            assert.isUndefined(res.configuration);
+            assert.isUndefined(res.audioProperties);
+            assert.isNotNull(res.tag);
             assert.equal(res.tag.title, req.tag.title);
             assert.equal(res.tag.album, req.tag.album);
             assert.equal(res.tag.artist, req.tag.artist);

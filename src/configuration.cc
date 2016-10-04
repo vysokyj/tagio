@@ -34,19 +34,19 @@ static TagLib::String FileExtractedAsString(int method) {
 
 void ExportConfiguration(Configuration *conf, v8::Object *object) {
     TagLibWrapper o(object);
-    o.SetString("fileExtracted", FileExtractedAsString(conf->fileExtracted()));
-    o.SetString("fileDirectory", conf->fileDirectory());
-    o.SetString("fileUrlPrefix", conf->fileUrlPrefix());
+    o.SetString("fileExtracted", FileExtractedAsString(conf->FileExtracted()));
+    o.SetString("fileDirectory", conf->FileDirectory());
+    o.SetString("fileUrlPrefix", conf->FileUrlPrefix());
+    o.SetBoolean("configurationReadable", conf->ConfigurationReadable());
+    o.SetBoolean("audioPropertiesReadable", conf->AudioPropertiesReadable());
+    o.SetBoolean("tagReadable", conf->TagReadable());
     o.SetBoolean("apeReadable", conf->APEReadable());
     o.SetBoolean("apeWritable", conf->APEWritable());
-    o.SetBoolean("apeExpunged", conf->APEExpunged());
     o.SetBoolean("id3v1Readable", conf->ID3v1Readable());
     o.SetBoolean("id3v1Writable", conf->ID3v1Writable());
-    o.SetBoolean("id3v1Expunged", conf->ID3v1Expunged());
     o.SetEncoding("id3v1Encoding", conf->ID3v1Encoding());
     o.SetBoolean("id3v2Readable", conf->ID3v2Readable());
     o.SetBoolean("id3v2Writable", conf->ID3v2Writable());
-    o.SetBoolean("id3v2Expunged", conf->ID3v2Expunged());
     o.SetUint32("id3v2Version", conf->ID3v2Version());
     o.SetEncoding("id3v2Encoding", conf->ID3v2Encoding());
     o.SetBoolean("id3v2UseFrameEncoding", conf->ID3v2UseFrameEncoding());
@@ -54,20 +54,20 @@ void ExportConfiguration(Configuration *conf, v8::Object *object) {
 
 void ImportConfiguration(v8::Object *object, Configuration *conf) {
     TagLibWrapper o(object);
-    conf->setFileExtracted(FileExtractedAsCode(o.GetString("fileExtracted")));
-    conf->setFileDirectory(o.GetString("fileDirectory"));
-    conf->setFileUrlPrefix(o.GetString("fileUrlPrefix"));
-    conf->setAPEReadable(o.GetBoolean("apeReadable"));
-    conf->setAPEWritable(o.GetBoolean("apeWritable"));
-    conf->setAPEExpunged(o.GetBoolean("apeExpunged"));
-    conf->setID3v1Readable(o.GetBoolean("id3v1Readable"));
-    conf->setID3v1Writable(o.GetBoolean("id3v1Writable"));
-    conf->setID3v1Expunged(o.GetBoolean("id3v1Expunged"));
-    conf->setID3v1Encoding(o.GetEncoding("id3v1Encoding"));
-    conf->setID3v2Readable(o.GetBoolean("id3v2Readable"));
-    conf->setID3v2Writable(o.GetBoolean("id3v2Writable"));
-    conf->setID3v2Expunged(o.GetBoolean("id3v2Expunged"));
-    conf->setID3v2Encoding(o.GetEncoding("id3v2Encoding"));
-    conf->setID3v2Version(o.GetUint32("id3v2Version"));
-    conf->setID3v2UseFrameEncoding(o.GetBoolean("id3v2UseFrameEncoding"));
+    conf->SetFileExtracted(FileExtractedAsCode(o.GetString("fileExtracted")));
+    conf->SetFileDirectory(o.GetString("fileDirectory"));
+    conf->SetFileUrlPrefix(o.GetString("fileUrlPrefix"));
+    conf->SetConfigurationReadable(o.GetBoolean("configurationReadable"));
+    conf->SetAudioPropertiesReadable(o.GetBoolean("audioPropertiesReadable"));
+    conf->SetTagReadable(o.GetBoolean("tagReadable"));
+    conf->SetAPEReadable(o.GetBoolean("apeReadable"));
+    conf->SetAPEWritable(o.GetBoolean("apeWritable"));
+    conf->SetID3v1Readable(o.GetBoolean("id3v1Readable"));
+    conf->SetID3v1Writable(o.GetBoolean("id3v1Writable"));
+    conf->SetID3v1Encoding(o.GetEncoding("id3v1Encoding"));
+    conf->SetID3v2Readable(o.GetBoolean("id3v2Readable"));
+    conf->SetID3v2Writable(o.GetBoolean("id3v2Writable"));
+    conf->SetID3v2Encoding(o.GetEncoding("id3v2Encoding"));
+    conf->SetID3v2Version(o.GetUint32("id3v2Version"));
+    conf->SetID3v2UseFrameEncoding(o.GetBoolean("id3v2UseFrameEncoding"));
 }
