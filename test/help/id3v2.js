@@ -22,6 +22,12 @@ var mapTestFrame = function (frame, testJPEG, testTEXT) {
             text: frame.title,
             description: "CUSTOM"
         };
+
+    } else if (frame.id === "TRCK") {
+        return {
+            id: frame.id,
+            text: "01/12" // note - string not accepted here!!!
+        };
     } else if (timestampFrames.indexOf(frame.id) != -1) {
         return {
             id: frame.id,
@@ -53,7 +59,7 @@ var mapTestFrame = function (frame, testJPEG, testTEXT) {
             id: frame.id,
             description: frame.title,
             mimeType: "image/jpeg",
-            type: "0",
+            type: 0,
             picture: testJPEG
         };
     } else if (frame.id === "GEOB") {
@@ -76,6 +82,7 @@ var mapTestFrame = function (frame, testJPEG, testTEXT) {
             id: frame.id,
             owner: "Someone"
         };
+        //TODO: Write or fix RVA2
     // } else if (frame.id === "RVA2") {
     //     return {
     //         id: frame.id,
@@ -108,26 +115,36 @@ var mapTestFrame = function (frame, testJPEG, testTEXT) {
 };
 
 
+
 var generateTestFrames = function (testJPEG, testTEXT) {
     return tagio.id3v2.frames
         .map(function (n) { return mapTestFrame(n, testJPEG, testTEXT) })
         .filter(function(n) { return n != undefined });
 };
 
+
 var assertTestFrames = function (iframes, oframes) {
     if (!iframes || !oframes) throw "Missing frames";
-    //if (iframes.length != oframes.length) throw "Frame count mismatch";
-    iframes.forEach(function(iframe) {
-        oframes.forEach(function(oframe) {
-            if (iframe.id === oframe.id) {
-                Object.keys(iframe).forEach(function(key) {
-                    if (key === "id" || key === "picture" || key === "object" || key === "identifier") return;
-                    //console.log(iframe.id + "." + key + ": " + iframe[key] + " <-> " + oframe[key]);
-                    assert.equal(iframe[key], oframe[key]);
-                });
-            }
-        });
-    });
+    if (iframes.length != oframes.length) throw "Frames length mismatch";
+    var byId = function (a, b) { return a.id.localeCompare(b.id) };
+    iframes = iframes.sort(byId);
+    oframes = oframes.sort(byId);
+
+    for (var i = 0, l = iframes.length; i < l; i++) {
+        var iframe = iframes[i];
+        var oframe = oframes[i];
+
+        // remove prohibited keys
+        delete iframe.picture;
+        delete oframe.picture;
+        delete iframe.object;
+        delete oframe.object;
+        delete iframe.identifier;
+        delete oframe.identifier;
+
+        assert.deepEqual(iframe, oframe);
+    }
+
 };
 
 module.exports = {

@@ -9,7 +9,7 @@ using v8::Array;
 using Nan::HandleScope;
 using Nan::New;
 
-static void Clear(TagLib::ID3v2::Tag *tag) {
+void ClearID3v2Tag(TagLib::ID3v2::Tag *tag) {
     typedef list<TagLib::ByteVector> ByteVectorList;
     TagLib::ID3v2::FrameList frameList = tag->frameList();
     ByteVectorList list;
@@ -36,6 +36,7 @@ static void Clear(TagLib::ID3v2::Tag *tag) {
     list.clear();
 }
 
+
 void ExportID3v2Tag(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *conf) {
     HandleScope scope;
     TagLib::ID3v2::FrameList frameList = tag->frameList();
@@ -48,7 +49,7 @@ void ExportID3v2Tag(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *c
 }
 
 void ImportID3v2Tag(v8::Array *frames, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf) {
-    Clear(tag);
+    ClearID3v2Tag(tag);
     for (unsigned int i = 0; i < frames->Length(); i++) {
         Local<Object> object = frames->Get(i)->ToObject();
         ImportID3v2Frame(*object, tag, fmap, conf);

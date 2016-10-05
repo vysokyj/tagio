@@ -122,7 +122,6 @@ describe("FLAC", function() {
     });
 
     it("Write ID3v2", function(done) {
-        var frames = tagio.id3v2.frames;
         const req = {
             path: testFile,
             id3v2: id3v2Helper.generateTestFrames(testJPEG, testTEXT)

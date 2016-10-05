@@ -177,13 +177,7 @@ inline void MPEGWorker::WriteID3v2() {
     TagLib::ID3v2::Tag *t2 = file->ID3v2Tag(true);
     TagLib::ID3v2::FrameList l2 = id3v2Tag->frameList();
     TagLib::ID3v2::FrameFactory *factory = TagLib::ID3v2::FrameFactory::instance();
-
-    //TODO: Clear all frames not only added!
-    for (unsigned int i = 0; i < l2.size(); i++) {
-        TagLib::ID3v2::Frame *frame = l2[i];
-        t2->removeFrames(frame->frameID());
-    }
-
+    ClearID3v2Tag(t2);
     for (unsigned int i = 0; i < l2.size(); i++) {
         TagLib::ID3v2::Frame *frame = l2[i];
         if (auto f = dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frame)) {
