@@ -27,8 +27,8 @@ public:
             write = false;
     }
 
-    GenericWorker(Callback *callback, string *path, Configuration *conf, TagLib::FileRef *file, TagLib::Tag *tag)
-            : AsyncWorker(callback), path(path), conf(conf), file(file), tag(tag) {
+    GenericWorker(Callback *callback, string *path, Configuration *conf, GenericTag *gtag)
+            : AsyncWorker(callback), path(path), conf(conf), gtag(gtag) {
         write = true;
     }
 
@@ -39,7 +39,20 @@ public:
     }
 
     void Execute () {
-        if (write) file->save();
+        if (write) {
+            file = new TagLib::FileRef(path->c_str());
+            tag = file->tag();
+            tag->setTitle(gtag->title);
+            tag->setAlbum(gtag->album);
+            tag->setArtist(gtag->artist);
+            tag->setTrack(gtag->track);
+            tag->setYear(gtag->year);
+            tag->setGenre(gtag->genre);
+            tag->setComment(gtag->comment);
+            file->save();
+            delete file;
+            delete gtag;
+        }
         file = new TagLib::FileRef(path->c_str());
         tag = file->tag();
         audioProperties = file->audioProperties();
@@ -86,6 +99,7 @@ private:
 
     TagLib::AudioProperties *audioProperties;
     TagLib::Tag *tag;
+    GenericTag *gtag;
 };
 
 
@@ -120,12 +134,10 @@ NAN_METHOD(WriteGeneric) {
     Configuration *conf = new Configuration();
     ImportConfiguration(*confVal, conf);
 
-    //TODO: Open and write tag async? Possible?
-    TagLib::FileRef *file = new TagLib::FileRef(path->c_str());
     Local<String> tagKey = New<String>("tag").ToLocalChecked();
     Local<Object> tagVal = reqObj->Get(tagKey).As<Object>();
-    TagLib::Tag *tag = file->tag();
-    ImportTag(*tagVal, tag);
+    GenericTag *gtag = new GenericTag;
+    ImportTag(*tagVal, gtag);
 
-    AsyncQueueWorker(new GenericWorker(callback, path, conf, file, tag));
+    AsyncQueueWorker(new GenericWorker(callback, path, conf, gtag));
 }
