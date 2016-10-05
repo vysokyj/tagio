@@ -65,7 +65,9 @@ describe("MPEG", function() {
                 id3v2Readable: false,
                 id3v2Writable: false,
                 apeReadable: false,
-                apeWritable: false
+                apeWritable: false,
+                xiphCommentReadable: true,
+                xiphCommentWritable: true
             },
             id3v1: {
                 "title": "Generic Title 2",
@@ -90,17 +92,16 @@ describe("MPEG", function() {
             assert.equal(res.id3v1.year, req.id3v1.year);
             assert.equal(res.id3v1.genre, req.id3v1.genre);
             assert.equal(res.id3v1.comment, req.id3v1.comment);
-            tagio.read(req).then(function (res) {
-                assert.equal(res.id3v1.title, req.id3v1.title);
-                assert.equal(res.id3v1.album, req.id3v1.album);
-                assert.equal(res.id3v1.artist, req.id3v1.artist);
-                assert.equal(res.id3v1.track, req.id3v1.track);
-                assert.equal(res.id3v1.year, req.id3v1.year);
-                assert.equal(res.id3v1.genre, req.id3v1.genre);
-                assert.equal(res.id3v1.comment, req.id3v1.comment);
-                done();
-            });
-
+            return tagio.read(req);
+        }).then(function (res) {
+            assert.equal(res.id3v1.title, req.id3v1.title);
+            assert.equal(res.id3v1.album, req.id3v1.album);
+            assert.equal(res.id3v1.artist, req.id3v1.artist);
+            assert.equal(res.id3v1.track, req.id3v1.track);
+            assert.equal(res.id3v1.year, req.id3v1.year);
+            assert.equal(res.id3v1.genre, req.id3v1.genre);
+            assert.equal(res.id3v1.comment, req.id3v1.comment);
+            done();
         }).catch(function(err) { done(err); });
     });
 
@@ -114,7 +115,9 @@ describe("MPEG", function() {
                 id3v2Readable: false,
                 id3v2Writable: false,
                 apeReadable: true,
-                apeWritable: true
+                apeWritable: true,
+                xiphCommentReadable: true,
+                xiphCommentWritable: true
             },
             id3v1: {
                 "title": "Příšerně",
@@ -160,7 +163,9 @@ describe("MPEG", function() {
                     id3v2Readable: false,
                     id3v2Writable: false,
                     apeReadable: true,
-                    apeWritable: true
+                    apeWritable: true,
+                    xiphCommentReadable: true,
+                    xiphCommentWritable: true
                 }
             });
         }).then(function (res) {
@@ -197,7 +202,9 @@ describe("MPEG", function() {
                     id3v2Readable: true,
                     id3v2Writable: false,
                     apeReadable: true,
-                    apeWritable: false
+                    apeWritable: false,
+                    xiphCommentReadable: true,
+                    xiphCommentWritable: true
                 },
                 id3v1: {
                     "title": "Příšerně",

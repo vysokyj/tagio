@@ -12,7 +12,7 @@ using Nan::HandleScope;
 using Nan::New;
 
 
-static void Clear(TagLib::Ogg::XiphComment *tag) {
+void ClearXiphComment(TagLib::Ogg::XiphComment *tag) {
     TagLib::Ogg::FieldListMap map = tag->fieldListMap();
     for (auto it = map.begin(); it != map.end(); it++) {
         TagLib::String key = it->first;
@@ -48,7 +48,7 @@ void ExportXiphComment(TagLib::Ogg::XiphComment *tag, v8::Array *array) {
 
 void ImportXiphComment(v8::Array *array, TagLib::Ogg::XiphComment *tag) {
     //tag->removeAllFields(); // in new version
-    Clear(tag);
+    ClearXiphComment(tag);
     TagLib::Ogg::FieldListMap map = tag->fieldListMap();
     map.clear();
     for (unsigned int i = 0; i < array->Length(); i++) {

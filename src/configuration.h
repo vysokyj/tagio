@@ -65,6 +65,12 @@ public:
     bool ID3v2UseFrameEncoding() { return id3v2UseFrameEncoding; }
     void SetID3v2UseFrameEncoding(bool b) { id3v2UseFrameEncoding = b; }
 
+    bool XIPHCommentWritable() { return xiphCommentWritable; }
+    void SetXIPHCommentWritable(bool b) { xiphCommentWritable = b; }
+
+    bool XIPHCommentReadable() { return xiphCommentReadable; }
+    void SetXIPHCommentReadable(bool b) { xiphCommentReadable = b; }
+
 
 private:
     Configuration(Configuration const&)   = delete;
@@ -92,6 +98,8 @@ private:
     TagLib::String::Type id3v2Encoding = TagLib::String::UTF8;
     bool id3v2UseFrameEncoding = false;
 
+    bool xiphCommentWritable = true;
+    bool xiphCommentReadable = true;
 };
 
 void ExportConfiguration(Configuration *configuration, v8::Object *object);

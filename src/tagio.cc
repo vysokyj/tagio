@@ -19,6 +19,7 @@ NAN_MODULE_INIT(InitAll) {
     Set(target, New<String>("readMPEG").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadMPEG)).ToLocalChecked());
     Set(target, New<String>("writeMPEG").ToLocalChecked(), GetFunction(New<FunctionTemplate>(WriteMPEG)).ToLocalChecked());
     Set(target, New<String>("readFLAC").ToLocalChecked(), GetFunction(New<FunctionTemplate>(ReadFLAC)).ToLocalChecked());
+    Set(target, New<String>("writeFLAC").ToLocalChecked(), GetFunction(New<FunctionTemplate>(WriteFLAC)).ToLocalChecked());
 }
 
 NODE_MODULE(addon, InitAll)

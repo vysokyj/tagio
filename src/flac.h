@@ -4,7 +4,7 @@
 #include <nan.h>
 
 NAN_METHOD(ReadFLAC);
-//NAN_METHOD(WriteFLAC);
+NAN_METHOD(WriteFLAC);
 
 
 #endif //TAGIO_FLAC_H

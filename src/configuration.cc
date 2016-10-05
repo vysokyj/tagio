@@ -50,6 +50,8 @@ void ExportConfiguration(Configuration *conf, v8::Object *object) {
     o.SetUint32("id3v2Version", conf->ID3v2Version());
     o.SetEncoding("id3v2Encoding", conf->ID3v2Encoding());
     o.SetBoolean("id3v2UseFrameEncoding", conf->ID3v2UseFrameEncoding());
+    o.SetBoolean("xiphCommentReadable", conf->XIPHCommentReadable());
+    o.SetBoolean("xiphCommentWritable", conf->XIPHCommentWritable());
 }
 
 void ImportConfiguration(v8::Object *object, Configuration *conf) {
@@ -70,4 +72,6 @@ void ImportConfiguration(v8::Object *object, Configuration *conf) {
     conf->SetID3v2Encoding(o.GetEncoding("id3v2Encoding"));
     conf->SetID3v2Version(o.GetUint32("id3v2Version"));
     conf->SetID3v2UseFrameEncoding(o.GetBoolean("id3v2UseFrameEncoding"));
+    conf->SetXIPHCommentReadable(o.GetBoolean("xiphCommentReadable"));
+    conf->SetXIPHCommentWritable(o.GetBoolean("xiphCommentWritable"));
 }

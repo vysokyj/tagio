@@ -48,7 +48,9 @@ describe("Configuration", function() {
                 id3v2Readable: false,
                 id3v2Encoding: tagio.Encoding.UTF16BE,
                 id3v2Version: 3,
-                id3v2UseFrameEncoding: false
+                id3v2UseFrameEncoding: false,
+                xiphCommentReadable: true,
+                xiphCommentWritable: true
         };
         const req = {
             path: testFile
