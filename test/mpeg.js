@@ -148,6 +148,27 @@ describe("MPEG", function() {
             assert.equal(res.ape.year, req.ape.year);
             assert.equal(res.ape.genre, req.ape.genre);
             assert.equal(res.ape.comment, req.ape.comment);
+            return res;
+        }).then(function (res) {
+            assert.isNotNull(res.path);
+            assert.isUndefined(res.configuration);
+            assert.isUndefined(res.audioProperties);
+            assert.isUndefined(res.tag);
+            assert.isUndefined(res.id3v2);
+            assert.equal(res.id3v1.title, req.id3v1.title);
+            assert.equal(res.id3v1.album, req.id3v1.album);
+            assert.equal(res.id3v1.artist, req.id3v1.artist);
+            assert.equal(res.id3v1.track, req.id3v1.track);
+            assert.equal(res.id3v1.year, req.id3v1.year);
+            assert.equal(res.id3v1.genre, req.id3v1.genre);
+            assert.equal(res.id3v1.comment, req.id3v1.comment);
+            assert.equal(res.ape.title, req.ape.title);
+            assert.equal(res.ape.album, req.ape.album);
+            assert.equal(res.ape.artist, req.ape.artist);
+            assert.equal(res.ape.track, req.ape.track);
+            assert.equal(res.ape.year, req.ape.year);
+            assert.equal(res.ape.genre, req.ape.genre);
+            assert.equal(res.ape.comment, req.ape.comment);
             return tagio.read({
                 path: testFile,
                 configuration: {
