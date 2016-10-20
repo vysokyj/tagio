@@ -47,7 +47,7 @@ describe("WAV (generic tag)", function() {
             assert.isNotNull(res.audioProperties);
             assert.isNotNull(res.tag);
             done();
-        });
+        }).catch(function(err) { done(err); });
     });
 
     it("write", function (done) {
@@ -82,7 +82,6 @@ describe("WAV (generic tag)", function() {
             assert.equal(res.tag.genre, req.tag.genre);
             assert.equal(res.tag.comment, req.tag.comment);
             done();
-        });
-
+        }).catch(function(err) { done(err); });
     });
 });

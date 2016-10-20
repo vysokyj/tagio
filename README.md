@@ -38,6 +38,7 @@ Advanced TagLib wrapper for Node.JS
 
 ### General Usage Information
 
+*   [Basic Usage](./doc/basic.md)
 *   [Configuration Format](./doc/config.md)
 *   [Generic Interface](./doc/generic.md)
 *   [MPEG (MP3) File Interface](./doc/mpeg.md)

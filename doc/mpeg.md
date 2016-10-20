@@ -4,100 +4,130 @@ Example:
 
 ```javascript
 var tagio = import('tagio');
-var config = { ... };
-var mp3 = tagio.open(__dirname + "/samples/sample.mp3", config);
-mp3.log();
-```
 
-Output:
-
-```json
-{
-  "path": "/home/jirka/dev/github/tagio/test/samples/sample.mp3",
-  "audioProperties": {
-    "length": 2,
-    "bitrate ": 117,
-    "sampleRate": 44100,
-    "channels": 2
-  },
-  "tags": {
-    "generic": {
-      "title": "My title",
-      "album": "My album",
-      "artist": "My artist",
-      "track": 1,
-      "year": 2000,
-      "genre": "Rock",
-      "comment": "My comment"
+const req = {
+    path: '/home/someone/sample.mp3',
+    configuration: {
+        configurationReadable: false,
+        audioPropertiesReadable: true,
+        id3v1Readable: true,
+        id3v1Writable: true,
+        id3v1Encoding: tagio.Encoding.UTF8,
+        id3v2Readable: true,
+        id3v2Writable: true,
+        apeReadable: true,
+        apeWritable: true
     },
-    "id3v2": [
-      {
-        "id": "TIT2",
-        "text": "My title"
-      },
-      {
-        "id": "TPE1",
-        "text": "My artist"
-      },
-      {
-        "id": "TPE2",
-        "text": "My album artist"
-      },
-      {
-        "id": "TALB",
-        "text": "My album"
-      },
-      {
-        "id": "TDRC",
-        "text": "2000"
-      },
-      {
-        "id": "TRCK",
-        "text": "01"
-      },
-      {
-        "id": "TCON",
-        "text": "17"
-      },
-      {
-        "id": "COMM",
-        "text": "My comment"
-      },
-      {
-        "id": "TCOM",
-        "text": "My composer"
-      },
-      {
-        "id": "TOPE",
-        "text": "My original artist"
-      },
-      {
-        "id": "TCOP",
-        "text": "My copyright"
-      },
-      {
-        "id": "WXXX",
-        "url": "http://somewhere.com",
-      },
-      {
-        "id": "TENC",
-        "text": "Some Encoder"
-      },
-      {
-        "id": "APIC",
-        "mimeType": "image/jpeg",
-        "description": "Cover Front.jpeg",
-        "type": 3,
-        "picture": "file:///tmp/01100af24849aec09055a35b0f6dd050.jpg"
-      }
-    ]
-  }
-}
+    id3v1: {
+        'title': 'My title',
+        'album': 'My album',
+        'artist': 'My artist',
+        'track': 1,
+        'year': 2015,
+        'genre': 'Rock',
+        'comment': 'My comment'
+    },
+    ape: {
+        'title': 'My title',
+        'album': 'My album',
+        'artist': 'My artist',
+        'track': 1,
+        'year': 2015,
+        'genre': 'Rock',
+        'comment': 'My comment'
+    },
+    id3v2: [
+     { id: 'APIC',
+       description: 'Attached picture',
+       mimeType: 'image/jpeg',
+       type: 0,
+       picture: '/home/someone/sample.jpg' },
+     { id: 'COMM', text: 'Comments' },
+     { id: 'GEOB',
+       mimeType: 'text/plain',
+       fileName: 'sample.txt',
+       description: 'General encapsulated object',
+       object: '/home/someone/sample.txt' },
+     { id: 'PRIV', owner: 'Someone' },
+     { id: 'POPM',
+       email: 'someone@somewhere.com',
+       rating: 120,
+       counter: 25 },
+     { id: 'TALB', text: 'Album/Movie/Show title' },
+     { id: 'TBPM', text: 'BPM (beats per minute)' },
+     { id: 'TCOM', text: 'Composer' },
+     { id: 'TCON', text: 'Content type' },
+     { id: 'TCOP', text: 'Copyright message' },
+     { id: 'TDEN', text: 'Encoding time' },
+     { id: 'TDLY', text: 'Playlist delay' },
+     { id: 'TDOR', text: '2015-04-01T05:23:30' },
+     { id: 'TDRC', text: '2015-04-01T05:23:30' },
+     { id: 'TDRL', text: '2015-04-01T05:23:30' },
+     { id: 'TDTG', text: '2015-04-01T05:23:30' },
+     { id: 'TENC', text: 'Encoded by' },
+     { id: 'TEXT', text: 'Lyricist/Text writer' },
+     { id: 'TFLT', text: 'File type' },
+     { id: 'TIPL', text: 'Involved people list' },
+     { id: 'TIT1', text: 'Content group description' },
+     { id: 'TIT2', text: 'Title/songname/content description' },
+     { id: 'TIT3', text: 'Subtitle/Description refinement' },
+     { id: 'TKEY', text: 'Initial key' },
+     { id: 'TLAN', text: 'Language(s)' },
+     { id: 'TLEN', text: 'Length' },
+     { id: 'TMCL', text: 'Musician credits list' },
+     { id: 'TMED', text: 'Media type' },
+     { id: 'TMOO', text: 'Mood' },
+     { id: 'TOAL', text: 'Original album/movie/show title' },
+     { id: 'TOFN', text: 'Original filename' },
+     { id: 'TOLY', text: 'Original lyricist(s)/text writer(s)' },
+     { id: 'TOPE', text: 'Original artist(s)/performer(s)' },
+     { id: 'TOWN', text: 'File owner/licensee' },
+     { id: 'TPE1', text: 'Lead performer(s)/Soloist(s)' },
+     { id: 'TPE2', text: 'Band/orchestra/accompaniment' },
+     { id: 'TPE3', text: 'Conductor/performer refinement' },
+     { id: 'TPE4',
+       text: 'Interpreted, remixed, or otherwise modified by' },
+     { id: 'TPOS', text: 'Part of a set' },
+     { id: 'TPRO', text: 'Produced notice' },
+     { id: 'TPUB', text: 'Publisher' },
+     { id: 'TRCK', text: '01/12' },
+     { id: 'TRSN', text: 'Internet radio station name' },
+     { id: 'TRSO', text: 'Internet radio station owner' },
+     { id: 'TSOA', text: 'Album sort order' },
+     { id: 'TSOP', text: 'Performer sort order' },
+     { id: 'TSOT', text: 'Title sort order' },
+     { id: 'TSRC',
+       text: 'ISRC (international standard recording code)' },
+     { id: 'TSSE',
+       text: 'Software/Hardware and settings used for encoding' },
+     { id: 'TSST', text: 'Set subtitle' },
+     { id: 'TXXX',
+       text: 'User defined text information frame',
+       description: 'CUSTOM' },
+     { id: 'UFID',
+       owner: 'Someone',
+       identifier: '/home/someone/sample.txt' },
+     { id: 'USLT',
+       description: 'Unsynchronised lyric/text transcription',
+       language: 'CZE',
+       text: 'Some text' },
+     { id: 'WCOM', url: 'http://www.testurl5873.com' },
+     { id: 'WCOP', url: 'http://www.testurl7764.com' },
+     { id: 'WOAF', url: 'http://www.testurl6728.com' },
+     { id: 'WOAR', url: 'http://www.testurl3880.com' },
+     { id: 'WOAS', url: 'http://www.testurl5116.com' },
+     { id: 'WORS', url: 'http://www.testurl5630.com' },
+     { id: 'WPAY', url: 'http://www.testurl5373.com' },
+     { id: 'WPAY', url: 'http://www.testurl8740.com' },
+     { id: 'WXXX',
+       url: 'http://www.testurl5690.com',
+       description: 'User defined URL link frame' } 
+     ]
+};
+
+tagio.write(req).then(function (res) {
+    console.log(res);
+}).catch(function(err) { console.error(err); });
 ```
 
-## Available additional methods
-
-*   **getID3v1Tag()**
-*   **setID3v1Tag(tag)**
-*   **getID3v2Tag()**
-*   s**setID3v2Tag(tag)**
+Output is similar to input.

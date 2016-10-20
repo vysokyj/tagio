@@ -25,7 +25,13 @@ var configuration = {
 
 ## Configuration Properties
 
+### fileDirectory
+
+Directory where attached files are exported. Defaults to system temp directory.
+
 ### fileExtracted
+
+**NOT WORKING YET!**
 
 Possible values:
 
@@ -34,35 +40,30 @@ Possible values:
 * AS_ABSOLUTE_URL - attached file is exported and JSON contains full path in format file:///somedir/somefile.ext
 * AS_RELATIVE_URL - attached file is exported and JSON contains relative path = "someprefix/somefile.ext", someprefix is from variable fileUrlPrefix. 
 
-### fileDirectory
-
-Directory where attached files are exported. Defaults to system temp directory.
-
 ### fileUrlPrefix
+
+**NOT WORKING YET!**
 
 Used when fileExtracted == tagio.FileExtracted.AS_RELATIVE_URL.
 
-### configurationReadable
+### somethingReadable
 
-If true returns parsed configuration in response. Defaults to false.
+Manages reading of something from the input file.
+ 
+### somethingWritable
 
-### audioPropertiesReadable
+Manages writing of something to the output file.
 
-If true returns audio properties. Defaults to true.
+### somethingEncoding
 
-### tagReadable
+Output encoding for something.
 
-If true generic tag is included in response. Defaults to false.
+### id3v2Version
 
-### apeWritable
+3 or 4 to write ID3v2.3 or ID3v2.4 
 
-Write or keep APE tag when possible.
+### id3v2UseFrameEncoding
 
-### id3v1Writable
+Use or ignore encoding of ID3v2 frames. If false used id3v2Encoding property.
 
-Write or keep ID3v1 tag when possible.
-
-### id3v2Writable
-
-Write or keep ID3v2 tag when possible.
 

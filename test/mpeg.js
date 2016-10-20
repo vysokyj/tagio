@@ -271,7 +271,7 @@ describe("MPEG", function() {
             },
             id3v2: id3v2Helper.generateTestFrames(testJPEG, testTEXT)
         };
-        //console.log(req);
+        console.log(req);
         tagio.write(req).then(function (res) {
             id3v2Helper.assertTestFrames(req.id3v2, res.id3v2);
             done();
