@@ -256,6 +256,19 @@ describe("MPEG", function() {
     it("Write ID3v2", function(done) {
         const req = {
             path: testFile,
+            configuration: {
+                configurationReadable: true,
+                audioPropertiesReadable: false,
+                id3v1Readable: false,
+                id3v1Writable: false,
+                id3v1Encoding: tagio.Encoding.UTF8,
+                id3v2Readable: true,
+                id3v2Writable: true,
+                apeReadable: true,
+                apeWritable: false,
+                xiphCommentReadable: true,
+                xiphCommentWritable: true
+            },
             id3v2: id3v2Helper.generateTestFrames(testJPEG, testTEXT)
         };
         //console.log(req);
