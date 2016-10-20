@@ -2,34 +2,72 @@
 
 TagIO supports generic interface for all formats supported by TagLib.
 
+Write:
+
 ```javascript
-var tagio = import('tagio');
-var config = { ... };
-var ogg = tagio.open(__dirname + "/samples/sample.ogg", config);
-ogg.log();
+var tagio = require('tagio');
+
+const req = {
+    path: sample.wav,
+    configuration: {
+        configurationReadable: false,
+        audioPropertiesReadable: true,
+        tagReadable: true
+    },
+    tag: {
+        title: 'Generic Title',
+        album: 'Generic Album',
+        artist: 'Generic Artist',
+        track: 1,
+        year: 2015,
+        genre: 'Speech',
+        comment: 'Generic Comment'
+    }
+};
+
+tagio.write(req).then(function (res) {
+    console.log(res);
+});
 ```
 
-Output:
+Read:
+
+```javascript
+var tagio = require('tagio');
+
+const req = {
+    path: 'sample.wav',
+    configuration: {
+        configurationReadable: true,
+        audioPropertiesReadable: true,
+        tagReadable: true
+    }
+};
+
+tagio.read(req).then(function (res) {
+    console.log(res);
+}).catch(function(err) { console.error(err); });
+```
+
+Output (same for both):
 
 ```json
 {
-  "path": "/home/jirka/dev/github/tagio/test/samples/sample.ogg",
+  "path": "/home/someone/sample.wav",
   "audioProperties": {
-    "length": 2,
-    "bitrate ": 112,
-    "sampleRate": 44100,
-    "channels": 2
+     "length": 2,
+     "bitrate": 1411,
+     "sampleRate": 44100,
+     "channels": 2
   },
-  "tags": {
-    "generic": {
-      "title": "My title",
-      "album": "My album",
-      "artist": "My artist",
-      "track": 2,
-      "year": 2000,
-      "genre": "Rock",
-      "comment": "My comment"
-    }
+  "tag": {
+     "title": "Generic Title",
+     "album": "Generic Album",
+     "artist": "Generic Artist",
+     "track": 1,
+     "year": 2015,
+     "genre": "Speech",
+     "comment": "Generic Comment"
   }
 }
 ```

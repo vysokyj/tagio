@@ -1,23 +1,24 @@
 #ifndef TAGIO_TAG_H
 #define TAGIO_TAG_H
 
-#include <node.h>
+#include <nan.h>
 #include <taglib/tag.h>
+#include <taglib/tstring.h>
 
-namespace TagIO {
-    class Tag {
-    public:
-        /**
-         * Create new V8 Object with tag properties.
-         */
-        static v8::Local<v8::Object> New(v8::Isolate *isolate, TagLib::Tag *tag);
+struct GenericTag {
+    TagLib::String title;
+    TagLib::String album;
+    TagLib::String artist;
+    TagLib::uint track;
+    TagLib::uint year;
+    TagLib::String genre;
+    TagLib::String comment;
+};
 
-        /**
-         * Set TagLib tag by properties from V8 Object.
-         */
-        static void Set(v8::Isolate *isolate, v8::Object *object, TagLib::Tag *tag);
-    };
-}
+void ExportTag(GenericTag *tag, v8::Object *object) ;
+void ExportTag(TagLib::Tag *tag, v8::Object *object);
+void ImportTag(v8::Object *object, TagLib::Tag *tag);
+void ImportTag(v8::Object *object, GenericTag *tag);
 
 
 #endif //TAGIO_TAG_H

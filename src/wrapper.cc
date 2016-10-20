@@ -1,68 +1,69 @@
 #include "wrapper.h"
-#include "bytevector.h"
 
-using namespace TagIO;
+
 using namespace v8;
 using namespace std;
+using Nan::New;
 
-Wrapper::Wrapper(Isolate *isolate, Object *object) : isolate(isolate), object(object) {}
 
-Wrapper::~Wrapper() {}
+TagLibWrapper::TagLibWrapper(Object *object) : object(object) {}
 
-bool Wrapper::GetBoolean(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+TagLibWrapper::~TagLibWrapper() {}
+
+bool TagLibWrapper::GetBoolean(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
-        return object->Get(String::NewFromUtf8(isolate, key))->BooleanValue();
+        return object->Get(New<String>(key).ToLocalChecked())->BooleanValue();
     } else {
         return false;
     }
 }
 
-void Wrapper::SetBoolean(const char *key, bool value) {
-    object->Set(String::NewFromUtf8(isolate, key), Boolean::New(isolate, value));
+void TagLibWrapper::SetBoolean(const char *key, bool value) {
+    object->Set(New<String>(key).ToLocalChecked(), New<Boolean>(value));
 }
 
-double Wrapper::GetNumber(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+double TagLibWrapper::GetNumber(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
-        return object->Get(String::NewFromUtf8(isolate, key))->NumberValue();
+        return object->Get(New<String>(key).ToLocalChecked())->NumberValue();
     } else {
         return 0.0;
     }
 }
 
-void Wrapper::SetNumber(const char *key, double value) {
-    object->Set(String::NewFromUtf8(isolate, key), Number::New(isolate, value));
+void TagLibWrapper::SetNumber(const char *key, double value) {
+    object->Set(New<String>(key).ToLocalChecked(), New<Number>(value));
 }
 
-int Wrapper::GetInt32(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+int TagLibWrapper::GetInt32(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
-        return (int) (object->Get(String::NewFromUtf8(isolate, key)))->Int32Value();
+        return (int) (object->Get(New<String>(key).ToLocalChecked()))->Int32Value();
     } else {
         return 0;
     }
 }
 
-void Wrapper::SetInt32(const char *key, int value) {
-    object->Set(String::NewFromUtf8(isolate, key), Integer::New(isolate, value));
+void TagLibWrapper::SetInt32(const char *key, int value) {
+    object->Set(New<String>(key).ToLocalChecked(), New<Integer>(value));
 }
 
-TagLib::uint Wrapper::GetUint32(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+TagLib::uint TagLibWrapper::GetUint32(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
-        return (TagLib::uint) (object->Get(String::NewFromUtf8(isolate, key)))->Uint32Value();
+        return (TagLib::uint) (object->Get(New<String>(key).ToLocalChecked()))->Uint32Value();
     } else {
         return 0;
     }
 }
 
-void Wrapper::SetUint32(const char *key, const TagLib::uint value) {
-    object->Set(String::NewFromUtf8(isolate, key), Integer::New(isolate, value));
+void TagLibWrapper::SetUint32(const char *key, const TagLib::uint value) {
+    object->Set(New<String>(key).ToLocalChecked(), New<Integer>(value));
 }
 
-TagLib::String Wrapper::GetString(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+TagLib::String TagLibWrapper::GetString(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
         String::Utf8Value value(object->Get(keyString));
         return TagLib::String(*value, TagLib::String::UTF8);
@@ -71,12 +72,12 @@ TagLib::String Wrapper::GetString(const char *key) {
     }
 }
 
-void Wrapper::SetString(const char *key, TagLib::String value) {
-    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, value.toCString(true)));
+void TagLibWrapper::SetString(const char *key, TagLib::String value) {
+    object->Set(New<String>(key).ToLocalChecked(), New<String>(value.toCString(true)).ToLocalChecked());
 }
 
-TagLib::StringList Wrapper::GetStringList(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+TagLib::StringList TagLibWrapper::GetStringList(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     Local<Array> array = Local<Array>::Cast(object->Get(keyString));
     TagLib::StringList list;
     //cout << "LENGTH" << array->Length() << endl;
@@ -90,30 +91,30 @@ TagLib::StringList Wrapper::GetStringList(const char *key) {
     return list;
 }
 
-void Wrapper::SetStringList(const char *key, TagLib::StringList value) {
-    Local<Array> array = Array::New(isolate, value.size());
+void TagLibWrapper::SetStringList(const char *key, TagLib::StringList value) {
+    Local<Array> array = New<Array>(value.size());
     for (uint32_t i = 0; i < value.size(); i++) {
-        array->Set(i, String::NewFromUtf8(isolate, value[i].toCString(true)));
+        array->Set(i, New<String>(value[i].toCString(true)).ToLocalChecked());
     }
-    object->Set(String::NewFromUtf8(isolate, key), array);
+    object->Set(New<String>(key).ToLocalChecked(), array);
 }
 
-TagLib::ByteVector Wrapper::GetBytes(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
-    if (object->Has(keyString)) {
-        String::Utf8Value value(object->Get(keyString));
-        return ByteVector::Import(TagLib::String(*value, TagLib::String::UTF8));
-    } else {
-        return TagLib::ByteVector(); // empty byte vector
-    }
-}
+//TagLib::ByteVector TagLibWrapper::GetBytes(const char *key, std::map<uintptr_t, std::string> *fmap) {
+//    Local<String> keyString = (String::NewFromUtf8(key))->ToString();
+//    if (object->Has(keyString)) {
+//        String::Utf8Value value(object->Get(keyString));
+//        return ByteVector::Import(TagLib::String(*value, TagLib::String::UTF8));
+//    } else {
+//        return TagLib::ByteVector(); // empty byte vector
+//    }
+//}
+//
+//void TagLibWrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType, std::map<uintptr_t, std::string> *fmap,) {
+//    SetString(key, ByteVector::Export(value, mimeType));
+//}
 
-void Wrapper::SetBytes(const char *key, const TagLib::ByteVector value, TagLib::String mimeType) {
-    SetString(key, ByteVector::Export(value, mimeType));
-}
-
-TagLib::String::Type Wrapper::GetEncoding(const char *key) {
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+TagLib::String::Type TagLibWrapper::GetEncoding(const char *key) {
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
         String::Utf8Value value(object->Get(keyString));
         TagLib::String encodingString(*value, TagLib::String::UTF8);
@@ -128,7 +129,7 @@ TagLib::String::Type Wrapper::GetEncoding(const char *key) {
     }
 }
 
-void Wrapper::SetEncoding(const char *key, const TagLib::String::Type value) {
+void TagLibWrapper::SetEncoding(const char *key, const TagLib::String::Type value) {
     string enc;
     switch (value) {
         case TagLib::String::Latin1:
@@ -150,13 +151,13 @@ void Wrapper::SetEncoding(const char *key, const TagLib::String::Type value) {
             enc = "UTF16";
 
     }
-    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, enc.c_str()));
+    object->Set(New<String>(key).ToLocalChecked(), New<String>(enc.c_str()).ToLocalChecked());
 }
 
-TagLib::ByteVector Wrapper::GetLanguage(const char *key) {
+TagLib::ByteVector TagLibWrapper::GetLanguage(const char *key) {
     //TODO: Check valid ISO format
     //TODO: Find better transoform from ByteVector to char *
-    Local<String> keyString = (String::NewFromUtf8(isolate, key))->ToString();
+    Local<String> keyString = New<String>(key).ToLocalChecked();
     if (object->Has(keyString)) {
         String::Utf8Value value(object->Get(keyString));
         TagLib::String str(*value);
@@ -166,15 +167,15 @@ TagLib::ByteVector Wrapper::GetLanguage(const char *key) {
     }
 }
 
-void Wrapper::SetLanguage(const char *key, const TagLib::ByteVector value) {
+void TagLibWrapper::SetLanguage(const char *key, const TagLib::ByteVector value) {
     //TODO: Check valid ISO format
-    //TODO: Find better transoform from ByteVector to char *
+    //TODO: Find better transform from ByteVector to char *
     TagLib::String str(value);
-    object->Set(String::NewFromUtf8(isolate, key), String::NewFromUtf8(isolate, str.toCString(true)));
+    object->Set(New<String>(key).ToLocalChecked(), New<String>(str.toCString(true)).ToLocalChecked());
 }
 
 
-//TagLib::List<TagLib::String> Wrapper::GetStringArray(const char *key) {
+//TagLib::List<TagLib::String> TagLibWrapper::GetStringArray(const char *key) {
 //    Local<Array> array = Local<Array>::Cast(object->Get(key));
 //    TagLib::List<TagLib::String> list;
 //    for (unsigned int i = 0; i < array->Length(); i++) {
@@ -185,7 +186,7 @@ void Wrapper::SetLanguage(const char *key, const TagLib::ByteVector value) {
 //    return list;
 //}
 //
-//void Wrapper::SetStringArray(const char *key, const TagLib::List<TagLib::String> list) {
+//void TagLibWrapper::SetStringArray(const char *key, const TagLib::List<TagLib::String> list) {
 //    Local<Array> array = Array::New(isolate, list.size());
 //    for (unsigned int i = 0; i < list.size(); i++) {
 //        TagLib::String string = list[i];

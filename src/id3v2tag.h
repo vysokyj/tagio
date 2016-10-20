@@ -1,19 +1,13 @@
 #ifndef TAGIO_ID3V2TAG_H
 #define TAGIO_ID3V2TAG_H
 
-
-#include <node.h>
+#include <nan.h>
 #include <taglib/id3v2tag.h>
 
-namespace TagIO {
-    class ID3v2Tag {
-    public:
-        static v8::Local<v8::Array> New(v8::Isolate *isolate, TagLib::ID3v2::Tag *tag);
-        static void Set(v8::Isolate *isolate, v8::Array *frames, TagLib::ID3v2::Tag *tag);
-    protected:
-        static void Clear(TagLib::ID3v2::Tag *tag);
-    };
-}
+#include "configuration.h"
 
+void ClearID3v2Tag(TagLib::ID3v2::Tag *tag);
+void ExportID3v2Tag(TagLib::ID3v2::Tag *tag, v8::Array *frames, Configuration *conf);
+void ImportID3v2Tag(v8::Array *frames, TagLib::ID3v2::Tag *tag, std::map<uintptr_t, std::string> *fmap, Configuration *conf);
 
 #endif //TAGIO_ID3V2TAG_H

@@ -1,110 +1,143 @@
 #include "generic.h"
 #include "configuration.h"
-#include "audioproperties.h"
 #include "tag.h"
+#include "audioproperties.h"
 
-using namespace TagIO;
-using namespace v8;
-using namespace node;
-using namespace std;
+#include <taglib/fileref.h>
 
-Persistent<Function> GENERIC::constructor;
+using std::string;
+using v8::Function;
+using v8::Local;
+using v8::Value;
+using v8::String;
+using v8::Object;
+using Nan::AsyncQueueWorker;
+using Nan::AsyncWorker;
+using Nan::Callback;
+using Nan::HandleScope;
+using Nan::New;
+using Nan::Null;
+using Nan::To;
 
-GENERIC::GENERIC(const char *path) : Base(path) {
-    //file = TagLib::FileRef::create(FixPath(path), true, TagLib::AudioProperties::Average);
-    file = new TagLib::FileRef(path);
-}
+class GenericWorker : public AsyncWorker {
+public:
 
-GENERIC::~GENERIC() {
-    delete file;
-}
-
-void GENERIC::Init(Handle<Object> exports) {
-    Isolate *isolate = Isolate::GetCurrent();
-
-    // Prepare constructor template
-    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
-    tpl->SetClassName(String::NewFromUtf8(isolate, "GENERIC"));
-    tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-    // Prototype
-    NODE_SET_PROTOTYPE_METHOD(tpl, "save", Save);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getPath", GetPath);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getAudioProperties", GetAudioProperties);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "getTag", GetTag);
-    NODE_SET_PROTOTYPE_METHOD(tpl, "setTag", SetTag);
-
-    constructor.Reset(isolate, tpl->GetFunction());
-    exports->Set(String::NewFromUtf8(isolate, "GENERIC"), tpl->GetFunction());
-}
-
-void GENERIC::New(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    //HandleScope scope(isolate);
-
-    if (args.Length() < 2) {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
-        return;
+    GenericWorker(Callback *callback, string *path, Configuration *conf)
+            : AsyncWorker(callback), path(path), conf(conf) {
+            write = false;
     }
 
-    if (!args[0]->IsString() || !args[1]->IsObject()) {
-        isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong arguments")));
-        return;
+    GenericWorker(Callback *callback, string *path, Configuration *conf, GenericTag *gtag)
+            : AsyncWorker(callback), path(path), conf(conf), gtag(gtag) {
+        write = true;
     }
 
-    if (args.IsConstructCall()) {
-        // Invoked as constructor
-        String::Utf8Value path(args[0]->ToString());
-        GENERIC *ref = new GENERIC(*path);
-        ref->Wrap(args.This());
-        Local<Object> object = args[1]->ToObject();
-        Configuration::Set(isolate, *object);
-        args.GetReturnValue().Set(args.This());
-    } else {
-        // Invoked as plain function, turn into construct call.
-        const int argc = 1;
-        Local<Value> argv[argc] = { args[0] };
-        Local<Function> cons = Local<Function>::New(isolate, constructor);
-        args.GetReturnValue().Set(cons->NewInstance(argc, argv));
+    ~GenericWorker() {
+        delete path;
+        delete conf;
+        delete file;
     }
+
+    void Execute () {
+        if (write) {
+            file = new TagLib::FileRef(path->c_str());
+            tag = file->tag();
+            tag->setTitle(gtag->title);
+            tag->setAlbum(gtag->album);
+            tag->setArtist(gtag->artist);
+            tag->setTrack(gtag->track);
+            tag->setYear(gtag->year);
+            tag->setGenre(gtag->genre);
+            tag->setComment(gtag->comment);
+            file->save();
+            delete file;
+            delete gtag;
+        }
+        file = new TagLib::FileRef(path->c_str());
+        tag = file->tag();
+        audioProperties = file->audioProperties();
+    }
+
+    void HandleOKCallback () {
+        HandleScope scope;
+        Local<Object> result = New<Object>();
+
+        Local<String> pathKey = New<String>("path").ToLocalChecked();
+        Local<String> pathVal = New<String>(path->c_str()).ToLocalChecked();
+        result->Set(pathKey, pathVal);
+
+        if (conf->ConfigurationReadable()) {
+            Local<String> confKey = New<String>("configuration").ToLocalChecked();
+            Local<Object> confVal = New<Object>();
+            ExportConfiguration(conf, *confVal);
+            result->Set(confKey, confVal);
+        }
+
+        if (conf->AudioPropertiesReadable()) {
+            Local<String> audioPropertiesKey = New<String>("audioProperties").ToLocalChecked();
+            Local<Object> audioPropertiesVal = New<Object>();
+            ExportAudioProperties(audioProperties, *audioPropertiesVal);
+            result->Set(audioPropertiesKey, audioPropertiesVal);
+        }
+
+        if (conf->TagReadable()) {
+            Local<String> tagKey = New<String>("tag").ToLocalChecked();
+            Local<Object> tagVal = New<Object>();
+            ExportTag(tag, *tagVal);
+            result->Set(tagKey, tagVal);
+        }
+
+        Local<Value> argv[] = { Null(), result };
+        callback->Call(2, argv);
+    }
+
+private:
+    bool write = false;
+    string *path;
+    Configuration *conf;
+    TagLib::FileRef *file;
+
+    TagLib::AudioProperties *audioProperties;
+    TagLib::Tag *tag;
+    GenericTag *gtag;
+};
+
+
+NAN_METHOD(ReadGeneric) {
+    Local<Object> reqObj = info[0].As<Object>();
+    Callback *callback = new Callback(info[1].As<Function>());
+
+    Local<String> pathKey = New<String>("path").ToLocalChecked();
+    Local<String> pathObj = reqObj->Get(pathKey).As<String>();
+    String::Utf8Value pathVal(pathObj);
+    std::string *path = new std::string(*pathVal);
+
+    Local<String> confKey = New<String>("configuration").ToLocalChecked();
+    Local<Object> confVal = reqObj->Get(confKey).As<Object>();
+    Configuration *conf = new Configuration();
+    ImportConfiguration(*confVal, conf);
+
+    AsyncQueueWorker(new GenericWorker(callback, path, conf));
 }
 
-//----------------------------------------------------------------------------------------------------------------------
-// Generic API
+NAN_METHOD(WriteGeneric) {
+    Local<Object> reqObj = info[0].As<Object>();
+    Callback *callback = new Callback(info[1].As<Function>());
 
-void GENERIC::Save(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    bool result = ref->file->save();
-    args.GetReturnValue().Set(Boolean::New(isolate, result));
-}
+    Local<String> pathKey = New<String>("path").ToLocalChecked();
+    Local<String> pathObj = reqObj->Get(pathKey).As<String>();
+    String::Utf8Value pathVal(pathObj);
+    std::string *path = new std::string(*pathVal);
 
-void GENERIC::GetPath(const FunctionCallbackInfo<Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    string path = ref->GetFilePath();
-    if (Configuration::Get().BinaryDataMethod() == BDM_ABSOLUTE_URL)
-        path = "file://" + path;
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, path.c_str()));
-}
+    Local<String> confKey = New<String>("configuration").ToLocalChecked();
+    Local<Object> confVal = reqObj->Get(confKey).As<Object>();
+    Configuration *conf = new Configuration();
+    ImportConfiguration(*confVal, conf);
 
-void GENERIC::GetAudioProperties(const FunctionCallbackInfo<v8::Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    Local<Object> object = AudioProperties::New(isolate, ref->file->audioProperties());
-    args.GetReturnValue().Set(object);
-}
+    Local<String> tagKey = New<String>("tag").ToLocalChecked();
+    Local<Object> tagVal = reqObj->Get(tagKey).As<Object>();
+    GenericTag *gtag = new GenericTag;
+    ImportTag(*tagVal, gtag);
 
-void GENERIC::GetTag(const FunctionCallbackInfo<v8::Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    Local<Object> object = Tag::New(isolate, ref->file->tag());
-    args.GetReturnValue().Set(object);
-}
-
-void GENERIC::SetTag(const FunctionCallbackInfo<v8::Value>& args) {
-    Isolate *isolate = Isolate::GetCurrent();
-    auto *ref = ObjectWrap::Unwrap<GENERIC>(args.Holder());
-    Local<Object> object = Local<Object>::Cast(args[0]);
-    Tag::Set(isolate, *object, ref->file->tag());
+    AsyncQueueWorker(new GenericWorker(callback, path, conf, gtag));
 }

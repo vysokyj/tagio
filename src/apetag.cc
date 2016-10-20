@@ -1,14 +1,8 @@
 #include "apetag.h"
 #include "wrapper.h"
 
-using namespace TagIO;
-using namespace v8;
-using namespace std;
-
-Local<Object> APETag::New(Isolate *isolate, TagLib::APE::Tag *tag) {
-    EscapableHandleScope handleScope(isolate);
-    Local<Object> object = Object::New(isolate);
-    Wrapper o(isolate, *object);
+void ExportAPETag(TagLib::APE::Tag *tag, v8::Object *object) {
+    TagLibWrapper o(object);
     o.SetString("title", tag->title());
     o.SetString("album", tag->album());
     o.SetString("artist", tag->artist());
@@ -16,11 +10,10 @@ Local<Object> APETag::New(Isolate *isolate, TagLib::APE::Tag *tag) {
     o.SetUint32("year", tag->year());
     o.SetString("genre", tag->genre());
     o.SetString("comment", tag->comment());
-    return handleScope.Escape(object);
 }
 
-void APETag::Set(Isolate *isolate, Object *object, TagLib::APE::Tag *tag) {
-    Wrapper o(isolate, object);
+void ImportAPETag(v8::Object *object, TagLib::APE::Tag *tag) {
+    TagLibWrapper o(object);
     tag->setTitle(o.GetString("title"));
     tag->setAlbum(o.GetString("album"));
     tag->setArtist(o.GetString("artist"));

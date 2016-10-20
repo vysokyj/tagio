@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "fileExtracted": {
+      "enum": [
+        "IS_IGNORED",
+        "AS_FILENAME",
+        "AS_ABSOLUTE_URL",
+        "AS_RELATIVE_URL"
+      ]
+    },
+    "fileDirectory": {
+      "type": "string",
+      "pattern": "^.+$"
+    },
+    "fileUrlPrefix": {
+      "type": "string",
+      "pattern": "^.+$"
+    },
+    "configurationReadable": {
+      "type": "boolean"
+    },
+    "audioPropertiesReadable": {
+      "type": "boolean"
+    },
+    "tagReadable": {
+      "type": "boolean"
+    },
+    "apeWritable": {
+      "type": "boolean"
+    },
+    "apeReadable": {
+      "type": "boolean"
+    },
+    "id3v1Writable": {
+      "type": "boolean"
+    },
+    "id3v1Readable": {
+      "type": "boolean"
+    },
+    "id3v1Encoding": {
+      "enum": [
+        "Latin1",
+        "UTF16",
+        "UTF16BE",
+        "UTF8",
+        "UTF16LE"
+      ]
+    },
+    "id3v2Writable": {
+      "type": "boolean"
+    },
+    "id3v2Readable": {
+      "type": "boolean"
+    },
+    "id3v2Encoding": {
+      "enum": [
+        "Latin1",
+        "UTF16",
+        "UTF16BE",
+        "UTF8",
+        "UTF16LE"
+      ]
+    },
+    "id3v2Version": {
+      "enum": [
+        3,
+        4
+      ]
+    },
+    "id3v2UseFrameEncoding": {
+      "type": "boolean"
+    },
+    "xiphCommentReadable": {
+      "type": "boolean"
+    },
+    "xiphCommentWritable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "fileExtracted",
+    "fileDirectory",
+    "fileUrlPrefix",
+    "configurationReadable",
+    "audioPropertiesReadable",
+    "tagReadable",
+    "apeWritable",
+    "id3v1Writable",
+    "id3v1Readable",
+    "id3v1Encoding",
+    "id3v2Writable",
+    "id3v2Readable",
+    "id3v2Encoding",
+    "id3v2Version",
+    "id3v2UseFrameEncoding",
+    "xiphCommentReadable",
+    "xiphCommentWritable"
+  ]
+}

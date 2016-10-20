@@ -18,7 +18,8 @@ endif()
 
 # Sanitise IDE suport - CMAKE_JS_INC is defined by cmake-js itself
 if(NOT DEFINED CMAKE_JS_INC)
-    set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v5.11.1/include/node")
+    set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v5.11.1/include/node" "./node_modules/nan")
+    #set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v4.4.7/include/node" "./node_modules/nan")
     message(WARNING "CMAKE_JS_INC not defined!")
 endif()
 
@@ -30,7 +31,7 @@ PREFIX "${CMAKE_SOURCE_DIR}/taglib"
 URL http://taglib.github.io/releases/taglib-1.9.1.tar.gz
 INSTALL_DIR "${CMAKE_SOURCE_DIR}/taglib"
 #CMAKE_ARGS "-DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib"
-CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib"
+CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib -DCMAKE_BUILD_TYPE=Release
 )
 
 # Make project

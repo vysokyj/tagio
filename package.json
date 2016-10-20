@@ -1,6 +1,6 @@
 {
   "name": "tagio",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Advanced TagLib wrapper.",
   "repository": {
     "type": "git",
@@ -19,12 +19,16 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test/* --reporter spec",
-    "rebuild": "./node_modules/.bin/cmake-js rebuild",
-    "install": "./node_modules/.bin/cmake-js rebuild"
+    "rebuild": "./node_modules/.bin/cmake-js rebuild -C && npm test",
+    "install": "./node_modules/.bin/cmake-js compile -C"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "cmake-js": "^3.2.1",
     "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "jsonschema": "^1.1.0",
+    "nan": "^2.4.0"
   }
 }

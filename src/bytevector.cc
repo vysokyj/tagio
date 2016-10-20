@@ -1,46 +1,19 @@
 #include "bytevector.h"
-#include "configuration.h"
+
 #include "md5.h"
 #include <fstream>
 #include <algorithm>
 #include <sys/stat.h>
 
-using namespace TagIO;
 using namespace std;
 
-
-TagLib::ByteVector ByteVector::Import(TagLib::String pathString) {
-    string path(StringToPath(pathString.to8Bit(true)));
-    ifstream ifs;
-    ifs.open(path, ios::in | ios::binary);
-    ifs.seekg(0, ios::end);
-    long length = ifs.tellg();
-    char *data = new char[length];
-    ifs.seekg(0, ios::beg);
-    ifs.read(data, length);
-    ifs.close();
-    return TagLib::ByteVector(data, (TagLib::uint) length);
+static string CountMD5(TagLib::ByteVector byteVector) {
+    string s = string(byteVector.data(), byteVector.size());
+    string hash = md5(s);
+    return hash;
 }
 
-TagLib::String ByteVector::Export(TagLib::ByteVector byteVector, TagLib::String mimeType) {
-    Configuration &cfg = Configuration::Get();
-    if (cfg.BinaryDataMethod() == BDM_IGNORE)
-        return TagLib::String("IGNORED");
-    string binaryDataDirectory(cfg.BinaryDataDirectory());
-    string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
-    string filePath = NewPath(binaryDataDirectory, fileName);
-    TagLib::String filePathString = PathToString(filePath, fileName);
-    if (FileExist(filePath)) return filePathString;
-
-    ofstream ofs;
-    ofs.open(filePath, ios::out | ios::binary);
-    ofs.write(byteVector.data(), byteVector.size());
-    ofs.close();
-
-    return filePathString;
-}
-
-string ByteVector::NewFileName(TagLib::ByteVector byteVector, string mimeType) {
+static string NewFileName(TagLib::ByteVector byteVector, string mimeType) {
     string hash = CountMD5(byteVector);
     string ext = (mimeType.empty()) ? "bin" : mimeType.substr(mimeType.find("/") + 1);
     //TODO: Implement complete mime type table...
@@ -51,13 +24,7 @@ string ByteVector::NewFileName(TagLib::ByteVector byteVector, string mimeType) {
     return hash + '.' + ext;
 }
 
-string ByteVector::CountMD5(TagLib::ByteVector byteVector) {
-    string s = string(byteVector.data(), byteVector.size());
-    string hash = md5(s);
-    return hash;
-}
-
-string ByteVector::NormalizePath(string path) {
+static string NormalizePath(string path) {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     replace(path.begin(), path.end(), '/', '\\');
     return path;
@@ -67,7 +34,7 @@ string ByteVector::NormalizePath(string path) {
 #endif
 }
 
-string ByteVector::NewPath(string directoryPath, string fileName) {
+static string NewPath(string directoryPath, string fileName) {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
     replace(directoryPath.begin(), directoryPath.end(), '/', '\\');
     return directoryPath + '\\' + fileName;
@@ -77,43 +44,40 @@ string ByteVector::NewPath(string directoryPath, string fileName) {
 #endif
 }
 
-std::string ByteVector::NewAbsoluteUrl(std::string filePath) {
-    replace(filePath.begin(), filePath.end(), '\\', '/');
-    return "file://" + filePath;
+//static inline bool FileExist(const std::string &name) {
+//    struct stat buffer;
+//    return (stat (name.c_str(), &buffer) == 0);
+//}
+
+TagLib::String ExportByteVector(TagLib::ByteVector byteVector, TagLib::String mimeType, Configuration *conf) {
+    if (conf->FileExtracted() == FILE_EXTRACTED_IS_IGNORED) return TagLib::String("IGNORED");
+    string directory = conf->FileDirectory().to8Bit(true);
+    //std::cout << directory << std::endl;
+    string fileName = NewFileName(byteVector, mimeType.to8Bit(true));
+    string filePath = NewPath(directory, fileName);
+
+    ofstream ofs;
+    ofs.open(filePath, ios::out | ios::binary);
+    ofs.write(byteVector.data(), byteVector.size());
+    ofs.close();
+
+    TagLib::String pathString(filePath);
+    return pathString;
 }
 
-std::string ByteVector::NewRelativeUrl(std::string relativeUrl, std::string fileName) {
-    return relativeUrl + '/' + fileName;
-}
-
-std::string ByteVector::PathToString(std::string filePath, std::string fileName) {
-    Configuration &cfg = Configuration::Get();
-    string retval = fileName;
-    string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
-    if (cfg.BinaryDataMethod() == BDM_RELATIVE_URL)
-        retval = NewRelativeUrl(binaryDataUrlPrefix, fileName);
-    else if (cfg.BinaryDataMethod() == BDM_ABSOLUTE_URL)
-        retval = NewAbsoluteUrl(filePath);
-    return retval;
-}
-
-std::string ByteVector::StringToPath(std::string str) {
-    Configuration &cfg = Configuration::Get();
-    string filePrefix = "file://";
-    string binaryDataUrlPrefix(cfg.BinaryDataUrlPrefix());
-    string binaryDataDirectory(cfg.BinaryDataDirectory());
-    if (cfg.BinaryDataMethod() == BDM_RELATIVE_URL) {
-        return NewPath(binaryDataDirectory, str.substr(binaryDataUrlPrefix.length() + 1));
-    } else if (cfg.BinaryDataMethod() == BDM_ABSOLUTE_URL) {
-        return NormalizePath(str.substr(filePrefix.length()));
-    } else {
-        return NewPath(binaryDataDirectory, str);
-    }
-}
-
-inline bool ByteVector::FileExist(const std::string &name) {
-    struct stat buffer;
-    return (stat (name.c_str(), &buffer) == 0);
+TagLib::ByteVector ImportByteVector(TagLib::String pathString, Configuration *conf) {
+    return ImportByteVector(pathString.to8Bit(true), conf);
 }
 
 
+TagLib::ByteVector ImportByteVector(std::string path, Configuration *conf) {
+    ifstream ifs;
+    ifs.open(path, ios::in | ios::binary);
+    ifs.seekg(0, ios::end);
+    long length = ifs.tellg();
+    char *data = new char[length];
+    ifs.seekg(0, ios::beg);
+    ifs.read(data, length);
+    ifs.close();
+    return TagLib::ByteVector(data, (TagLib::uint) length);
+}
