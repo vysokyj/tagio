@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "pattern": "^.+$"
+    },
+    "album": {
+      "type": "string",
+      "pattern": "^.+$"
+    },
+    "artist": {
+      "type": "string",
+      "pattern": "^.+$"
+    },
+    "track": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "year": {
+      "type": "integer"
+    },
+    "genre": {
+      "type": "string",
+      "pattern": "^.+$"
+    },
+    "comment": {
+      "type": "string",
+      "pattern": "^.+$"
+    }
+  },
+  "required": [
+    "title",
+    "album",
+    "artist",
+    "track",
+    "year",
+    "genre",
+    "comment"
+  ]
+}
