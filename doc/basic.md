@@ -11,7 +11,7 @@ tagio.configure(conf);
 
 // read something
 tagio.read({
-       path: /home/someone/music.mp3,
+       path: '/home/someone/music.mp3',
        configuration: {
            id3v1Readable: false
        }
@@ -21,19 +21,19 @@ tagio.read({
 
 // write something
 tagio.write({
-       path: /home/someone/music.mp3,
+       path: '/home/someone/music.mp3',
        configuration: {
            id3v1Readable: true,
            id3v1Writable: true
        },
        id3v1: {
-           "title": "Generic Title 2",
-           "album": "Generic Album 2",
-           "artist": "Generic Artist 2",
-           "track": 1,
-           "year": 2015,
-           "genre": "Speech",
-           "comment": "Generic Comment 2"
+           'title': 'Generic Title 2',
+           'album': 'Generic Album 2',
+           'artist': 'Generic Artist 2',
+           'track': 1,
+           'year': 2015,
+           'genre': 'Speech',
+           'comment': 'Generic Comment 2'
        }
 }).then(function (res) {
     console.log(res);

@@ -36,7 +36,7 @@ Read:
 var tagio = require('tagio');
 
 const req = {
-    path: sample.wav,
+    path: 'sample.wav',
     configuration: {
         configurationReadable: true,
         audioPropertiesReadable: true,
@@ -46,7 +46,7 @@ const req = {
 
 tagio.read(req).then(function (res) {
     console.log(res);
-});
+}).catch(function(err) { console.error(err); });
 ```
 
 Output (same for both):
