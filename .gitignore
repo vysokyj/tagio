@@ -8,6 +8,7 @@ TagIO.xcodeproj/*
 node_modules/*
 build/*
 taglib/*
+cmake-build-debug
 .codelite/*
 *.project
 *.workspace
