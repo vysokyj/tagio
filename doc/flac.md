@@ -2,7 +2,7 @@
 
 ## ID3v1 and ID3v2
 
-See examples [mpeg](mpeg.md) section.
+See examples in [mpeg](mpeg.md) section.
 
 ## XIPH Comment
 
