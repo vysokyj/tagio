@@ -1,19 +1,19 @@
 "use strict";
-var fs = require("fs");
-var path = require("path");
-//var tagio = require("../build/Release/tagio");
-var tagio = require("../lib");
-var assert = require("chai").assert;
+const fs = require("fs");
+const path = require("path");
+//const tagio = require("../build/Release/tagio");
+const tagio = require("../lib");
+const assert = require("chai").assert;
 
-var fileCounter = 0;
+let fileCounter = 0;
 
 
 describe("WAV (generic tag)", function() {
-    var testDir;
-    var sampleFile;
-    var testFile;
-    var testJPEG;
-    var testTEXT;
+    let testDir;
+    let sampleFile;
+    let testFile;
+    let testJPEG;
+    let testTEXT;
 
     beforeEach(function () {
         testDir = path.resolve(__dirname, "../build/Test");

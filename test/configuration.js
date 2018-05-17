@@ -1,20 +1,20 @@
 "use strict";
-var fs = require("fs");
-var path = require("path");
-//var tagio = require("../build/Release/tagio");
-var tagio = require("../lib");
-var assert = require("chai").assert;
+const fs = require("fs");
+const path = require("path");
+//const tagio = require("../build/Release/tagio");
+const tagio = require("../lib");
+const assert = require("chai").assert;
 const os = require("os");
 
-var fileCounter = 0;
+let fileCounter = 0;
 
 
 describe("Configuration", function() {
-    var testDir;
-    var sampleFile;
-    var testFile;
-    var testJPEG;
-    var testTEXT;
+    let testDir;
+    let sampleFile;
+    let testFile;
+    let testJPEG;
+    let testTEXT;
 
     beforeEach(function () {
         testDir = path.resolve(__dirname, "../build/Test");
@@ -55,7 +55,7 @@ describe("Configuration", function() {
         const req = {
             path: testFile
         };
-        var res1 = tagio.configure(conf);
+        let res1 = tagio.configure(conf);
         assert.deepEqual(conf, res1);
 
         tagio.read(req).then(function (res) {

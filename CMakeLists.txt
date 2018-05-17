@@ -16,9 +16,9 @@ if (APPLE)
     set(CMAKE_MACOSX_RPATH 0)
 endif()
 
-# Sanitise IDE suport - CMAKE_JS_INC is defined by cmake-js itself
+# Sanitise IDE support - CMAKE_JS_INC is defined by cmake-js itself
+# Version is dependant to cmake-js version!!
 if(NOT DEFINED CMAKE_JS_INC)
-    # Version is dependant to cmake-js version!!
     set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v9.11.1/include/node" "./node_modules/nan")
     #message(WARNING "CMAKE_JS_INC not defined!")
 endif()
@@ -28,10 +28,10 @@ endif()
 ExternalProject_Add(
 taglib
 PREFIX "${CMAKE_SOURCE_DIR}/taglib"
-URL http://taglib.github.io/releases/taglib-1.9.1.tar.gz
+#URL http://taglib.org/releases/taglib-1.11.1.tar.gz
+URL http://taglib.org/releases/taglib-1.9.1.tar.gz
 INSTALL_DIR "${CMAKE_SOURCE_DIR}/taglib"
-#CMAKE_ARGS "-DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib"
-CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib -DCMAKE_BUILD_TYPE=Release
+CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/taglib -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
 )
 
 # Make project

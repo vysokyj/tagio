@@ -1,19 +1,19 @@
 "use strict";
-var fs = require("fs");
-var path = require("path");
-var tagio = require("../lib");
-var assert = require("chai").assert;
-var id3v2Helper = require("./help/id3v2");
+const fs = require("fs");
+const path = require("path");
+const tagio = require("../lib");
+const assert = require("chai").assert;
+const id3v2Helper = require("./help/id3v2");
 
-var fileCounter = 0;
+let fileCounter = 0;
 
 
 describe("FLAC", function() {
-    var testDir;
-    var sampleFile;
-    var testFile;
-    var testJPEG;
-    var testTEXT;
+    let testDir;
+    let sampleFile;
+    let testFile;
+    let testJPEG;
+    let testTEXT;
 
     beforeEach(function () {
         testDir = path.resolve(__dirname, "../build/Test");
@@ -36,7 +36,7 @@ describe("FLAC", function() {
 
 
     it("Write XIPH", function(done) {
-        var req = {
+        let req = {
             path: testFile,
             configuration: {
                 configurationReadable: false,
@@ -61,17 +61,17 @@ describe("FLAC", function() {
             assert.isNotNull(res.path);
             assert.isUndefined(res.configuration);
             assert.isUndefined(res.audioProperties);
-            assert.isUndefined(res.tag)
-            var byKey = function(a, b) { a.id.localeCompare(b.id) };
-            var actual = res.xiphComment.sort(byKey);
-            var expected = req.xiphComment.sort(byKey);
+            assert.isUndefined(res.tag);
+            let byKey = function(a, b) { a.id.localeCompare(b.id) };
+            let actual = res.xiphComment.sort(byKey);
+            let expected = req.xiphComment.sort(byKey);
             assert.deepEqual(actual, expected);
             done();
         }).catch(function(err) { done(err); });
     });
 
     it("Write ID3v1 only", function(done) {
-        var req = {
+        let req = {
             path: testFile,
             configuration: {
                 configurationReadable: false,
@@ -100,7 +100,7 @@ describe("FLAC", function() {
             assert.isNotNull(res.path);
             assert.isUndefined(res.configuration);
             assert.isUndefined(res.audioProperties);
-            assert.isUndefined(res.tag)
+            assert.isUndefined(res.tag);
             assert.equal(res.id3v1.title, req.id3v1.title);
             assert.equal(res.id3v1.album, req.id3v1.album);
             assert.equal(res.id3v1.artist, req.id3v1.artist);

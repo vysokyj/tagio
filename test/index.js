@@ -1,6 +1,6 @@
-var fs = require("fs");
-var path = require("path");
-var testDir = path.resolve(__dirname, "../build/Test");
+const fs = require("fs");
+const path = require("path");
+const testDir = path.resolve(__dirname, "../build/Test");
 
 describe("Index", function() {
 

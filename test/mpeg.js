@@ -1,20 +1,20 @@
 "use strict";
-var fs = require("fs");
-var path = require("path");
-var tagio = require("../lib");
-var assert = require("chai").assert;
+const fs = require("fs");
+const path = require("path");
+const tagio = require("../lib");
+const assert = require("chai").assert;
 
-var id3v2Helper = require("./help/id3v2");
+const id3v2Helper = require("./help/id3v2");
 
-var fileCounter = 0;
+let fileCounter = 0;
 
 
 describe("MPEG", function() {
-    var testDir;
-    var sampleFile;
-    var testFile;
-    var testJPEG;
-    var testTEXT;
+    let testDir;
+    let sampleFile;
+    let testFile;
+    let testJPEG;
+    let testTEXT;
 
     beforeEach(function () {
         testDir = path.resolve(__dirname, "../build/Test");
@@ -36,12 +36,12 @@ describe("MPEG", function() {
 
     it("Read plain", function(done) {
 
-        var request = {
+        let request = {
             path: testFile,
             configuration: { }
         };
 
-        tagio.read(request).then(function (result) {
+        tagio.read(request).then(function(result) {
             //console.log(result);
             done();
         });
@@ -49,7 +49,7 @@ describe("MPEG", function() {
 
 
     it("Write and read ID3v1 only", function(done) {
-        var req = {
+        let req = {
             path: testFile,
             configuration: {
                 configurationReadable: false,
@@ -78,7 +78,7 @@ describe("MPEG", function() {
             assert.isNotNull(res.path);
             assert.isUndefined(res.configuration);
             assert.isUndefined(res.audioProperties);
-            assert.isUndefined(res.tag)
+            assert.isUndefined(res.tag);
             assert.equal(res.id3v1.title, req.id3v1.title);
             assert.equal(res.id3v1.album, req.id3v1.album);
             assert.equal(res.id3v1.artist, req.id3v1.artist);
@@ -100,7 +100,7 @@ describe("MPEG", function() {
     });
 
     it("Write ID3v1 and APE tag in unicode", function(done) {
-        var req = {
+        let req = {
             path: testFile,
             configuration: {
                 id3v1Readable: true,
