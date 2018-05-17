@@ -1,13 +1,14 @@
 # Development Notes
 
-## Trace Errors
+## Common Tasks
 
-```bash
-nm -C build/Release/tagio.node
-```
+|*Task* | *Command*                                                                                                    |
+|-------|--------------------------------------------------------------------------------------------------------------|
+| build | `cmake-js`                                                                                                   |
+| test  | `yarn test`                                                                                                  |
+| trace | `nm -C build/Release/tagio.node`                                                                             |
 
-## Run Tests
+## Links
 
-```bash
-yarn test
-```
+* [Taglib on GitHub](https://github.com/taglib/taglib)
+* [ID3 specification](http://id3.org/Developer%20Information)
