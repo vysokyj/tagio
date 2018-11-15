@@ -24,12 +24,13 @@
     "clean": "rimraf taglib && rimraf build && rimraf cmake-build-debug"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "cmake-js": "^3.2.1",
-    "mocha": "^5.1.1"
+    "chai": "^4.2.0",
+    "cmake-js": "^4.0.1",
+    "mocha": "^5.2.0"
   },
   "dependencies": {
+    "global": "^4.3.2",
     "jsonschema": "^1.1.0",
-    "nan": "^2.4.0"
+    "nan": "^2.11.1"
   }
 }

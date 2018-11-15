@@ -19,7 +19,7 @@ endif()
 # Sanitise IDE support - CMAKE_JS_INC is defined by cmake-js itself
 # Version is dependant to cmake-js version!!
 if(NOT DEFINED CMAKE_JS_INC)
-    set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v9.11.1/include/node" "./node_modules/nan")
+    set(CMAKE_JS_INC "$ENV{HOME}/.cmake-js/node-x64/v9.11.2/include/node" "./node_modules/nan")
     #message(WARNING "CMAKE_JS_INC not defined!")
 endif()
 
